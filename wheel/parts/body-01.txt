@@ -1,0 +1,147 @@
+
+  <!-- cosmic-background-version: 30-compact -->
+  <main class="app">
+    <div class="sparkle sparkle--one" aria-hidden="true">✦</div>
+    <div class="sparkle sparkle--two" aria-hidden="true">✧</div>
+    <div class="sparkle sparkle--three" aria-hidden="true">✦</div>
+
+    <section class="intro">
+      <div class="brand-row">
+        <div class="brand-icon">✦</div>
+        <div>Колесо Баланса</div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="eyebrow">Практика на 1–5 минут</div>
+        <h1>Крутите Колесо Ресурса</h1>
+        <p class="lead">
+          Получите небольшую практику, которую можно выполнить <strong>прямо сейчас</strong>
+          и заметить, что изменилось в вашем состоянии.
+        </p>
+      </div>
+    </section>
+
+    <section class="wheel-zone" aria-label="Колесо Ресурса">
+      <div class="wheel-stage">
+        <div class="wheel-composition">
+          <img
+            class="cosmic-background"
+            decoding="sync"
+            fetchpriority="high"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-cosmic-asset="1"
+            data-asset-path="assets/cosmic-wheel-background.webp"
+            alt=""
+            aria-hidden="true"
+          >
+
+          <div class="interactive-wheel">
+            <div class="pointer" aria-hidden="true"></div>
+            <div class="wheel" id="wheel" role="button" tabindex="0" aria-label="Крутить Колесо Ресурса">
+          
+<svg viewBox="0 0 400 400" aria-hidden="true">
+  <defs>
+    <linearGradient id="wheelGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7b5114"/>
+      <stop offset="18%" stop-color="#fff0ae"/>
+      <stop offset="42%" stop-color="#d39a2f"/>
+      <stop offset="66%" stop-color="#ffe29a"/>
+      <stop offset="100%" stop-color="#8c5d19"/>
+    </linearGradient>
+
+    <radialGradient id="wheelGlow" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#ffe6a3" stop-opacity=".92"/>
+      <stop offset="42%" stop-color="#dca840" stop-opacity=".66"/>
+      <stop offset="100%" stop-color="#8b5d18" stop-opacity=".12"/>
+    </radialGradient>
+
+    <linearGradient id="sectorA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a7b80"/>
+      <stop offset="44%" stop-color="#14545e"/>
+      <stop offset="100%" stop-color="#083743"/>
+    </linearGradient>
+
+    <linearGradient id="sectorB" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d4f59"/>
+      <stop offset="54%" stop-color="#083c46"/>
+      <stop offset="100%" stop-color="#052b35"/>
+    </linearGradient>
+
+    <linearGradient id="sectorC" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2c7d7d"/>
+      <stop offset="48%" stop-color="#155963"/>
+      <stop offset="100%" stop-color="#083641"/>
+    </linearGradient>
+
+    <radialGradient id="hubSun" cx="38%" cy="34%">
+      <stop offset="0%" stop-color="#fff7cf"/>
+      <stop offset="26%" stop-color="#ffd36d"/>
+      <stop offset="66%" stop-color="#d68d24"/>
+      <stop offset="100%" stop-color="#7d4c10"/>
+    </radialGradient>
+
+    <linearGradient id="milkyGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff1ba" stop-opacity=".92"/>
+      <stop offset="26%" stop-color="#f7d980" stop-opacity=".96"/>
+      <stop offset="62%" stop-color="#dca13d" stop-opacity=".94"/>
+      <stop offset="100%" stop-color="#fff1c1" stop-opacity=".88"/>
+    </linearGradient>
+
+    <radialGradient id="lotusPetalOuter" cx="50%" cy="14%">
+      <stop offset="0%" stop-color="#fff0b8" stop-opacity=".96"/>
+      <stop offset="48%" stop-color="#f0c45d" stop-opacity=".92"/>
+      <stop offset="100%" stop-color="#b9741f" stop-opacity=".88"/>
+    </radialGradient>
+
+    <radialGradient id="lotusPetalInner" cx="50%" cy="18%">
+      <stop offset="0%" stop-color="#fff5d1" stop-opacity=".98"/>
+      <stop offset="54%" stop-color="#ffd979" stop-opacity=".94"/>
+      <stop offset="100%" stop-color="#c98928" stop-opacity=".90"/>
+    </radialGradient>
+
+    <radialGradient id="coreGlow" cx="50%" cy="42%">
+      <stop offset="0%" stop-color="#fff8dd" stop-opacity="1"/>
+      <stop offset="34%" stop-color="#ffd36f" stop-opacity=".98"/>
+      <stop offset="72%" stop-color="#d98f24" stop-opacity=".90"/>
+      <stop offset="100%" stop-color="#7e4c10" stop-opacity=".84"/>
+    </radialGradient>
+
+    <linearGradient id="petalGlowStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff3c5" stop-opacity=".96"/>
+      <stop offset="38%" stop-color="#f6d675" stop-opacity=".98"/>
+      <stop offset="72%" stop-color="#d5982f" stop-opacity=".92"/>
+      <stop offset="100%" stop-color="#fff0bb" stop-opacity=".90"/>
+    </linearGradient>
+
+    <radialGradient id="petalDustFill" cx="50%" cy="20%">
+      <stop offset="0%" stop-color="#fff0b8" stop-opacity=".18"/>
+      <stop offset="58%" stop-color="#f0c45d" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#d08d28" stop-opacity=".04"/>
+    </radialGradient>
+
+    <radialGradient id="tealCore" cx="46%" cy="38%">
+      <stop offset="0%" stop-color="#6dcad9" stop-opacity=".30"/>
+      <stop offset="34%" stop-color="#1d6675" stop-opacity=".92"/>
+      <stop offset="100%" stop-color="#082f3b" stop-opacity="1"/>
+    </radialGradient>
+
+    <filter id="softBloom" x="-120%" y="-120%" width="340%" height="340%">
+      <feGaussianBlur stdDeviation="3.4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="goldBloom" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5.6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#000000" flood-opacity=".35"/>
+    </filter>
+
+    <filter id="textShadow" x="-40%" y="-40%" w
