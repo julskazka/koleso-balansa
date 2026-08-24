@@ -170,7 +170,7 @@
       };
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
         reflectionFormId: '',
-        sevenDaysUrl: 'https://t.me/post#1HyKwZ5uhzwdI74llc7iTV_lp'
+        sevenDaysUrl: 'https://t.me/post#1HyKwZ5uhzwdI74llc7iTV'
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
       run(payload.bridge, 'notibot-bridge.js');
