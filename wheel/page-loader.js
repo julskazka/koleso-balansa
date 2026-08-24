@@ -41,13 +41,8 @@
       style.textContent = payload.css;
       document.head.appendChild(style);
 
-      /*
-        На широком экране растягиваем только общий контейнер.
-        Космический слой, его исходная маска и смешивание не меняются:
-        они полностью совпадают с автономной версией до переноса на GitHub.
-      */
-      const desktopLayoutStyle = document.createElement('style');
-      desktopLayoutStyle.textContent = `
+      const githubFixStyle = document.createElement('style');
+      githubFixStyle.textContent = `
         html,
         body {
           width: 100% !important;
@@ -73,8 +68,33 @@
           margin-left: auto !important;
           margin-right: auto !important;
         }
+
+        .wheel-stage,
+        .wheel-composition {
+          isolation: auto !important;
+          background: transparent !important;
+          z-index: 0 !important;
+        }
+
+        .cosmic-background {
+          mix-blend-mode: normal !important;
+          z-index: 0 !important;
+        }
+
+        .interactive-wheel,
+        .wheel-label-overlay {
+          z-index: 2 !important;
+        }
+
+        .result,
+        .spin-button,
+        .caption,
+        .test-note {
+          position: relative !important;
+          z-index: 20 !important;
+        }
       `;
-      document.head.appendChild(desktopLayoutStyle);
+      document.head.appendChild(githubFixStyle);
 
       document.getElementById('app-root').innerHTML = payload.body;
       document.querySelectorAll('[data-cosmic-asset="1"]').forEach(el => {
