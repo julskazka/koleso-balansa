@@ -41,20 +41,18 @@
       style.textContent = payload.css;
       document.head.appendChild(style);
 
-      const seamlessStyle = document.createElement('style');
-      seamlessStyle.textContent = `
+      /*
+        На широком экране растягиваем только общий контейнер.
+        Космический слой, его исходная маска и смешивание не меняются:
+        они полностью совпадают с автономной версией до переноса на GitHub.
+      */
+      const desktopLayoutStyle = document.createElement('style');
+      desktopLayoutStyle.textContent = `
         html,
         body {
           width: 100% !important;
           min-width: 100% !important;
           min-height: 100% !important;
-          background:
-            radial-gradient(circle at 50% 20%, rgba(45,153,170,.16) 0%, rgba(17,88,104,.10) 18%, transparent 40%),
-            radial-gradient(circle at 18% 68%, rgba(14,84,98,.18) 0%, transparent 26%),
-            radial-gradient(circle at 82% 70%, rgba(14,84,98,.18) 0%, transparent 26%),
-            radial-gradient(circle at 50% 48%, rgba(233,198,99,.07) 0%, rgba(18,88,100,.04) 16%, transparent 38%),
-            linear-gradient(180deg, #052d37 0%, #032330 28%, #021923 58%, #010f17 100%) !important;
-          background-attachment: fixed !important;
         }
 
         body {
@@ -64,13 +62,8 @@
         .app {
           width: 100% !important;
           max-width: none !important;
-          margin: 0 !important;
-          background: transparent !important;
-        }
-
-        .app::before {
-          display: none !important;
-          content: none !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
         }
 
         .intro,
@@ -80,41 +73,8 @@
           margin-left: auto !important;
           margin-right: auto !important;
         }
-
-        .wheel-zone,
-        .wheel-stage,
-        .wheel-composition {
-          background: transparent !important;
-          overflow: visible !important;
-        }
-
-        .cosmic-background {
-          background: transparent !important;
-          border-radius: 50% !important;
-          mix-blend-mode: screen !important;
-          -webkit-mask-image: radial-gradient(
-            circle at 50% 50%,
-            transparent 0%,
-            transparent 25%,
-            rgba(0,0,0,.32) 35%,
-            #000 48%,
-            #000 72%,
-            rgba(0,0,0,.62) 84%,
-            transparent 98%
-          ) !important;
-          mask-image: radial-gradient(
-            circle at 50% 50%,
-            transparent 0%,
-            transparent 25%,
-            rgba(0,0,0,.32) 35%,
-            #000 48%,
-            #000 72%,
-            rgba(0,0,0,.62) 84%,
-            transparent 98%
-          ) !important;
-        }
       `;
-      document.head.appendChild(seamlessStyle);
+      document.head.appendChild(desktopLayoutStyle);
 
       document.getElementById('app-root').innerHTML = payload.body;
       document.querySelectorAll('[data-cosmic-asset="1"]').forEach(el => {
