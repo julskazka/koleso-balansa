@@ -1,9 +1,9 @@
 (() => {
-  const bodyFiles = ['body-01.txt', 'body-02.txt'];
-  const bridgeFiles = ['bridge-01.txt', 'bridge-02.txt'];
-  const appFiles = ['app-01.txt', 'app-02.txt'];
-  const asset1Files = ['cosmic-1-01.txt', 'cosmic-1-02.txt', 'cosmic-1-03.txt'];
-  const asset2Files = ['cosmic-2-01.txt'];
+  const bodyFiles = ['body-01.txt', 'body-02.txt', 'body-03.txt', 'body-04.txt'];
+  const bridgeFiles = ['bridge-01.txt', 'bridge-02.txt', 'bridge-03.txt', 'bridge-04.txt'];
+  const appFiles = ['app-01.txt', 'app-02.txt', 'app-03.txt', 'app-04.txt'];
+  const asset1Files = ['cosmic-1-01.txt', 'cosmic-1-02.txt', 'cosmic-1-03.txt', 'cosmic-1-04.txt', 'cosmic-1-05.txt'];
+  const asset2Files = ['cosmic-2-01.txt', 'cosmic-2-02.txt'];
   const readAll = async (base, files) => (await Promise.all(files.map(async name => {
     const response = await fetch(base + name, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Не удалось загрузить ${name}`);
