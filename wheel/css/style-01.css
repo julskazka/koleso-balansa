@@ -1,0 +1,579 @@
+
+    :root {
+      --bg: #063c36;
+      --gold: #d6b35f;
+      --gold-light: #f3dc95;
+      --text: #fff8e8;
+      --muted: #d9d2bd;
+      --shadow: rgba(0, 0, 0, 0.34);
+      --aura-gold: rgba(244, 197, 79, 0.64);
+      --aura-gold-soft: rgba(255, 226, 145, 0.24);
+      --aura-teal: rgba(35, 149, 169, 0.18);
+      --safe-top: max(18px, env(safe-area-inset-top));
+      --safe-bottom: max(22px, env(safe-area-inset-bottom));
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(45, 153, 170, 0.16) 0%, rgba(17, 88, 104, 0.10) 18%, transparent 40%),
+        radial-gradient(circle at 18% 68%, rgba(14, 84, 98, 0.18) 0%, transparent 26%),
+        radial-gradient(circle at 82% 70%, rgba(14, 84, 98, 0.18) 0%, transparent 26%),
+        radial-gradient(circle at 50% 48%, rgba(233, 198, 99, 0.07) 0%, rgba(18, 88, 100, 0.04) 16%, transparent 38%),
+        linear-gradient(180deg, #052d37 0%, #032330 28%, #021923 58%, #010f17 100%);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 236, 175, 0.76) 0 1.1px, transparent 2px),
+        radial-gradient(circle at 76% 24%, rgba(255, 236, 175, 0.72) 0 1px, transparent 2px),
+        radial-gradient(circle at 12% 76%, rgba(255, 236, 175, 0.46) 0 0.95px, transparent 1.8px),
+        radial-gradient(circle at 84% 72%, rgba(255, 236, 175, 0.48) 0 0.95px, transparent 1.8px),
+        radial-gradient(circle at 40% 60%, rgba(255, 236, 175, 0.32) 0 0.9px, transparent 1.7px),
+        radial-gradient(circle at 62% 66%, rgba(255, 236, 175, 0.30) 0 0.85px, transparent 1.6px),
+        radial-gradient(ellipse at 50% 26%, rgba(41, 157, 176, 0.16), transparent 26%),
+        radial-gradient(ellipse at 50% 42%, rgba(9, 61, 75, 0.30), transparent 54%);
+      opacity: 0.30;
+    }
+
+    body::after {
+      background:
+        radial-gradient(ellipse at 50% 24%, rgba(86, 196, 215, 0.10), transparent 20%),
+        radial-gradient(ellipse at 50% 30%, rgba(255, 224, 139, 0.06), transparent 24%),
+        radial-gradient(ellipse at 30% 55%, rgba(29, 126, 144, 0.06), transparent 24%),
+        radial-gradient(ellipse at 72% 58%, rgba(29, 126, 144, 0.06), transparent 24%);
+      mix-blend-mode: screen;
+      opacity: 0.50;
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 560px);
+      min-height: 100svh;
+      margin: 0 auto;
+      padding:
+        calc(var(--safe-top) + 8px)
+        16px
+        calc(var(--safe-bottom) + 18px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 34%, rgba(255, 224, 132, 0.05), transparent 16%),
+        radial-gradient(ellipse at 50% 40%, rgba(18, 102, 118, 0.16), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.01), transparent 20%, transparent 82%, rgba(0,0,0,0.16));
+      opacity: 0.95;
+      z-index: -1;
+    }
+
+    .sparkle {
+      position: absolute;
+      color: var(--gold-light);
+      opacity: 0.8;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(243, 220, 149, 0.35));
+    }
+
+    .sparkle--one { top: 192px; left: 22px; font-size: 18px; }
+    .sparkle--two { top: 108px; right: 28px; font-size: 13px; }
+    .sparkle--three { top: 54%; left: 12px; font-size: 10px; opacity: 0.55; }
+
+    .intro {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      padding: 0 4px 0;
+      animation: intro-in 0.7s ease both;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(214, 179, 95, 0.55);
+      display: grid;
+      place-items: center;
+      background: rgba(255, 227, 146, 0.05);
+      box-shadow: inset 0 0 14px rgba(243, 220, 149, 0.06);
+      color: var(--gold-light);
+      font-size: 13px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 6;
+      margin-top: 22px;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: #f3d98f;
+      font-size: 15px;
+      line-height: 1.2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      text-shadow: 0 0 10px rgba(243, 217, 143, 0.14);
+    }
+
+    h1 {
+      max-width: 520px;
+      margin: 14px auto 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(33px, 8.2vw, 50px);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+      color: #f3d98f;
+      background: linear-gradient(180deg, #fff1bf 0%, #f3d98f 38%, #d8aa45 72%, #fff0b5 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        0 1px 0 rgba(255, 247, 220, 0.18),
+        0 0 18px rgba(243, 217, 143, 0.10);
+    }
+
+    .lead {
+      max-width: 456px;
+      margin: 18px auto 0;
+      color: #f0ead9;
+      font-size: 21px;
+      line-height: 1.56;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-wrap: balance;
+      text-shadow:
+        0 1px 1px rgba(2, 18, 25, 0.72),
+        0 0 10px rgba(2, 18, 25, 0.48);
+    }
+
+    .lead strong {
+      color: #fff8e1;
+      font-weight: 700;
+      text-shadow:
+        0 1px 1px rgba(2, 18, 25, 0.68),
+        0 0 10px rgba(2, 18, 25, 0.42);
+    }
+
+    .wheel-zone {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      margin-top: 16px;
+      display: grid;
+      justify-items: center;
+      animation: wheel-in 0.8s 0.08s ease both;
+    }
+
+    .wheel-stage {
+      position: relative;
+      width: min(96vw, 560px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
+
+    .wheel-stage::before,
+    .wheel-stage::after,
+    .wheel-glow,
+    .reference-nebula,
+    .milky-way-overlay,
+    .cosmic-texture,
+    .nebula-layer,
+    .stars-layer {
+      display: none !important;
+    }
+
+    .wheel-composition {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      isolation: isolate;
+    }
+
+    .cosmic-background {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 50.5%;
+      width: 156%;
+      height: 156%;
+      max-width: none;
+      transform: translate(-50%, -50%);
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.90;
+      filter:
+        brightness(0.93)
+        saturate(0.82)
+        contrast(0.97);
+      mix-blend-mode: screen;
+      -webkit-mask-image: radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 26%,
+        rgba(0, 0, 0, 0.28) 34%,
+        rgba(0, 0, 0, 0.78) 43%,
+        rgba(0, 0, 0, 1) 54%,
+        rgba(0, 0, 0, 0.9) 67%,
+        rgba(0, 0, 0, 0.52) 80%,
+        rgba(0, 0, 0, 0.18) 90%,
+        transparent 98%
+      );
+      mask-image: radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 26%,
+        rgba(0, 0, 0, 0.28) 34%,
+        rgba(0, 0, 0, 0.78) 43%,
+        rgba(0, 0, 0, 1) 54%,
+        rgba(0, 0, 0, 0.9) 67%,
+        rgba(0, 0, 0, 0.52) 80%,
+        rgba(0, 0, 0, 0.18) 90%,
+        transparent 98%
+      );
+    }
+
+    .interactive-wheel {
+      position: absolute;
+      z-index: 2;
+      width: 88%;
+      height: 88%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @media (max-width: 420px) {
+      .wheel-stage {
+        width: min(100vw, 520px);
+      }
+
+      .cosmic-background {
+        width: 152%;
+        height: 152%;
+        top: 51%;
+        opacity: 0.86;
+        filter:
+          brightness(0.94)
+          saturate(0.82)
+          contrast(0.98);
+      }
+
+      .interactive-wheel {
+        width: 90%;
+        height: 90%;
+      }
+    }
+
+    .pointer {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      z-index: 8;
+      width: 42px;
+      height: 46px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.42));
+    }
+
+    .pointer::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 24px;
+      height: 24px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,244,210,0.72);
+      background: radial-gradient(circle at 35% 30%, #fff2c1, #cf9b3e 70%, #845916 100%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.45);
+    }
+
+    .pointer::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 18px;
+      width: 18px;
+      height: 20px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #f6e5ab 0%, #cf9939 55%, #91611a 100%);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      border-radius: 2px;
+    }
+
+    .wheel {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: rotate(0deg);
+      will-change: transform;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      z-index: 2;
+    }
+
+    .wheel.is-spinning { cursor: default; }
+    .wheel svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+    .segment {
+      stroke: rgba(248, 223, 149, 0.90);
+      stroke-width: 1.55;
+    }
+
+    .divider {
+      stroke: rgba(248, 223, 149, 0.90);
+      stroke-width: 1.7;
+    }
+
+    .rim-outer {
+      fill: none;
+      stroke: url(#goldStroke);
+      stroke-width: 7.2;
+      filter: url(#softGlow);
+    }
+
+    .rim-outer-highlight {
+      fill: none;
+      stroke: rgba(255, 245, 202, 0.88);
+      stroke-width: 1.2;
+    }
+
+    .rim-inner {
+      fill: none;
+      stroke: rgba(249, 228, 159, 0.86);
+      stroke-width: 1.4;
+    }
+
+    .rim-inner-highlight {
+      fill: none;
+      stroke: rgba(255, 237, 182, 0.44);
+      stroke-width: 0.9;
+      stroke-dasharray: 0.1 15;
+      stroke-linecap: round;
+    }
+
+    .rim-inner-glow {
+      fill: none;
+      stroke: rgba(255, 243, 197, 0.16);
+      stroke-width: 1;
+    }
+
+    .pearl-dot {
+      fill: rgba(255, 234, 171, 0.98);
+      filter: url(#softGlow);
+      opacity: 0.95;
+    }
+
+    .rim-lace {
+      fill: none;
+      stroke: rgba(255, 240, 192, 0.28);
+      stroke-width: 0.9;
+      stroke-dasharray: 0.1 11.8;
+      stroke-linecap: round;
+    }
+
+    .rim-sigil-line {
+      fill: none;
+      stroke: url(#goldStrokeSoft);
+      stroke-width: 1.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.98;
+    }
+
+    .rim-sigil-thin {
+      fill: none;
+      stroke: rgba(255, 243, 202, 0.82);
+      stroke-width: 0.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.95;
+    }
+
+    .rim-sigil-fill {
+      fill: rgba(255, 232, 170, 0.16);
+      stroke: rgba(255, 244, 214, 0.82);
+      stroke-width: 0.75;
+      filter: url(#softGlow);
+    }
+
+    .rim-sigil-dot {
+      fill: rgba(255, 241, 197, 0.94);
+      filter: url(#softGlow);
+    }
+    .outer-scroll {
+      fill: none;
+      stroke: url(#goldStrokeSoft);
+      stroke-width: 1.05;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.98;
+    }
+
+    .outer-scroll-thin {
+      fill: none;
+      stroke: rgba(255, 242, 199, 0.78);
+      stroke-width: 0.72;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.95;
+    }
+
+    .outer-scroll-gem {
+      fill: rgba(255, 241, 197, 0.95);
+      stroke: rgba(255, 248, 226, 0.9);
+      stroke-width: 0.55;
+      filter: url(#softGlow);
+    }
+    .outer-lace-arc {
+      fill: none;
+      stroke: rgba(255, 240, 200, 0.44);
+      stroke-width: 0.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.62;
+    }
+
+    .outer-lace-arc-strong {
+      fill: none;
+      stroke: rgba(255, 233, 166, 0.72);
+      stroke-width: 0.96;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.78;
+    }
+
+    .outer-lace-dot {
+      fill: rgba(255, 242, 202, 0.92);
+      stroke: rgba(255, 249, 232, 0.85);
+      stroke-width: 0.45;
+      filter: url(#softGlow);
+      opacity: 0.72;
+    }
+
+    .outer-lace-gem {
+      fill: rgba(255, 237, 186, 0.18);
+      stroke: rgba(255, 245, 214, 0.78);
+      stroke-width: 0.68;
+      filter: url(#softGlow);
+      opacity: 0.8;
+    }
+
+    .outer-lace-swirl {
+      fill: none;
+      stroke: rgba(255, 242, 202, 0.64);
+      stroke-width: 0.72;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.64;
+    }
+
+    .label-mask {
+      fill: rgba(5, 57, 64, 0.72);
+      rx: 8;
+      ry: 8;
+    }
+
+    .sector-label {
+      fill: #fff6d9;
+      font-family: Inter, Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      paint-order: stroke;
+      stroke: rgba(0, 0, 0, 0.24);
+      stroke-width: 2px;
+      stroke-linejoin: round;
+    }
+
+    .sector-short { font-size: 17px; }
+    .sector-medium { font-size: 15px; }
+    .sector-long {
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+    }
+
+    .hub-shadow {
+      fill: rgba(0, 0, 0, 0.2);
+    }
+
+    .hub-open-ring {
+      fill: rgba(5, 63, 74, 0.68);
+      stroke: url(#goldStroke);
+      stroke-width: 3.2;
+    }
+
+    .hub-open-ring--inner {
+      fill: rgba(5, 49, 57, 0.88);
+      stroke: rgba(252, 233, 179, 0.88);
+      stroke-width: 1.2;
+    }
+
+    .hub-compass {
+      pointer-events: none;
+    }
+
+    .hub-axis {
+      stroke: rgba(247, 224, 161, 0.52);
+      stroke-width: 1;
+      stroke-linecap: round;
+    }
