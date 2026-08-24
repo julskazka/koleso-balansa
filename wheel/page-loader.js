@@ -32,6 +32,64 @@
 
   const run = (code, sourceName) => (0, eval)(`${code}\n//# sourceURL=${sourceName}`);
 
+  const cleanCosmicBackground = async (img) => {
+    if (!img || img.dataset.cosmicCleaned === 'true') return;
+    img.dataset.cosmicCleaned = 'processing';
+
+    try {
+      if (!img.complete) {
+        await new Promise((resolve, reject) => {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', reject, { once: true });
+        });
+      }
+
+      if (img.decode) {
+        try { await img.decode(); } catch (_) {}
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      context.drawImage(img, 0, 0);
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+
+      for (let i = 0; i < pixels.length; i += 4) {
+        const red = pixels[i];
+        const green = pixels[i + 1];
+        const blue = pixels[i + 2];
+        const alpha = pixels[i + 3];
+        const brightest = Math.max(red, green, blue);
+
+        if (brightest <= 48) {
+          pixels[i + 3] = 0;
+        } else if (brightest < 78) {
+          pixels[i + 3] = Math.round(alpha * ((brightest - 48) / 30));
+        }
+      }
+
+      context.putImageData(imageData, 0, 0);
+
+      const cleanedSource = canvas.toDataURL('image/webp', 0.86);
+      await new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.src = cleanedSource;
+        if (img.complete) resolve();
+      });
+
+      img.dataset.cosmicCleaned = 'true';
+      img.classList.add('is-cleaned');
+    } catch (error) {
+      console.error('Не удалось очистить космический фон', error);
+      img.dataset.cosmicCleaned = 'failed';
+      img.classList.add('is-cleaned');
+    }
+  };
+
   (async () => {
     try {
       const packed = await readAll(payloadFiles);
@@ -69,40 +127,35 @@
           margin-right: auto !important;
         }
 
-        .wheel-stage,
-        .wheel-composition {
-          isolation: auto !important;
-          background: transparent !important;
-          z-index: 0 !important;
-        }
-
         .cosmic-background {
           mix-blend-mode: normal !important;
-          z-index: 0 !important;
+          opacity: 0 !important;
         }
 
-        .interactive-wheel,
-        .wheel-label-overlay {
-          z-index: 2 !important;
+        .cosmic-background.is-cleaned {
+          opacity: 0.90 !important;
         }
 
-        .result,
-        .spin-button,
-        .caption,
-        .test-note {
-          position: relative !important;
-          z-index: 20 !important;
+        @media (max-width: 420px) {
+          .cosmic-background.is-cleaned {
+            opacity: 0.86 !important;
+          }
         }
       `;
       document.head.appendChild(githubFixStyle);
 
       document.getElementById('app-root').innerHTML = payload.body;
-      document.querySelectorAll('[data-cosmic-asset="1"]').forEach(el => {
+
+      const cosmicImages = Array.from(document.querySelectorAll('[data-cosmic-asset="1"]'));
+      cosmicImages.forEach(el => {
         el.src = 'data:image/webp;base64,' + payload.cosmic1;
       });
+
       document.querySelectorAll('[data-cosmic-asset="2"]').forEach(el => {
         el.src = 'data:image/webp;base64,' + payload.cosmic2;
       });
+
+      await Promise.all(cosmicImages.map(cleanCosmicBackground));
 
       window.NOTIBOT_INTEGRATION_CONFIG = {
         autoAttachIdentityToForms: true,
