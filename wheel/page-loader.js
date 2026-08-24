@@ -170,7 +170,7 @@
       };
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
         reflectionFormId: '',
-        sevenDaysUrl: 'https://t.me/anna_kolieso_bot/aboutme?startapp=a_1HyKwZ5uhzwdI74llc7iTV_lp'
+        sevenDaysUrl: 'https://t.me/post#1HyKwZ5uhzwdI74llc7iTV_lp'
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
       run(payload.bridge, 'notibot-bridge.js');
@@ -178,27 +178,29 @@
       const notibot = window.NotibotIntegration;
       if (notibot && typeof notibot.openLink === 'function') {
         const originalOpenLink = notibot.openLink.bind(notibot);
+        const externalSevenDaysUrl = 'https://t.me/anna_kolieso_bot/aboutme?startapp=a_1HyKwZ5uhzwdI74llc7iTV_lp';
 
         notibot.openLink = (url) => {
           try {
             const parsed = new URL(url, window.location.href);
-            const isTelegramLink = parsed.hostname === 't.me' || parsed.hostname === 'telegram.me';
+            const isInternalNotibotPage =
+              (parsed.hostname === 't.me' || parsed.hostname === 'telegram.me') &&
+              parsed.pathname === '/post' &&
+              parsed.hash.length > 1;
 
-            if (isTelegramLink) {
-              parsed.searchParams.delete('source');
-              parsed.searchParams.delete('sector');
-              const telegramUrl = parsed.toString();
+            if (isInternalNotibotPage) {
+              const internalUrl = `https://t.me/post${parsed.hash}`;
+              const connected = Boolean(notibot.getState?.().connected);
 
-              if (window.Telegram?.WebApp?.openTelegramLink) {
-                window.Telegram.WebApp.openTelegramLink(telegramUrl);
-                return true;
+              if (connected) {
+                return originalOpenLink(internalUrl);
               }
 
-              window.location.href = telegramUrl;
+              window.location.assign(externalSevenDaysUrl);
               return true;
             }
           } catch (error) {
-            console.warn('Не удалось обработать внутреннюю Telegram-ссылку', error);
+            console.warn('Не удалось обработать внутреннюю ссылку Notibot', error);
           }
 
           return originalOpenLink(url);
