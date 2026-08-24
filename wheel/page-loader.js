@@ -136,7 +136,12 @@
           opacity: 0.90 !important;
         }
 
-        @media (max-width: 420px) {
+        @media (max-width: 520px) {
+          .lead {
+            font-size: 17px !important;
+            line-height: 1.50 !important;
+          }
+
           .cosmic-background.is-cleaned {
             opacity: 0.86 !important;
           }
