@@ -1,0 +1,133 @@
+-37 C4 -34 8 -27 8 -21 C7 -17 4 -15 0 -14 Z" transform="rotate(180)"/>
+        <path d="M0 -14 C-7 -17 -15 -24 -15 -32 C-15 -38 -9 -40 -3 -37 C4 -34 8 -27 8 -21 C7 -17 4 -15 0 -14 Z" transform="rotate(240)"/>
+        <path d="M0 -14 C-7 -17 -15 -24 -15 -32 C-15 -38 -9 -40 -3 -37 C4 -34 8 -27 8 -21 C7 -17 4 -15 0 -14 Z" transform="rotate(300)"/>
+      </g>
+    </g>
+
+    <!-- тёмно-бирюзовый центр с двойным золотым кольцом -->
+    <circle r="17" fill="#073642" stroke="#d9a945" stroke-width="1.25"/>
+    <circle r="14.5" fill="url(#tealCore)" stroke="#ffe8a5" stroke-opacity=".72" stroke-width=".85"/>
+    <circle r="4.2" fill="#69c5d4" fill-opacity=".18" filter="url(#softBloom)"/>
+  </g>
+
+</svg>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result" aria-live="polite"></div>
+
+      <button class="spin-button" id="spinButton" type="button">
+        Крутить колесо
+      </button>
+
+      <p class="caption">Практика выпадет случайным образом</p>
+      <p class="test-note">Тестовый режим: количество вращений не ограничено</p>
+    </section>
+  </main>
+
+
+  <div class="practice-modal" id="practiceModal" aria-hidden="true">
+    <div class="practice-backdrop" id="practiceBackdrop"></div>
+
+    <article class="practice-sheet" id="practiceSheet" role="dialog" aria-modal="true" aria-labelledby="practiceSector">
+      <button class="practice-close" id="practiceClose" type="button" aria-label="Закрыть">×</button>
+
+      <header class="practice-head practice-stage">
+        <div class="practice-ornament" aria-hidden="true"><span></span></div>
+        <div class="practice-kicker">Ваш сектор</div>
+        <h2 class="practice-sector" id="practiceSector"></h2>
+        <p class="practice-description" id="practiceDescription"></p>
+      </header>
+
+      <section class="practice-card practice-stage">
+        <div class="practice-label">Практика</div>
+        <h3 class="practice-title" id="practiceTitle"></h3>
+        <div class="practice-time">1–5 минут</div>
+        <div class="practice-content" id="practiceContent"></div>
+      </section>
+
+      <section class="after-practice practice-stage">
+        <h3 class="after-title">После практики</h3>
+        <ul class="after-list" id="afterList"></ul>
+      </section>
+
+      <section class="continuation-card practice-stage" aria-labelledby="continuationTitle">
+        <div class="continuation-nebula" aria-hidden="true"><img class="continuation-nebula-main" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-cosmic-asset="2" alt=""><img class="continuation-nebula-echo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-cosmic-asset="2" alt=""></div>
+        <h3 class="continuation-title" id="continuationTitle">Вы увидели только один сектор из шести</h3>
+        <p id="continuationSectorText"></p>
+        <p>Внутри «Колеса Баланса» собраны практики, эксперты и материалы для разных состояний и жизненных запросов.</p>
+        <p class="continuation-note">Посмотрите, как можно продолжить работу с собой в течение 7 дней за 1 ₽.</p>
+      </section>
+
+      <div class="practice-actions practice-stage">
+        <button
+          class="seven-days-button"
+          id="sevenDaysButton"
+          type="button"
+          data-action="open-seven-days"
+        >
+          Узнать, что входит в 7 дней за 1 ₽
+        </button>
+        <button class="practice-back-button" id="toReflectionButton" type="button">
+          Перейти к рефлексии
+        </button>
+      </div>
+
+      <section class="reflection-stage" id="reflectionStage">
+        <header class="reflection-head">
+          <div class="practice-ornament" aria-hidden="true"><span></span></div>
+          <div class="reflection-kicker">Рефлексия</div>
+          <h2 class="reflection-title">А теперь прислушайтесь к себе</h2>
+          <p class="reflection-question">Как изменилось ваше состояние после практики?</p>
+        </header>
+
+        <div class="reflection-card">
+          <div class="reflection-options" id="reflectionOptions">
+            <label class="reflection-option">
+              <input type="radio" name="reflectionAnswer" value="Стало легче">
+              <span class="reflection-option-content">Стало легче</span>
+            </label>
+
+            <label class="reflection-option">
+              <input type="radio" name="reflectionAnswer" value="Стало спокойнее">
+              <span class="reflection-option-content">Стало спокойнее</span>
+            </label>
+
+            <label class="reflection-option">
+              <input type="radio" name="reflectionAnswer" value="Появилось больше энергии">
+              <span class="reflection-option-content">Появилось больше энергии</span>
+            </label>
+
+            <label class="reflection-option">
+              <input type="radio" name="reflectionAnswer" value="Что-то изменилось, но пока не понимаю что">
+              <span class="reflection-option-content">Что-то изменилось, но пока не понимаю что</span>
+            </label>
+
+            <label class="reflection-option">
+              <input type="radio" name="reflectionAnswer" value="Пока не заметил(а) изменений">
+              <span class="reflection-option-content">Пока не заметил(а) изменений</span>
+            </label>
+          </div>
+
+          <div class="reflection-note-wrap">
+            <label class="reflection-note-label" for="reflectionNote">
+              Дополнить ответ
+              <span>по желанию</span>
+            </label>
+            <textarea
+              class="reflection-note"
+              id="reflectionNote"
+              placeholder="Напишите, что вы заметили в своём состоянии…"
+            ></textarea>
+          </div>
+
+          <div class="reflection-status" id="reflectionStatus" aria-live="polite">
+            Ответ сохранён
+          </div>
+        </div>
+
+        <div class="reflection-actions">
+          <button class="reflection-submit" id="reflectionSubmit" type="button" disab
