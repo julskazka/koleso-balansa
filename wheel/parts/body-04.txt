@@ -1,0 +1,40 @@
+led>
+            Сохранить ответ
+          </button>
+          <button class="reflection-back" id="reflectionBackButton" type="button">
+            Вернуться к практике
+          </button>
+        </div>
+
+        <section class="reflection-success" id="reflectionSuccess" aria-live="polite">
+          <div class="reflection-success-card">
+            <div class="reflection-success-icon" aria-hidden="true">✓</div>
+            <div class="reflection-success-kicker">Рефлексия завершена</div>
+            <h2 class="reflection-success-title">Ответ сохранён</h2>
+            <p class="reflection-success-lead" id="reflectionClubSectorText"></p>
+
+            <div class="reflection-club-card">
+              <div class="reflection-club-label">Продолжение</div>
+              <h3>7 дней в «Колесе Баланса» за 1 ₽</h3>
+              <p>Практики, эксперты и материалы по шести жизненным сферам помогут продолжить работу с собой — не только в теме, которая выпала сегодня.</p>
+              <ul>
+                <li>практики для разных состояний и запросов;</li>
+                <li>материалы и поддержка экспертов;</li>
+                <li>доступ ко всем шести направлениям.</li>
+              </ul>
+            </div>
+
+            <button class="reflection-club-button" id="reflectionClubButton" type="button">
+              Узнать, что входит в 7 дней за 1 ₽
+            </button>
+            <button class="reflection-success-back" id="reflectionSuccessBack" type="button">
+              Вернуться к практике
+            </button>
+          </div>
+        </section>
+      </section>
+    </article>
+  </div>
+
+
+   
