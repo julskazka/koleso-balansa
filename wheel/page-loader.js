@@ -73,8 +73,8 @@
       }
 
       context.putImageData(imageData, 0, 0);
-
       const cleanedSource = canvas.toDataURL('image/webp', 0.86);
+
       await new Promise((resolve) => {
         img.addEventListener('load', resolve, { once: true });
         img.src = cleanedSource;
@@ -170,10 +170,41 @@
       };
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
         reflectionFormId: '',
-        sevenDaysUrl: ''
+        sevenDaysUrl: 'https://t.me/anna_kolieso_bot/aboutme?startapp=a_1HyKwZ5uhzwdI74llc7iTV_lp'
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
       run(payload.bridge, 'notibot-bridge.js');
+
+      const notibot = window.NotibotIntegration;
+      if (notibot && typeof notibot.openLink === 'function') {
+        const originalOpenLink = notibot.openLink.bind(notibot);
+
+        notibot.openLink = (url) => {
+          try {
+            const parsed = new URL(url, window.location.href);
+            const isTelegramLink = parsed.hostname === 't.me' || parsed.hostname === 'telegram.me';
+
+            if (isTelegramLink) {
+              parsed.searchParams.delete('source');
+              parsed.searchParams.delete('sector');
+              const telegramUrl = parsed.toString();
+
+              if (window.Telegram?.WebApp?.openTelegramLink) {
+                window.Telegram.WebApp.openTelegramLink(telegramUrl);
+                return true;
+              }
+
+              window.location.href = telegramUrl;
+              return true;
+            }
+          } catch (error) {
+            console.warn('Не удалось обработать внутреннюю Telegram-ссылку', error);
+          }
+
+          return originalOpenLink(url);
+        };
+      }
+
       run(payload.app, 'wheel-app.js');
     } catch (error) {
       console.error(error);
