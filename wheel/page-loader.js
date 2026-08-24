@@ -168,9 +168,10 @@
         heightOffsetPx: 16,
         requestTimeoutMs: 12000
       };
+      const sevenDaysPageId = '1HyKwZ5uhzwdI74llc7iTV';
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
         reflectionFormId: '',
-        sevenDaysUrl: 'https://t.me/post#1HyKwZ5uhzwdI74llc7iTV'
+        sevenDaysUrl: `/page/${sevenDaysPageId}`
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
       run(payload.bridge, 'notibot-bridge.js');
@@ -178,29 +179,33 @@
       const notibot = window.NotibotIntegration;
       if (notibot && typeof notibot.openLink === 'function') {
         const originalOpenLink = notibot.openLink.bind(notibot);
+        const originalOpenArticle = typeof notibot.openArticle === 'function'
+          ? notibot.openArticle.bind(notibot)
+          : null;
+        const internalPagePath = `/page/${sevenDaysPageId}`;
         const externalSevenDaysUrl = 'https://t.me/anna_kolieso_bot/aboutme?startapp=a_1HyKwZ5uhzwdI74llc7iTV_lp';
 
         notibot.openLink = (url) => {
           try {
             const parsed = new URL(url, window.location.href);
-            const isInternalNotibotPage =
-              (parsed.hostname === 't.me' || parsed.hostname === 'telegram.me') &&
-              parsed.pathname === '/post' &&
-              parsed.hash.length > 1;
+            const isSevenDaysPage = parsed.pathname === internalPagePath;
 
-            if (isInternalNotibotPage) {
-              const internalUrl = `https://t.me/post${parsed.hash}`;
+            if (isSevenDaysPage) {
               const connected = Boolean(notibot.getState?.().connected);
 
+              if (connected && originalOpenArticle) {
+                return originalOpenArticle(sevenDaysPageId);
+              }
+
               if (connected) {
-                return originalOpenLink(internalUrl);
+                return originalOpenLink(internalPagePath);
               }
 
               window.location.assign(externalSevenDaysUrl);
               return true;
             }
           } catch (error) {
-            console.warn('Не удалось обработать внутреннюю ссылку Notibot', error);
+            console.warn('Не удалось открыть внутреннюю страницу Notibot', error);
           }
 
           return originalOpenLink(url);
