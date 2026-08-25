@@ -150,6 +150,7 @@
       document.head.appendChild(githubFixStyle);
 
       document.getElementById('app-root').innerHTML = payload.body;
+      document.querySelectorAll('.test-note').forEach((element) => element.remove());
 
       const cosmicImages = Array.from(document.querySelectorAll('[data-cosmic-asset="1"]'));
       cosmicImages.forEach(el => {
@@ -170,7 +171,7 @@
       };
       const sevenDaysPageId = '1HyKwZ5uhzwdI74llc7iTV';
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
-        reflectionFormId: '',
+        reflectionFormId: '0cyqNg1gNHXd9vy5zBLn6p',
         sevenDaysUrl: `/page/${sevenDaysPageId}`
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
