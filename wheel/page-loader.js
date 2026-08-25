@@ -170,14 +170,40 @@
         requestTimeoutMs: 12000
       };
       const sevenDaysPageId = '1HyKwZ5uhzwdI74llc7iTV';
+      const reflectionFormId = '0cyqNg1gNHXd9vy5zBLn6p';
       window.WHEEL_NOTIBOT_CONFIG = Object.assign({
-        reflectionFormId: '0cyqNg1gNHXd9vy5zBLn6p',
+        reflectionFormId,
         sevenDaysUrl: `/page/${sevenDaysPageId}`
       }, window.WHEEL_NOTIBOT_CONFIG || {});
 
       run(payload.bridge, 'notibot-bridge.js');
 
       const notibot = window.NotibotIntegration;
+      if (notibot && typeof notibot.submitForm === 'function') {
+        const originalSubmitForm = notibot.submitForm.bind(notibot);
+        notibot.submitForm = (formId, answers, options) => {
+          if (String(formId) === reflectionFormId) {
+            const sourceAnswers = Array.isArray(answers) ? answers : [];
+            const stateAnswer = sourceAnswers.find((item) => {
+              const title = String(item?.title || '').trim();
+              return title === 'Состояние после практики' || title === 'Как изменилось ваше состояние после практики?';
+            });
+            const values = Array.isArray(stateAnswer?.answers) ? stateAnswer.answers : [];
+            const reflectionAnswers = [{
+              title: 'Как изменилось ваше состояние после практики?',
+              answers: values.map((value) => String(value))
+            }];
+
+            return originalSubmitForm(formId, reflectionAnswers, {
+              ...(options || {}),
+              attachIdentity: false
+            });
+          }
+
+          return originalSubmitForm(formId, answers, options);
+        };
+      }
+
       if (notibot && typeof notibot.openLink === 'function') {
         const originalOpenLink = notibot.openLink.bind(notibot);
         const originalOpenArticle = typeof notibot.openArticle === 'function'
