@@ -31,14 +31,14 @@
       './payload/payload-08.txt'
     ];
     const b64=(await Promise.all(files.map(async path=>{
-      const response=await fetch(path+'?v=91',{cache:'no-store'});
+      const response=await fetch(path+'?v=92',{cache:'no-store'});
       if(!response.ok) throw new Error('Не удалось загрузить '+path);
       return response.text();
     }))).join('');
     if(typeof DecompressionStream==='undefined') throw new Error('Браузер не поддерживает распаковку страницы');
     const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
     const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-    const patched=html.replace('</body>','<script src="./v76-patch.js?v=76"><\/script><script src="./v77-scroll-fix.js?v=77"><\/script><script src="./v78-popup-no-image.js?v=78"><\/script><script src="./v80-popup-bottom-close.js?v=80"><\/script><script src="./v87-real-images.js?v=87"><\/script><script src="./v89-question-fix.js?v=89"><\/script><script src="./v90-mobile-scroll-cue.js?v=90"><\/script><script src="./v91-mobile-floating-cue.js?v=91"><\/script></body>');
+    const patched=html.replace('</body>','<script src="./v76-patch.js?v=76"><\/script><script src="./v77-scroll-fix.js?v=77"><\/script><script src="./v78-popup-no-image.js?v=78"><\/script><script src="./v80-popup-bottom-close.js?v=80"><\/script><script src="./v87-real-images.js?v=87"><\/script><script src="./v89-question-fix.js?v=89"><\/script><script src="./v90-mobile-scroll-cue.js?v=90"><\/script></body>');
     document.open();document.write(patched);document.close();
   }catch(error){
     console.error(error);
