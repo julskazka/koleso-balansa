@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#031c28">
+<title>7 дней в «Центре Ресурсов» за 1 ₽</title>
+<style>html,body{margin:0;min-height:100%;background:#031c28}body{display:grid;place-items:center;color:#f3d98f;font:600 15px Arial,sans-serif;text-align:center;padding:24px;box-sizing:border-box}</style>
+</head>
+<body><div>Загружаем «Центр Ресурсов»…</div>
+<script>
+(async()=>{
+  try{
+    const files=[
+      '../club/payload/payload-01.txt',
+      '../club/payload/fix-02-1.txt',
+      '../club/payload/fix-02-2.txt',
+      '../club/payload/fix-02-3.txt',
+      '../club/payload/fix-02-4.txt',
+      '../club/payload/payload-03.txt',
+      '../club/payload/payload-04.txt',
+      '../club/payload/payload-05.txt',
+      '../club/payload/fix-06-1.txt',
+      '../club/payload/fix-06-2.txt',
+      '../club/payload/fix-06-3.txt',
+      '../club/payload/fix-06-4.txt',
+      '../club/payload/payload-07.txt',
+      '../club/payload/payload-08.txt'
+    ];
+    const b64=(await Promise.all(files.map(async path=>{
+      const response=await fetch(path+'?v=2',{cache:'no-store'});
+      if(!response.ok) throw new Error('Не удалось загрузить '+path);
+      return response.text();
+    }))).join('');
+    if(typeof DecompressionStream==='undefined') throw new Error('Браузер не поддерживает распаковку страницы');
+    const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    const patched=html.replace('</body>','<script src="../club/v76-patch.js?v=76"><\/script><script src="../club/v77-scroll-fix.js?v=77"><\/script></body>');
+    document.open();document.write(patched);document.close();
+  }catch(error){
+    console.error(error);
+    document.body.innerHTML='<div>Не удалось загрузить страницу. Обновите её ещё раз.</div>';
+  }
+})();
+</script>
+</body>
+</html>
