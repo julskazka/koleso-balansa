@@ -1,0 +1,1 @@
+Assets for the four approved cards. Binary files are committed through the Git data API.
