@@ -35,7 +35,7 @@
     if(typeof DecompressionStream==='undefined') throw new Error('Браузер не поддерживает распаковку страницы');
     const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
     const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-    const patched=html.replace('</body>','<script src="./v76-patch.js?v=76"><\/script><script src="./v77-scroll-fix.js?v=77"><\/script><script src="./v78-popup-no-image.js?v=78"><\/script><script src="./v80-popup-bottom-close.js?v=80"><\/script><script src="./v81-inside-cards-first.js?v=81"><\/script><script src="./v82-inside-cards-nebula.js?v=82"><\/script><script src="./v83-generated-cards.js?v=83"><\/script></body>');
+    const patched=html.replace('</body>','<script src="./v76-patch.js?v=76"><\/script><script src="./v77-scroll-fix.js?v=77"><\/script><script src="./v78-popup-no-image.js?v=78"><\/script><script src="./v80-popup-bottom-close.js?v=80"><\/script><script src="./v81-inside-cards-first.js?v=81"><\/script><script src="./v82-inside-cards-nebula.js?v=82"><\/script><script src="./v83-generated-cards.js?v=84"><\/script></body>');
     document.open();document.write(patched);document.close();
   }catch(error){
     console.error(error);
