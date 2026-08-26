@@ -13,19 +13,33 @@
   try{
     const files=[
       './payload/payload-01.txt',
-      './payload/payload-02.txt',
+      './payload/fix-02-1.txt',
+      './payload/fix-02-2.txt',
+      './payload/fix-02-3.txt',
+      './payload/fix-02-4.txt',
       './payload/payload-03.txt',
       './payload/payload-04.txt',
       './payload/payload-05.txt',
-      './payload/payload-06.txt',
+      './payload/fix-06-1.txt',
+      './payload/fix-06-2.txt',
+      './payload/fix-06-3.txt',
+      './payload/fix-06-4.txt',
       './payload/payload-07.txt',
       './payload/payload-08.txt'
     ];
-    const b64=(await Promise.all(files.map(async path=>{const response=await fetch(path,{cache:'no-store'});if(!response.ok)throw new Error('Не удалось загрузить '+path);return response.text();}))).join('');
+    const b64=(await Promise.all(files.map(async path=>{
+      const response=await fetch(path+'?v=2',{cache:'no-store'});
+      if(!response.ok) throw new Error('Не удалось загрузить '+path);
+      return response.text();
+    }))).join('');
+    if(typeof DecompressionStream==='undefined') throw new Error('Браузер не поддерживает распаковку страницы');
     const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
     const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
     document.open();document.write(html);document.close();
-  }catch(error){console.error(error);document.body.innerHTML='<div>Не удалось загрузить страницу. Обновите её ещё раз.</div>';}
+  }catch(error){
+    console.error(error);
+    document.body.innerHTML='<div>Не удалось загрузить страницу. Обновите её ещё раз.</div>';
+  }
 })();
 </script>
 </body>
