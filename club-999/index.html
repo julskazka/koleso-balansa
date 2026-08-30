@@ -21,7 +21,8 @@
       './payload-v48/part-04.txt',
       './payload-v48/part-05.txt',
       './payload-v48/part-06.txt',
-      './payload-v48/part-07.txt'
+      './payload-v48/part-07a.txt',
+      './payload-v48/part-07b.txt'
     ];
     const b64=(await Promise.all(files.map(async path=>{
       const response=await fetch(path+'?v=48',{cache:'no-store'});
