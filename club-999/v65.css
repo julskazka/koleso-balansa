@@ -1,0 +1,17 @@
+/* Desktop-only correction. Mobile rules stay in v64.css unchanged. */
+@media (min-width:641px){
+  .hero--v41{
+    width:min(calc(100vw - 48px),1320px)!important;
+    max-width:none!important;
+    margin-left:50%!important;
+    margin-right:0!important;
+    transform:translateX(-50%)!important;
+  }
+  .hero41__panel{
+    width:100%!important;
+    box-sizing:border-box!important;
+  }
+}
+@media (min-width:1500px){
+  .hero--v41{width:min(calc(100vw - 80px),1380px)!important}
+}
