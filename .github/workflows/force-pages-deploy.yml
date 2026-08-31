@@ -104,46 +104,45 @@ jobs:
           for old, new in replacements.items():
               html = html.replace(old, new)
 
-          background_candidates = re.findall(
-              r'url\(["\']?(data:image/(?:jpeg|jpg|png);base64,[A-Za-z0-9+/=]+)',
-              html,
-              flags=re.I,
-          )
-          if not background_candidates:
-              background_candidates = re.findall(
-                  r'data:image/(?:jpeg|jpg|png);base64,[A-Za-z0-9+/=]+',
-                  html,
-                  flags=re.I,
-              )
-          if not background_candidates:
-              raise RuntimeError('No embedded background image was found')
-          page_bg = max(background_candidates, key=len)
-
-          background_css = f'''
-          <style id="page-nebula-v56-direct">
-          html,body{{background:#010f17!important}}
-          body{{position:relative!important;isolation:isolate!important}}
-          #page-nebula-v56{{
+          background_css = '''
+          <style id="page-nebula-v57-direct">
+          html,body{background:#010f17!important}
+          body{position:relative!important;isolation:isolate!important}
+          #page-nebula-v57{
             position:fixed;inset:0;z-index:0;pointer-events:none;
-            background-image:linear-gradient(180deg,rgba(1,15,23,.08) 0%,rgba(1,15,23,.12) 58%,rgba(1,15,23,.18) 100%),url("{page_bg}");
-            background-position:center center;background-size:cover;background-repeat:no-repeat;
-          }}
-          body::before{{display:none!important}}
-          body::after,.cosmos{{z-index:1!important}}
-          main,.footer{{position:relative!important;z-index:2!important;background:transparent!important}}
-          .section,.section::before,.section::after,.clarity,.directions,.connection,.inside,.questions,.difference,.audience,.return,.access,.final{{background-color:transparent!important}}
-          @media(max-width:700px){{#page-nebula-v56{{background-position:42% center;background-size:cover;background-repeat:no-repeat}}}}
+            background:
+              radial-gradient(circle at 13% 17%,rgba(210,255,248,.75) 0 1px,transparent 1.4px) 0 0/128px 142px,
+              radial-gradient(circle at 72% 29%,rgba(124,220,228,.48) 0 1px,transparent 1.5px) 0 0/173px 161px,
+              radial-gradient(circle at 42% 76%,rgba(238,211,133,.28) 0 1px,transparent 1.4px) 0 0/211px 187px,
+              radial-gradient(ellipse at 16% 18%,rgba(62,190,191,.24) 0%,rgba(25,128,146,.13) 25%,transparent 55%),
+              radial-gradient(ellipse at 84% 24%,rgba(65,139,191,.23) 0%,rgba(32,91,145,.10) 31%,transparent 58%),
+              radial-gradient(ellipse at 62% 76%,rgba(45,163,155,.17) 0%,transparent 48%),
+              linear-gradient(124deg,transparent 8%,rgba(96,218,213,.05) 24%,rgba(61,155,193,.08) 43%,transparent 65%),
+              linear-gradient(180deg,#021722 0%,#032a34 44%,#021c27 71%,#010f17 100%);
+          }
+          #page-nebula-v57::before{
+            content:"";position:absolute;inset:-10%;
+            background:
+              radial-gradient(ellipse at 24% 32%,rgba(104,225,219,.13),transparent 32%),
+              radial-gradient(ellipse at 76% 58%,rgba(70,151,201,.12),transparent 36%),
+              linear-gradient(138deg,transparent 22%,rgba(112,225,219,.07) 38%,rgba(67,157,198,.05) 51%,transparent 69%);
+            filter:blur(22px);opacity:.9;transform:rotate(-3deg) scale(1.06);
+          }
+          body::before{display:none!important}
+          body::after,.cosmos{z-index:1!important}
+          main,.footer{position:relative!important;z-index:2!important;background:transparent!important}
+          .section,.section::before,.section::after,.clarity,.directions,.connection,.inside,.questions,.difference,.audience,.return,.access,.final{background-color:transparent!important}
           </style>
           '''
 
           html = html.replace(
               '</head>',
-              '<link rel="stylesheet" href="./v53.css?v=56">' + background_css + '</head>',
+              '<link rel="stylesheet" href="./v53.css?v=57">' + background_css + '</head>',
               1,
           )
           html, body_count = re.subn(
               r'<body([^>]*)>',
-              r'<body\1><div id="page-nebula-v56" aria-hidden="true"></div>',
+              r'<body\1><div id="page-nebula-v57" aria-hidden="true"></div>',
               html,
               count=1,
               flags=re.I,
@@ -153,11 +152,11 @@ jobs:
 
           output = site / 'club-999/index.html'
           output.write_text(html, encoding='utf-8')
-          (site / 'club-999/deploy-version.txt').write_text('v56-direct\n', encoding='utf-8')
+          (site / 'club-999/deploy-version.txt').write_text('v57-direct\n', encoding='utf-8')
 
           if 'Не удалось загрузить страницу' in html:
               raise RuntimeError('Loader error page leaked into direct build')
-          if 'page-nebula-v56' not in html:
+          if 'page-nebula-v57' not in html:
               raise RuntimeError('Background layer missing from direct build')
           print(f'Built direct page: {output} ({output.stat().st_size} bytes)')
           PY
