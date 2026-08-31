@@ -104,13 +104,20 @@ jobs:
           for old, new in replacements.items():
               html = html.replace(old, new)
 
-          bg_match = re.search(
-              r'<style id="single-continuous-nebula-v5">[\s\S]*?url\(["\']?(data:image/jpeg;base64,[^)"\']+)["\']?\)',
+          background_candidates = re.findall(
+              r'url\(["\']?(data:image/(?:jpeg|jpg|png);base64,[A-Za-z0-9+/=]+)',
               html,
+              flags=re.I,
           )
-          if not bg_match:
-              raise RuntimeError('Continuous nebula background was not found')
-          page_bg = bg_match.group(1)
+          if not background_candidates:
+              background_candidates = re.findall(
+                  r'data:image/(?:jpeg|jpg|png);base64,[A-Za-z0-9+/=]+',
+                  html,
+                  flags=re.I,
+              )
+          if not background_candidates:
+              raise RuntimeError('No embedded background image was found')
+          page_bg = max(background_candidates, key=len)
 
           background_css = f'''
           <style id="page-nebula-v56-direct">
