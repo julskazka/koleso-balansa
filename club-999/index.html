@@ -19,7 +19,7 @@ body{display:grid;place-items:center;color:#f3d98f;font:600 15px Arial,sans-seri
 (async()=>{try{
 const files=['./payload-v48/part-01.txt','./payload-v48/part-02.txt','./payload-v48/part-03.txt','./payload-v48/part-04.txt','./payload-v48/part-05.txt','./payload-v48/part-06.txt','./payload-v48/p07-01.txt','./payload-v48/p07-02.txt','./payload-v48/p07-03.txt','./payload-v48/p07-04.txt','./payload-v48/p07-05.txt','./payload-v48/p07-06.txt','./payload-v48/p07-07.txt','./payload-v48/p07-08.txt','./payload-v48/p07-09.txt'];
 const heroFiles=['./hero-v51/part-01.txt','./hero-v51/part-02.txt','./hero-v51/part-03.txt','./hero-v51/part-04.txt','./hero-v51/part-05.txt','./hero-v51/part-06.txt','./hero-v51/part-07.txt','./hero-v51/part-08.txt'];
-const read=async paths=>(await Promise.all(paths.map(async path=>{const r=await fetch(path+'?v=72',{cache:'no-store'});if(!r.ok)throw new Error('Не удалось загрузить '+path);return r.text()}))).join('');
+const read=async paths=>(await Promise.all(paths.map(async path=>{const r=await fetch(path+'?v=73',{cache:'no-store'});if(!r.ok)throw new Error('Не удалось загрузить '+path);return r.text()}))).join('');
 const [b64,heroB64]=await Promise.all([read(files),read(heroFiles)]);
 const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 let html='';
@@ -31,8 +31,8 @@ html=html.replace('<h1>Найдите точку<br>опоры в той<br>сф
 .replace('<p><strong>6 направлений</strong> — тело, энергия,<br>дело, отношения, окружение и красота</p>','<p><strong>6 направлений</strong> — тело, энергия, дело, отношения, окружение и красота</p>')
 .replace('<p><strong>Эфиры, конференции, практики</strong><br>и полезные материалы</p>','<p><strong>Эфиры, конференции, практики</strong> и полезные материалы</p>')
 .replace('<p><strong>Сильные эксперты, живое общение</strong><br>и новые встречи каждый месяц</p>','<p><strong>Сильные эксперты, живое общение</strong> и новые встречи каждый месяц</p>');
-html=html.replace('</head>','<link rel="stylesheet" href="./v53.css?v=72"><link rel="stylesheet" href="./v61-bg.css?v=72"><link rel="stylesheet" href="./v62.css?v=72"><link rel="stylesheet" href="./v64.css?v=72"><link rel="stylesheet" href="./v65.css?v=72"><link rel="stylesheet" href="./v66.css?v=72"></head>');
-html=html.replace('</body>','<script src="./v71-clarity-heading.js?v=72"><\/script></body>');
+html=html.replace('</head>','<link rel="stylesheet" href="./v53.css?v=73"><link rel="stylesheet" href="./v61-bg.css?v=73"><link rel="stylesheet" href="./v62.css?v=73"><link rel="stylesheet" href="./v64.css?v=73"><link rel="stylesheet" href="./v65.css?v=73"><link rel="stylesheet" href="./v66.css?v=73"></head>');
+html=html.replace('</body>','<script src="./v71-clarity-heading.js?v=73"><\/script><script src="./v73-page-typography.js?v=73"><\/script></body>');
 html=html.replace(/<body([^>]*)>/i,'<body$1><div id="page-nebula-v61" aria-hidden="true"></div>');
 document.open();document.write(html);document.close();
 }catch(error){console.error(error);document.body.innerHTML='<div>Страница временно не загрузилась. Нажмите обновить ещё раз.</div>'}})();
