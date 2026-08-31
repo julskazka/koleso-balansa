@@ -29,10 +29,126 @@ jobs:
         with:
           enablement: true
 
+      - name: Build direct Club 999 page
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import gzip
+          import re
+          import shutil
+
+          root = Path('.')
+          site = Path('_site')
+          if site.exists():
+              shutil.rmtree(site)
+          shutil.copytree(root, site, ignore=shutil.ignore_patterns('.git', '_site'))
+
+          payload_files = [
+              root / 'club-999/payload-v48/part-01.txt',
+              root / 'club-999/payload-v48/part-02.txt',
+              root / 'club-999/payload-v48/part-03.txt',
+              root / 'club-999/payload-v48/part-04.txt',
+              root / 'club-999/payload-v48/part-05.txt',
+              root / 'club-999/payload-v48/part-06.txt',
+              root / 'club-999/payload-v48/p07-01.txt',
+              root / 'club-999/payload-v48/p07-02.txt',
+              root / 'club-999/payload-v48/p07-03.txt',
+              root / 'club-999/payload-v48/p07-04.txt',
+              root / 'club-999/payload-v48/p07-05.txt',
+              root / 'club-999/payload-v48/p07-06.txt',
+              root / 'club-999/payload-v48/p07-07.txt',
+              root / 'club-999/payload-v48/p07-08.txt',
+              root / 'club-999/payload-v48/p07-09.txt',
+          ]
+          hero_files = [root / f'club-999/hero-v51/part-{i:02d}.txt' for i in range(1, 9)]
+
+          missing = [str(p) for p in payload_files + hero_files if not p.exists()]
+          if missing:
+              raise FileNotFoundError('Missing build files: ' + ', '.join(missing))
+
+          payload_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in payload_files)
+          html = gzip.decompress(base64.b64decode(payload_b64)).decode('utf-8')
+          hero_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in hero_files)
+
+          html, image_count = re.subn(
+              r'(<img class="hero41__art" src=")data:image/webp;base64,[^"]+(")',
+              lambda m: m.group(1) + 'data:image/webp;base64,' + hero_b64 + m.group(2),
+              html,
+              count=1,
+          )
+          if image_count != 1:
+              raise RuntimeError('Hero image was not replaced')
+
+          replacements = {
+              '<h1>Найдите точку<br>опоры в той<br>сфере жизни,<br>которая сейчас<br>требует внимания</h1>':
+                  '<h1>Найдите точку опоры в той сфере жизни, которая сейчас требует внимания</h1>',
+              '<p><strong>6 направлений</strong> — тело, энергия,<br>дело, отношения, окружение и красота</p>':
+                  '<p><strong>6 направлений</strong> — тело, энергия, дело, отношения, окружение и красота</p>',
+              '<p><strong>Эфиры, конференции, практики</strong><br>и полезные материалы</p>':
+                  '<p><strong>Эфиры, конференции, практики</strong> и полезные материалы</p>',
+              '<p><strong>Сильные эксперты, живое общение</strong><br>и новые встречи каждый месяц</p>':
+                  '<p><strong>Сильные эксперты, живое общение</strong> и новые встречи каждый месяц</p>',
+          }
+          for old, new in replacements.items():
+              html = html.replace(old, new)
+
+          bg_match = re.search(
+              r'<style id="single-continuous-nebula-v5">[\s\S]*?url\(["\']?(data:image/jpeg;base64,[^)"\']+)["\']?\)',
+              html,
+          )
+          if not bg_match:
+              raise RuntimeError('Continuous nebula background was not found')
+          page_bg = bg_match.group(1)
+
+          background_css = f'''
+          <style id="page-nebula-v56-direct">
+          html,body{{background:#010f17!important}}
+          body{{position:relative!important;isolation:isolate!important}}
+          #page-nebula-v56{{
+            position:fixed;inset:0;z-index:0;pointer-events:none;
+            background-image:linear-gradient(180deg,rgba(1,15,23,.08) 0%,rgba(1,15,23,.12) 58%,rgba(1,15,23,.18) 100%),url("{page_bg}");
+            background-position:center center;background-size:cover;background-repeat:no-repeat;
+          }}
+          body::before{{display:none!important}}
+          body::after,.cosmos{{z-index:1!important}}
+          main,.footer{{position:relative!important;z-index:2!important;background:transparent!important}}
+          .section,.section::before,.section::after,.clarity,.directions,.connection,.inside,.questions,.difference,.audience,.return,.access,.final{{background-color:transparent!important}}
+          @media(max-width:700px){{#page-nebula-v56{{background-position:42% center;background-size:cover;background-repeat:no-repeat}}}}
+          </style>
+          '''
+
+          html = html.replace(
+              '</head>',
+              '<link rel="stylesheet" href="./v53.css?v=56">' + background_css + '</head>',
+              1,
+          )
+          html, body_count = re.subn(
+              r'<body([^>]*)>',
+              r'<body\1><div id="page-nebula-v56" aria-hidden="true"></div>',
+              html,
+              count=1,
+              flags=re.I,
+          )
+          if body_count != 1:
+              raise RuntimeError('Body tag was not found')
+
+          output = site / 'club-999/index.html'
+          output.write_text(html, encoding='utf-8')
+          (site / 'club-999/deploy-version.txt').write_text('v56-direct\n', encoding='utf-8')
+
+          if 'Не удалось загрузить страницу' in html:
+              raise RuntimeError('Loader error page leaked into direct build')
+          if 'page-nebula-v56' not in html:
+              raise RuntimeError('Background layer missing from direct build')
+          print(f'Built direct page: {output} ({output.stat().st_size} bytes)')
+          PY
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
