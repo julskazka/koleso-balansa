@@ -72,14 +72,24 @@ jobs:
           html = gzip.decompress(base64.b64decode(payload_b64)).decode('utf-8')
           hero_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in hero_files)
 
-          html, image_count = re.subn(
-              r'(<img class="hero41__art" src=")data:image/webp;base64,[^"]+(")',
-              lambda m: m.group(1) + 'data:image/webp;base64,' + hero_b64 + m.group(2),
-              html,
+          hero_match = None
+          for candidate in re.finditer(r'<img\b[^>]*>', html, flags=re.I):
+              if re.search(r'class\s*=\s*(["\'])[^"\']*\bhero41__art\b[^"\']*\1', candidate.group(0), flags=re.I):
+                  hero_match = candidate
+                  break
+          if hero_match is None:
+              raise RuntimeError('Hero image tag was not found')
+
+          hero_tag = hero_match.group(0)
+          src_pattern = re.compile(r'(src\s*=\s*)(["\'])data:image/webp;base64,[^"\']+\2', flags=re.I)
+          hero_tag, image_count = src_pattern.subn(
+              lambda m: m.group(1) + m.group(2) + 'data:image/webp;base64,' + hero_b64 + m.group(2),
+              hero_tag,
               count=1,
           )
           if image_count != 1:
-              raise RuntimeError('Hero image was not replaced')
+              raise RuntimeError('Hero image source was not replaced')
+          html = html[:hero_match.start()] + hero_tag + html[hero_match.end():]
 
           replacements = {
               '<h1>Найдите точку<br>опоры в той<br>сфере жизни,<br>которая сейчас<br>требует внимания</h1>':
