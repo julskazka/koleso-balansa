@@ -1,0 +1,20 @@
+/* v67 — fixed phrase-based wrapping for the first heading after hero only */
+.clarity .section-heading h2 .clarity-title-line{display:inline;white-space:normal}
+@media (max-width:700px){
+  .clarity .section-heading h2{
+    max-width:none!important;
+    width:100%!important;
+    font-size:clamp(33px,8.9vw,37px)!important;
+    line-height:.95!important;
+    text-wrap:initial!important;
+  }
+  .clarity .section-heading h2 .clarity-title-line{
+    display:block!important;
+    width:max-content!important;
+    max-width:100%!important;
+    white-space:nowrap!important;
+  }
+}
+@media (max-width:360px){
+  .clarity .section-heading h2{font-size:31px!important}
+}
