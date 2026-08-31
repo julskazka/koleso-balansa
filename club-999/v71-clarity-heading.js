@@ -1,6 +1,7 @@
 (()=>{
   const STYLE_ID='club999-clarity-heading-v71';
   const TARGET='А ясности всё равно нет';
+  const SUBTITLE='Можно сохранять посты, смотреть эфиры и читать советы разных специалистов — и при этом так и не понять, с чего начать именно сейчас';
 
   function injectStyle(){
     if(document.getElementById(STYLE_ID)) return;
@@ -58,13 +59,20 @@
           overflow-wrap:normal!important;
           hyphens:none!important;
         }
-        .clarity .section-heading--split>p{
-          max-width:34ch!important;
-          margin:13px auto 0!important;
+        .clarity .section-heading--split>p.clarity-subtitle-v72{
+          display:block!important;
+          width:100%!important;
+          max-width:none!important;
+          box-sizing:border-box!important;
+          margin:13px 0 0!important;
+          padding:0!important;
           text-align:center!important;
           font-size:15px!important;
           font-weight:430!important;
           line-height:1.45!important;
+          word-break:normal!important;
+          overflow-wrap:normal!important;
+          hyphens:none!important;
         }
       }
       @media(max-width:350px){
@@ -76,11 +84,18 @@
 
   function apply(){
     injectStyle();
-    const heading=[...document.querySelectorAll('.clarity h2')]
+    const section=document.querySelector('.clarity');
+    if(!section) return false;
+    const heading=[...section.querySelectorAll('h2')]
       .find(el=>(el.textContent||'').replace(/\s+/g,' ').trim()===TARGET);
     if(!heading) return false;
     heading.className='clarity-title-v71';
     heading.innerHTML='<span class="clarity-title-line-v71">А ясности всё</span><span class="clarity-title-line-v71">равно нет</span>';
+    const subtitle=section.querySelector('.section-heading--split>p');
+    if(subtitle){
+      subtitle.classList.add('clarity-subtitle-v72');
+      subtitle.textContent=SUBTITLE;
+    }
     return true;
   }
 
