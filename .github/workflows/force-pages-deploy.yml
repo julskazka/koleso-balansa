@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -40,37 +42,51 @@ jobs:
           import shutil
 
           root = Path('.')
-          site = Path('_site')
-          if site.exists():
-              shutil.rmtree(site)
-          shutil.copytree(root, site, ignore=shutil.ignore_patterns('.git', '_site'))
+          club = root / 'club-999'
 
           payload_files = [
-              root / 'club-999/payload-v48/part-01.txt',
-              root / 'club-999/payload-v48/part-02.txt',
-              root / 'club-999/payload-v48/part-03.txt',
-              root / 'club-999/payload-v48/part-04.txt',
-              root / 'club-999/payload-v48/part-05.txt',
-              root / 'club-999/payload-v48/part-06.txt',
-              root / 'club-999/payload-v48/p07-01.txt',
-              root / 'club-999/payload-v48/p07-02.txt',
-              root / 'club-999/payload-v48/p07-03.txt',
-              root / 'club-999/payload-v48/p07-04.txt',
-              root / 'club-999/payload-v48/p07-05.txt',
-              root / 'club-999/payload-v48/p07-06.txt',
-              root / 'club-999/payload-v48/p07-07.txt',
-              root / 'club-999/payload-v48/p07-08.txt',
-              root / 'club-999/payload-v48/p07-09.txt',
+              club / 'payload-v48/part-01.txt',
+              club / 'payload-v48/part-02.txt',
+              club / 'payload-v48/part-03.txt',
+              club / 'payload-v48/part-04.txt',
+              club / 'payload-v48/part-05.txt',
+              club / 'payload-v48/part-06.txt',
+              club / 'payload-v48/p07-01.txt',
+              club / 'payload-v48/p07-02.txt',
+              club / 'payload-v48/p07-03.txt',
+              club / 'payload-v48/p07-04.txt',
+              club / 'payload-v48/p07-05.txt',
+              club / 'payload-v48/p07-06.txt',
+              club / 'payload-v48/p07-07.txt',
+              club / 'payload-v48/p07-08.txt',
+              club / 'payload-v48/p07-09.txt',
           ]
-          hero_files = [root / f'club-999/hero-v51/part-{i:02d}.txt' for i in range(1, 9)]
+          hero_files = [club / f'hero-v51/part-{i:02d}.txt' for i in range(1, 9)]
+          css_files = [
+              club / 'v53.css',
+              club / 'v61-bg.css',
+              club / 'v62.css',
+              club / 'v64.css',
+              club / 'v65.css',
+              club / 'v66.css',
+          ]
+          js_files = [
+              club / 'v71-clarity-heading.js',
+              club / 'v73-page-typography.js',
+              club / 'v74-layout-spacing.js',
+              club / 'v75-heading-fit-readability.js',
+              club / 'v76-clarity-cards.js',
+              club / 'v78-resource-steps.js',
+          ]
 
-          missing = [str(p) for p in payload_files + hero_files if not p.exists()]
+          required = payload_files + hero_files + css_files + js_files
+          missing = [str(path) for path in required if not path.exists()]
           if missing:
-              raise FileNotFoundError('Missing build files: ' + ', '.join(missing))
+              raise FileNotFoundError('Missing Club 999 build files: ' + ', '.join(missing))
 
-          payload_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in payload_files)
+          payload_b64 = ''.join(path.read_text(encoding='utf-8').strip() for path in payload_files)
           html = gzip.decompress(base64.b64decode(payload_b64)).decode('utf-8')
-          hero_b64 = ''.join(p.read_text(encoding='utf-8').strip() for p in hero_files)
+          hero_b64 = ''.join(path.read_text(encoding='utf-8').strip() for path in hero_files)
 
           hero_match = None
           for candidate in re.finditer(r'<img\b[^>]*>', html, flags=re.I):
@@ -83,7 +99,7 @@ jobs:
           hero_tag = hero_match.group(0)
           src_pattern = re.compile(r'(src\s*=\s*)(["\'])data:image/webp;base64,[^"\']+\2', flags=re.I)
           hero_tag, image_count = src_pattern.subn(
-              lambda m: m.group(1) + m.group(2) + 'data:image/webp;base64,' + hero_b64 + m.group(2),
+              lambda match: match.group(1) + match.group(2) + 'data:image/webp;base64,' + hero_b64 + match.group(2),
               hero_tag,
               count=1,
           )
@@ -104,62 +120,63 @@ jobs:
           for old, new in replacements.items():
               html = html.replace(old, new)
 
-          background_css = '''
-          <style id="page-nebula-v57-direct">
-          html,body{background:#010f17!important}
-          body{position:relative!important;isolation:isolate!important}
-          #page-nebula-v57{
-            position:fixed;inset:0;z-index:0;pointer-events:none;
-            background:
-              radial-gradient(circle at 13% 17%,rgba(210,255,248,.75) 0 1px,transparent 1.4px) 0 0/128px 142px,
-              radial-gradient(circle at 72% 29%,rgba(124,220,228,.48) 0 1px,transparent 1.5px) 0 0/173px 161px,
-              radial-gradient(circle at 42% 76%,rgba(238,211,133,.28) 0 1px,transparent 1.4px) 0 0/211px 187px,
-              radial-gradient(ellipse at 16% 18%,rgba(62,190,191,.24) 0%,rgba(25,128,146,.13) 25%,transparent 55%),
-              radial-gradient(ellipse at 84% 24%,rgba(65,139,191,.23) 0%,rgba(32,91,145,.10) 31%,transparent 58%),
-              radial-gradient(ellipse at 62% 76%,rgba(45,163,155,.17) 0%,transparent 48%),
-              linear-gradient(124deg,transparent 8%,rgba(96,218,213,.05) 24%,rgba(61,155,193,.08) 43%,transparent 65%),
-              linear-gradient(180deg,#021722 0%,#032a34 44%,#021c27 71%,#010f17 100%);
-          }
-          #page-nebula-v57::before{
-            content:"";position:absolute;inset:-10%;
-            background:
-              radial-gradient(ellipse at 24% 32%,rgba(104,225,219,.13),transparent 32%),
-              radial-gradient(ellipse at 76% 58%,rgba(70,151,201,.12),transparent 36%),
-              linear-gradient(138deg,transparent 22%,rgba(112,225,219,.07) 38%,rgba(67,157,198,.05) 51%,transparent 69%);
-            filter:blur(22px);opacity:.9;transform:rotate(-3deg) scale(1.06);
-          }
-          body::before{display:none!important}
-          body::after,.cosmos{z-index:1!important}
-          main,.footer{position:relative!important;z-index:2!important;background:transparent!important}
-          .section,.section::before,.section::after,.clarity,.directions,.connection,.inside,.questions,.difference,.audience,.return,.access,.final{background-color:transparent!important}
-          </style>
-          '''
+          css = '\n\n'.join(path.read_text(encoding='utf-8') for path in css_files)
+          css = css.replace('</style', '<\\/style')
+          js = '\n\n'.join(path.read_text(encoding='utf-8') for path in js_files)
+          js = js.replace('</script', '<\\/script')
 
           html = html.replace(
               '</head>',
-              '<link rel="stylesheet" href="./v53.css?v=57">' + background_css + '</head>',
+              '<meta name="club999-build" content="v81-direct-inline">'
+              '<style id="club999-inline-css-v81">' + css + '</style></head>',
               1,
           )
           html, body_count = re.subn(
               r'<body([^>]*)>',
-              r'<body\1><div id="page-nebula-v57" aria-hidden="true"></div>',
+              r'<body\1><div id="page-nebula-v61" aria-hidden="true"></div>',
               html,
               count=1,
               flags=re.I,
           )
           if body_count != 1:
               raise RuntimeError('Body tag was not found')
+          html = html.replace(
+              '</body>',
+              '<script id="club999-inline-js-v81">' + js + '<\\/script></body>',
+              1,
+          )
 
-          output = site / 'club-999/index.html'
+          output = club / 'index.html'
           output.write_text(html, encoding='utf-8')
-          (site / 'club-999/deploy-version.txt').write_text('v57-direct\n', encoding='utf-8')
 
-          if 'Не удалось загрузить страницу' in html:
-              raise RuntimeError('Loader error page leaked into direct build')
-          if 'page-nebula-v57' not in html:
-              raise RuntimeError('Background layer missing from direct build')
+          if 'Загружаем «Центр Ресурса»' in html or 'Страница временно не загрузилась' in html:
+              raise RuntimeError('Runtime loader leaked into direct page')
+          if 'payload-v48/' in html or 'fflate' in html:
+              raise RuntimeError('Runtime payload dependency leaked into direct page')
+          if 'club999-build" content="v81-direct-inline' not in html:
+              raise RuntimeError('Direct build marker is missing')
+          if 'page-nebula-v61' not in html:
+              raise RuntimeError('Nebula layer is missing')
           print(f'Built direct page: {output} ({output.stat().st_size} bytes)')
+
+          site = Path('_site')
+          if site.exists():
+              shutil.rmtree(site)
+          shutil.copytree(root, site, ignore=shutil.ignore_patterns('.git', '_site'))
           PY
+
+      - name: Save direct page to main
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add club-999/index.html
+          if git diff --cached --quiet; then
+            echo "Direct Club 999 page is already current."
+          else
+            git commit -m "Publish fast direct Club 999 page [skip ci]"
+            git push origin HEAD:main
+          fi
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
