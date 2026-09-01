@@ -1,4 +1,4 @@
-name: Force Pages Deploy
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: force-pages-deploy
+  group: github-pages
   cancel-in-progress: true
 
 jobs:
@@ -23,159 +23,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
-      - name: Build direct Club 999 page
+      - name: Prepare static site
         shell: bash
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import base64
-          import gzip
-          import re
-          import shutil
-
-          root = Path('.')
-          club = root / 'club-999'
-
-          payload_files = [
-              club / 'payload-v48/part-01.txt',
-              club / 'payload-v48/part-02.txt',
-              club / 'payload-v48/part-03.txt',
-              club / 'payload-v48/part-04.txt',
-              club / 'payload-v48/part-05.txt',
-              club / 'payload-v48/part-06.txt',
-              club / 'payload-v48/p07-01.txt',
-              club / 'payload-v48/p07-02.txt',
-              club / 'payload-v48/p07-03.txt',
-              club / 'payload-v48/p07-04.txt',
-              club / 'payload-v48/p07-05.txt',
-              club / 'payload-v48/p07-06.txt',
-              club / 'payload-v48/p07-07.txt',
-              club / 'payload-v48/p07-08.txt',
-              club / 'payload-v48/p07-09.txt',
-          ]
-          hero_files = [club / f'hero-v51/part-{i:02d}.txt' for i in range(1, 9)]
-          css_files = [
-              club / 'v53.css',
-              club / 'v61-bg.css',
-              club / 'v62.css',
-              club / 'v64.css',
-              club / 'v65.css',
-              club / 'v66.css',
-          ]
-          js_files = [
-              club / 'v71-clarity-heading.js',
-              club / 'v73-page-typography.js',
-              club / 'v74-layout-spacing.js',
-              club / 'v75-heading-fit-readability.js',
-              club / 'v76-clarity-cards.js',
-          ]
-
-          required = payload_files + hero_files + css_files + js_files
-          missing = [str(path) for path in required if not path.exists()]
-          if missing:
-              raise FileNotFoundError('Missing Club 999 build files: ' + ', '.join(missing))
-
-          payload_b64 = ''.join(path.read_text(encoding='utf-8').strip() for path in payload_files)
-          html = gzip.decompress(base64.b64decode(payload_b64)).decode('utf-8')
-          hero_b64 = ''.join(path.read_text(encoding='utf-8').strip() for path in hero_files)
-
-          hero_match = None
-          for candidate in re.finditer(r'<img\b[^>]*>', html, flags=re.I):
-              if re.search(r'class\s*=\s*(["\'])[^"\']*\bhero41__art\b[^"\']*\1', candidate.group(0), flags=re.I):
-                  hero_match = candidate
-                  break
-          if hero_match is None:
-              raise RuntimeError('Hero image tag was not found')
-
-          hero_tag = hero_match.group(0)
-          src_pattern = re.compile(r'(src\s*=\s*)(["\'])data:image/webp;base64,[^"\']+\2', flags=re.I)
-          hero_tag, image_count = src_pattern.subn(
-              lambda match: match.group(1) + match.group(2) + 'data:image/webp;base64,' + hero_b64 + match.group(2),
-              hero_tag,
-              count=1,
-          )
-          if image_count != 1:
-              raise RuntimeError('Hero image source was not replaced')
-          html = html[:hero_match.start()] + hero_tag + html[hero_match.end():]
-
-          replacements = {
-              '<h1>Найдите точку<br>опоры в той<br>сфере жизни,<br>которая сейчас<br>требует внимания</h1>':
-                  '<h1>Найдите точку опоры в той сфере жизни, которая сейчас требует внимания</h1>',
-              '<p><strong>6 направлений</strong> — тело, энергия,<br>дело, отношения, окружение и красота</p>':
-                  '<p><strong>6 направлений</strong> — тело, энергия, дело, отношения, окружение и красота</p>',
-              '<p><strong>Эфиры, конференции, практики</strong><br>и полезные материалы</p>':
-                  '<p><strong>Эфиры, конференции, практики</strong> и полезные материалы</p>',
-              '<p><strong>Сильные эксперты, живое общение</strong><br>и новые встречи каждый месяц</p>':
-                  '<p><strong>Сильные эксперты, живое общение</strong> и новые встречи каждый месяц</p>',
-          }
-          for old, new in replacements.items():
-              html = html.replace(old, new)
-
-          css = '\n\n'.join(path.read_text(encoding='utf-8') for path in css_files)
-          css = css.replace('</style', '<\\/style')
-          js = '\n\n'.join(path.read_text(encoding='utf-8') for path in js_files)
-          js = js.replace('</script', '<\\/script')
-
-          html = html.replace(
-              '</head>',
-              '<meta name="club999-build" content="v77-direct-inline">'
-              '<style id="club999-inline-css-v77">' + css + '</style></head>',
-              1,
-          )
-          html, body_count = re.subn(
-              r'<body([^>]*)>',
-              r'<body\1><div id="page-nebula-v61" aria-hidden="true"></div>',
-              html,
-              count=1,
-              flags=re.I,
-          )
-          if body_count != 1:
-              raise RuntimeError('Body tag was not found')
-          html = html.replace(
-              '</body>',
-              '<script id="club999-inline-js-v77">' + js + '<\\/script></body>',
-              1,
-          )
-
-          output = club / 'index.html'
-          output.write_text(html, encoding='utf-8')
-
-          if 'Загружаем «Центр Ресурса»' in html or 'Страница временно не загрузилась' in html:
-              raise RuntimeError('Runtime loader leaked into direct page')
-          if 'payload-v48/' in html or 'fflate' in html:
-              raise RuntimeError('Runtime payload dependency leaked into direct page')
-          if 'club999-build" content="v77-direct-inline' not in html:
-              raise RuntimeError('Direct build marker is missing')
-          if 'page-nebula-v61' not in html:
-              raise RuntimeError('Nebula layer is missing')
-          print(f'Built direct page: {output} ({output.stat().st_size} bytes)')
-
-          site = Path('_site')
-          if site.exists():
-              shutil.rmtree(site)
-          shutil.copytree(root, site, ignore=shutil.ignore_patterns('.git', '_site'))
-          PY
-
-      - name: Save direct page to main
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add club-999/index.html
-          if git diff --cached --quiet; then
-            echo "Direct Club 999 page is already current."
-          else
-            git commit -m "Publish Club 999 visual version v77 [skip ci]"
-            git push origin HEAD:main
-          fi
+          rm -rf _site
+          mkdir -p _site
+          rsync -a --exclude='.git' --exclude='_site' ./ _site/
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
