@@ -14,6 +14,9 @@
         padding-top:18px!important;
         padding-bottom:48px!important;
       }
+      .directions.section{
+        padding-top:18px!important;
+      }
 
       .section:not(.hero) .section-heading,
       .section:not(.hero) .section-heading--split,
