@@ -12,10 +12,10 @@
       }
       .clarity.section{
         padding-top:18px!important;
-        padding-bottom:48px!important;
+        padding-bottom:16px!important;
       }
       .directions.section{
-        padding-top:18px!important;
+        padding-top:16px!important;
       }
 
       .section:not(.hero) .section-heading,
@@ -120,6 +120,12 @@
       .section:not(.hero){
         padding-top:82px!important;
         padding-bottom:82px!important;
+      }
+      .clarity.section{
+        padding-bottom:32px!important;
+      }
+      .directions.section{
+        padding-top:32px!important;
       }
       .section:not(.hero) .section-heading,
       .section:not(.hero) .section-heading--split,
