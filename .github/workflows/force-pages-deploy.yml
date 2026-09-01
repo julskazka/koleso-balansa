@@ -76,7 +76,6 @@ jobs:
               club / 'v74-layout-spacing.js',
               club / 'v75-heading-fit-readability.js',
               club / 'v76-clarity-cards.js',
-              club / 'v78-resource-steps.js',
           ]
 
           required = payload_files + hero_files + css_files + js_files
@@ -127,8 +126,8 @@ jobs:
 
           html = html.replace(
               '</head>',
-              '<meta name="club999-build" content="v81-direct-inline">'
-              '<style id="club999-inline-css-v81">' + css + '</style></head>',
+              '<meta name="club999-build" content="v77-direct-inline">'
+              '<style id="club999-inline-css-v77">' + css + '</style></head>',
               1,
           )
           html, body_count = re.subn(
@@ -142,7 +141,7 @@ jobs:
               raise RuntimeError('Body tag was not found')
           html = html.replace(
               '</body>',
-              '<script id="club999-inline-js-v81">' + js + '<\\/script></body>',
+              '<script id="club999-inline-js-v77">' + js + '<\\/script></body>',
               1,
           )
 
@@ -153,7 +152,7 @@ jobs:
               raise RuntimeError('Runtime loader leaked into direct page')
           if 'payload-v48/' in html or 'fflate' in html:
               raise RuntimeError('Runtime payload dependency leaked into direct page')
-          if 'club999-build" content="v81-direct-inline' not in html:
+          if 'club999-build" content="v77-direct-inline' not in html:
               raise RuntimeError('Direct build marker is missing')
           if 'page-nebula-v61' not in html:
               raise RuntimeError('Nebula layer is missing')
@@ -174,7 +173,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Direct Club 999 page is already current."
           else
-            git commit -m "Publish fast direct Club 999 page [skip ci]"
+            git commit -m "Publish Club 999 visual version v77 [skip ci]"
             git push origin HEAD:main
           fi
 
