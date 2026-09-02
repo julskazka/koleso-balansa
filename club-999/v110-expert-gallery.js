@@ -1,5 +1,5 @@
 (()=>{
-  const STYLE_ID='club999-expert-gallery-v111';
+  const STYLE_ID='club999-expert-gallery-v112';
   const IMAGES=[
     './assets/gallery-v110/01-anna-plaksina.webp',
     './assets/gallery-v110/02-olga-schastye.webp',
@@ -14,8 +14,9 @@
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
+      .club999-expert-section-v112{padding-top:24px!important}
       .club999-expert-gallery-card-v110{
-        padding:8px 14px 14px!important;
+        padding:4px 14px 14px!important;
         min-height:0!important;
         height:auto!important;
         overflow:visible!important;
@@ -47,7 +48,8 @@
       .club999-expert-gallery-title-v111{margin:0;color:#f1d47a;font-size:18px;line-height:1.2;font-weight:800;text-wrap:balance}
       .club999-expert-gallery-text-v111{margin:7px 0 0;color:rgba(242,244,239,.78);font-size:11px;line-height:1.35}
       @media(max-width:700px){
-        .club999-expert-gallery-card-v110{padding:6px 10px 12px!important}
+        .club999-expert-section-v112{padding-top:16px!important}
+        .club999-expert-gallery-card-v110{padding:2px 10px 12px!important}
         .club999-expert-gallery-dots-v110{margin-top:7px}
         .club999-expert-gallery-copy-v111{margin-top:10px;max-width:320px}
         .club999-expert-gallery-title-v111{font-size:17px}
@@ -84,7 +86,7 @@
     gallery.className='club999-expert-gallery-v110';
     gallery.innerHTML=`
       <div class="club999-expert-gallery-stage-v110" tabindex="0" aria-label="Галерея экспертов">
-        ${IMAGES.map((src,i)=>`<div class="club999-expert-gallery-slide-v110${i===0?' is-active':''}" data-index="${i}"><img src="${src}?v=111" alt="Эксперт ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false"></div>`).join('')}
+        ${IMAGES.map((src,i)=>`<div class="club999-expert-gallery-slide-v110${i===0?' is-active':''}" data-index="${i}"><img src="${src}?v=112" alt="Эксперт ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false"></div>`).join('')}
         <button class="club999-expert-gallery-arrow-v110 prev" type="button" aria-label="Предыдущий эксперт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="club999-expert-gallery-arrow-v110 next" type="button" aria-label="Следующий эксперт"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5.5 6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
@@ -106,7 +108,13 @@
     stage.addEventListener('touchstart',e=>{touchX=e.touches[0]?.clientX??null},{passive:true});
     stage.addEventListener('touchend',e=>{if(touchX===null)return;const end=e.changedTouches[0]?.clientX??touchX,dx=end-touchX;touchX=null;if(Math.abs(dx)>=42)show(dx>0?current-1:current+1)},{passive:true});
   }
-  function apply(){if(document.querySelector('.club999-expert-gallery-v110'))return true;const section=findSection();if(!section)return false;const card=findCard(section);if(!card)return false;buildGallery(card);return true}
+  function apply(){
+    if(document.querySelector('.club999-expert-gallery-v110'))return true;
+    const section=findSection();if(!section)return false;
+    section.classList.add('club999-expert-section-v112');
+    const card=findCard(section);if(!card)return false;
+    buildGallery(card);return true;
+  }
   let tries=0;const timer=setInterval(()=>{tries+=1;if(apply()||tries>=50)clearInterval(timer)},120);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })();
