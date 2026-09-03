@@ -1,0 +1,24 @@
+.club999-expert-gallery-v110{
+  box-sizing:border-box!important;
+  padding:12px 12px 16px!important;
+  border:1px solid rgba(232,196,92,.46)!important;
+  border-radius:24px!important;
+  background:linear-gradient(180deg,rgba(13,72,79,.24),rgba(4,41,50,.12))!important;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.16),
+    0 0 24px rgba(230,193,88,.10),
+    inset 0 1px 0 rgba(255,236,174,.07)!important;
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
+
+@media(max-width:700px){
+  .club999-expert-gallery-v110{
+    padding:10px 10px 14px!important;
+    border-radius:21px!important;
+    box-shadow:
+      0 10px 26px rgba(0,0,0,.15),
+      0 0 20px rgba(230,193,88,.10),
+      inset 0 1px 0 rgba(255,236,174,.07)!important;
+  }
+}
