@@ -23,7 +23,7 @@
     if(!el) return null;
     let best=el;
     let node=el.parentElement;
-    for(let i=0;i<9&&node&&node!==document.body;i++,node=node.parentElement){
+    for(let i=0;i<10&&node&&node!==document.body;i++,node=node.parentElement){
       const t=norm(node.textContent);
       if(!t.includes(target)) break;
       const containsAnother=NITEMS.some(x=>x!==target&&t.includes(x));
@@ -38,40 +38,44 @@
     const s=document.createElement('style');
     s.id='club999-whofor-v136-style';
     s.textContent=`
-      .club999-whofor-section-v136{padding-top:5px!important;margin-top:0!important;min-height:0!important}
-      .club999-whofor-list-v136{display:grid!important;grid-template-columns:1fr!important;gap:5px!important;margin:0!important;padding:0!important;list-style:none!important}
-      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:25px minmax(0,1fr)!important;align-items:center!important;gap:8px!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:6px 9px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:14px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 5px 14px rgba(0,10,18,.08)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
-      .club999-whofor-row-v136::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,rgba(255,255,255,.045),transparent 38%,rgba(71,190,186,.035))!important}
+      .club999-whofor-section-v136{padding-top:2px!important;margin-top:0!important;min-height:0!important}
+      .club999-whofor-list-v136{display:grid!important;grid-template-columns:1fr!important;gap:4px!important;margin:0!important;padding:0!important;list-style:none!important}
+      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:23px minmax(0,1fr)!important;align-items:center!important;gap:7px!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:5px 8px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:13px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 4px 12px rgba(0,10,18,.07)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
+      .club999-whofor-row-v136::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,rgba(255,255,255,.04),transparent 38%,rgba(71,190,186,.03))!important}
       .club999-whofor-row-v136::after,.club999-whofor-row-v136::marker{content:none!important;display:none!important}
-      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:24px!important;height:24px!important;display:grid!important;place-items:center!important;border-radius:8px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 8px rgba(223,183,62,.14)!important}
-      .club999-whofor-icon-v136 svg{width:16px!important;height:16px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.3))!important}
+      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:22px!important;height:22px!important;display:grid!important;place-items:center!important;border-radius:7px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 7px rgba(223,183,62,.13)!important}
+      .club999-whofor-icon-v136 svg{width:14.5px!important;height:14.5px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.28))!important}
       .club999-whofor-icon-v136 .dot{fill:#f2d47d!important;stroke:#f2d47d!important}
-      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:14px!important;line-height:1.16!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
+      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:13px!important;line-height:1.14!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
       .club999-whofor-footer-v136{background:linear-gradient(135deg,rgba(15,86,96,.34),rgba(4,35,47,.46))!important;border:1px solid rgba(234,199,101,.30)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;backdrop-filter:blur(14px) saturate(115%)!important;-webkit-backdrop-filter:blur(14px) saturate(115%)!important;border-radius:17px!important}
-      @media(max-width:700px){
-        .club999-whofor-section-v136{padding-top:3px!important}
-        .club999-whofor-list-v136{gap:4px!important}
-        .club999-whofor-row-v136{grid-template-columns:24px minmax(0,1fr)!important;gap:7px!important;padding:5px 8px!important;border-radius:13px!important}
-        .club999-whofor-icon-v136{width:23px!important;height:23px!important;border-radius:7px!important}
-        .club999-whofor-icon-v136 svg{width:15px!important;height:15px!important}
-        .club999-whofor-copy-v136{font-size:13px!important;line-height:1.15!important}
-      }
+      @media(min-width:701px){.club999-whofor-row-v136{padding:6px 9px!important;grid-template-columns:24px minmax(0,1fr)!important}.club999-whofor-icon-v136{width:23px!important;height:23px!important}.club999-whofor-copy-v136{font-size:14px!important}}
     `;
     document.head.appendChild(s);
+  }
+
+  function makeRow(text,icon){
+    const row=document.createElement('div');
+    row.className='club999-whofor-row-v136';
+    row.innerHTML=`<span class="club999-whofor-icon-v136" aria-hidden="true">${icon}</span><span class="club999-whofor-copy-v136">${text}</span>`;
+    return row;
   }
 
   function applyRows(){
     const hosts=ITEMS.map(([text])=>rowHost(text));
     if(hosts.some(x=>!x)||new Set(hosts).size!==ITEMS.length) return false;
     addStyle();
+    const parents=hosts.map(h=>h.parentElement);
     hosts.forEach((host,i)=>{
       const [text,icon]=ITEMS[i];
-      host.className='club999-whofor-row-v136';
-      host.innerHTML=`<span class="club999-whofor-icon-v136" aria-hidden="true">${icon}</span><span class="club999-whofor-copy-v136">${text}</span>`;
+      host.replaceWith(makeRow(text,icon));
     });
-    const parents=hosts.map(h=>h.parentElement);
-    if(parents.every(p=>p&&p===parents[0])) parents[0].classList.add('club999-whofor-list-v136');
-    else parents.forEach(p=>{if(p){p.style.setProperty('margin','0','important');p.style.setProperty('padding','0','important')}});
+    const common=parents[0]&&parents.every(p=>p===parents[0])?parents[0]:null;
+    if(common){
+      common.classList.add('club999-whofor-list-v136');
+      common.style.setProperty('gap','4px','important');
+      common.style.setProperty('margin','0','important');
+      common.style.setProperty('padding','0','important');
+    }
     return true;
   }
 
