@@ -39,16 +39,16 @@
     s.id='club999-whofor-v136-style';
     s.textContent=`
       .club999-whofor-section-v136{padding-top:2px!important;margin-top:0!important;min-height:0!important}
-      .club999-whofor-list-v136{display:grid!important;grid-template-columns:1fr!important;gap:5px!important;margin:0!important;padding:0!important;list-style:none!important}
-      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:25px minmax(0,1fr)!important;align-items:center!important;gap:8px!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:6px 9px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:13px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 4px 12px rgba(0,10,18,.07)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
+      .club999-whofor-list-v136{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;margin:0!important;padding:0!important;list-style:none!important}
+      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:27px minmax(0,1fr)!important;align-items:center!important;gap:9px!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:7px 10px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:13px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 4px 12px rgba(0,10,18,.07)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
       .club999-whofor-row-v136::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,rgba(255,255,255,.04),transparent 38%,rgba(71,190,186,.03))!important}
       .club999-whofor-row-v136::after,.club999-whofor-row-v136::marker{content:none!important;display:none!important}
-      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:24px!important;height:24px!important;display:grid!important;place-items:center!important;border-radius:8px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 7px rgba(223,183,62,.13)!important}
-      .club999-whofor-icon-v136 svg{width:16px!important;height:16px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.28))!important}
+      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:26px!important;height:26px!important;display:grid!important;place-items:center!important;border-radius:8px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 7px rgba(223,183,62,.13)!important}
+      .club999-whofor-icon-v136 svg{width:17.5px!important;height:17.5px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.28))!important}
       .club999-whofor-icon-v136 .dot{fill:#f2d47d!important;stroke:#f2d47d!important}
-      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:13.5px!important;line-height:1.16!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
+      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:14.5px!important;line-height:1.18!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
       .club999-whofor-footer-v136{background:linear-gradient(135deg,rgba(15,86,96,.34),rgba(4,35,47,.46))!important;border:1px solid rgba(234,199,101,.30)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;backdrop-filter:blur(14px) saturate(115%)!important;-webkit-backdrop-filter:blur(14px) saturate(115%)!important;border-radius:17px!important}
-      @media(min-width:701px){.club999-whofor-row-v136{padding:7px 10px!important;grid-template-columns:26px minmax(0,1fr)!important}.club999-whofor-icon-v136{width:25px!important;height:25px!important}.club999-whofor-copy-v136{font-size:14.5px!important}}
+      @media(min-width:701px){.club999-whofor-row-v136{padding:8px 11px!important;grid-template-columns:28px minmax(0,1fr)!important}.club999-whofor-icon-v136{width:27px!important;height:27px!important}.club999-whofor-copy-v136{font-size:15px!important}}
     `;
     document.head.appendChild(s);
   }
@@ -72,7 +72,7 @@
     const common=parents[0]&&parents.every(p=>p===parents[0])?parents[0]:null;
     if(common){
       common.classList.add('club999-whofor-list-v136');
-      common.style.setProperty('gap','5px','important');
+      common.style.setProperty('gap','6px','important');
       common.style.setProperty('margin','0','important');
       common.style.setProperty('padding','0','important');
     }
