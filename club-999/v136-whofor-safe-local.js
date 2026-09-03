@@ -8,6 +8,7 @@
     ['Не готовы менять всё сразу, но готовы сделать один конкретный шаг','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.7 18.3h5.1v-4.1h5.1v-4.1h6.2"/><path d="m17.2 6.3 3 3.8-3 3.8"/><circle class="dot" cx="4.8" cy="18.3" r="1.1"/></svg>']
   ];
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+  const NITEMS=ITEMS.map(([t])=>norm(t));
 
   function exactElement(text){
     const target=norm(text);
@@ -20,43 +21,57 @@
     const target=norm(text);
     let el=exactElement(text);
     if(!el) return null;
-    let host=el;
+    let best=el;
     let node=el.parentElement;
-    for(let i=0;i<7&&node&&node!==document.body;i++,node=node.parentElement){
-      if(norm(node.textContent)!==target) break;
-      host=node;
+    for(let i=0;i<9&&node&&node!==document.body;i++,node=node.parentElement){
+      const t=norm(node.textContent);
+      if(!t.includes(target)) break;
+      const containsAnother=NITEMS.some(x=>x!==target&&t.includes(x));
+      if(containsAnother) break;
+      best=node;
     }
-    return host;
+    return best;
   }
 
   function addStyle(){
-    if(document.getElementById('club999-whofor-v136-style')) return;
+    document.getElementById('club999-whofor-v136-style')?.remove();
     const s=document.createElement('style');
     s.id='club999-whofor-v136-style';
     s.textContent=`
-      .club999-whofor-section-v136{padding-top:12px!important;margin-top:0!important;min-height:0!important}
-      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;align-items:center!important;gap:9px!important;width:100%!important;min-height:0!important;margin:0 0 7px!important;padding:8px 11px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:15px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 7px 20px rgba(0,10,18,.10)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
-      .club999-whofor-row-v136::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,rgba(255,255,255,.055),transparent 38%,rgba(71,190,186,.04))!important}
+      .club999-whofor-section-v136{padding-top:5px!important;margin-top:0!important;min-height:0!important}
+      .club999-whofor-list-v136{display:grid!important;grid-template-columns:1fr!important;gap:5px!important;margin:0!important;padding:0!important;list-style:none!important}
+      .club999-whofor-row-v136{position:relative!important;display:grid!important;grid-template-columns:25px minmax(0,1fr)!important;align-items:center!important;gap:8px!important;width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:6px 9px!important;box-sizing:border-box!important;border:1px solid rgba(234,199,101,.34)!important;border-radius:14px!important;background:linear-gradient(135deg,rgba(15,86,96,.43),rgba(4,35,47,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.075),0 5px 14px rgba(0,10,18,.08)!important;backdrop-filter:blur(14px) saturate(118%)!important;-webkit-backdrop-filter:blur(14px) saturate(118%)!important;overflow:hidden!important;list-style:none!important}
+      .club999-whofor-row-v136::before{content:""!important;position:absolute!important;inset:0!important;pointer-events:none!important;background:linear-gradient(115deg,rgba(255,255,255,.045),transparent 38%,rgba(71,190,186,.035))!important}
       .club999-whofor-row-v136::after,.club999-whofor-row-v136::marker{content:none!important;display:none!important}
-      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:27px!important;height:27px!important;display:grid!important;place-items:center!important;border-radius:9px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 10px rgba(223,183,62,.16)!important}
-      .club999-whofor-icon-v136 svg{width:18px!important;height:18px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.3))!important}
+      .club999-whofor-icon-v136{position:relative!important;z-index:1!important;width:24px!important;height:24px!important;display:grid!important;place-items:center!important;border-radius:8px!important;border:1px solid rgba(239,204,104,.64)!important;background:radial-gradient(circle at 35% 28%,rgba(248,221,141,.18),transparent 38%),linear-gradient(145deg,rgba(11,82,94,.88),rgba(3,31,40,.96))!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 0 8px rgba(223,183,62,.14)!important}
+      .club999-whofor-icon-v136 svg{width:16px!important;height:16px!important;fill:none!important;stroke:#f2d47d!important;stroke-width:1.55!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 0 2px rgba(242,212,125,.3))!important}
       .club999-whofor-icon-v136 .dot{fill:#f2d47d!important;stroke:#f2d47d!important}
-      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:14px!important;line-height:1.2!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
+      .club999-whofor-copy-v136{position:relative!important;z-index:1!important;min-width:0!important;margin:0!important;padding:0!important;color:#f8f3e8!important;font-size:14px!important;line-height:1.16!important;font-weight:650!important;text-align:left!important;overflow-wrap:normal!important;word-break:normal!important}
       .club999-whofor-footer-v136{background:linear-gradient(135deg,rgba(15,86,96,.34),rgba(4,35,47,.46))!important;border:1px solid rgba(234,199,101,.30)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;backdrop-filter:blur(14px) saturate(115%)!important;-webkit-backdrop-filter:blur(14px) saturate(115%)!important;border-radius:17px!important}
-      @media(max-width:700px){.club999-whofor-section-v136{padding-top:8px!important}.club999-whofor-row-v136{grid-template-columns:26px minmax(0,1fr)!important;gap:8px!important;padding:7px 9px!important;border-radius:14px!important}.club999-whofor-icon-v136{width:25px!important;height:25px!important;border-radius:8px!important}.club999-whofor-icon-v136 svg{width:17px!important;height:17px!important}.club999-whofor-copy-v136{font-size:14px!important}}
+      @media(max-width:700px){
+        .club999-whofor-section-v136{padding-top:3px!important}
+        .club999-whofor-list-v136{gap:4px!important}
+        .club999-whofor-row-v136{grid-template-columns:24px minmax(0,1fr)!important;gap:7px!important;padding:5px 8px!important;border-radius:13px!important}
+        .club999-whofor-icon-v136{width:23px!important;height:23px!important;border-radius:7px!important}
+        .club999-whofor-icon-v136 svg{width:15px!important;height:15px!important}
+        .club999-whofor-copy-v136{font-size:13px!important;line-height:1.15!important}
+      }
     `;
     document.head.appendChild(s);
   }
 
   function applyRows(){
     const hosts=ITEMS.map(([text])=>rowHost(text));
-    if(hosts.some(x=>!x) || new Set(hosts).size!==ITEMS.length) return false;
+    if(hosts.some(x=>!x)||new Set(hosts).size!==ITEMS.length) return false;
     addStyle();
     hosts.forEach((host,i)=>{
       const [text,icon]=ITEMS[i];
       host.className='club999-whofor-row-v136';
       host.innerHTML=`<span class="club999-whofor-icon-v136" aria-hidden="true">${icon}</span><span class="club999-whofor-copy-v136">${text}</span>`;
     });
+    const parents=hosts.map(h=>h.parentElement);
+    if(parents.every(p=>p&&p===parents[0])) parents[0].classList.add('club999-whofor-list-v136');
+    else parents.forEach(p=>{if(p){p.style.setProperty('margin','0','important');p.style.setProperty('padding','0','important')}});
     return true;
   }
 
