@@ -28,20 +28,20 @@
     style.id=STYLE_ID;
     style.textContent=`
       .inside-grid.inside-grid--glass-v107{
-        gap:12px!important;
+        gap:9px!important;
       }
       .inside-grid--glass-v107 .inside-card{
         position:relative!important;
         isolation:isolate!important;
         overflow:hidden!important;
-        min-height:104px!important;
-        padding:15px 16px!important;
+        min-height:76px!important;
+        padding:10px 12px!important;
         display:grid!important;
-        grid-template-columns:50px minmax(0,1fr)!important;
+        grid-template-columns:40px minmax(0,1fr)!important;
         grid-template-rows:1fr!important;
         align-items:center!important;
-        column-gap:14px!important;
-        border-radius:22px!important;
+        column-gap:10px!important;
+        border-radius:18px!important;
         border:1px solid rgba(231,195,104,.34)!important;
         background:
           radial-gradient(circle at 16% 18%,rgba(104,226,231,.13),transparent 30%),
@@ -50,17 +50,17 @@
         box-shadow:
           inset 0 1px 0 rgba(255,255,255,.10),
           inset 0 -20px 34px rgba(0,8,14,.08),
-          0 10px 26px rgba(0,8,15,.12),
-          0 0 22px rgba(98,221,227,.035)!important;
+          0 8px 22px rgba(0,8,15,.11),
+          0 0 18px rgba(98,221,227,.035)!important;
         -webkit-backdrop-filter:blur(15px) saturate(1.08)!important;
         backdrop-filter:blur(15px) saturate(1.08)!important;
       }
       .inside-grid--glass-v107 .inside-card::before{
         content:""!important;
         position:absolute!important;
-        inset:7px!important;
+        inset:6px!important;
         z-index:0!important;
-        border-radius:16px!important;
+        border-radius:13px!important;
         border:1px solid rgba(247,224,160,.10)!important;
         background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 36%)!important;
         pointer-events:none!important;
@@ -69,25 +69,25 @@
         content:""!important;
         position:absolute!important;
         z-index:0!important;
-        width:150px!important;
-        height:60px!important;
-        right:-32px!important;
-        bottom:-25px!important;
+        width:130px!important;
+        height:48px!important;
+        right:-30px!important;
+        bottom:-22px!important;
         border-radius:50%!important;
         background:radial-gradient(ellipse at center,rgba(68,184,188,.12),rgba(68,184,188,.04) 42%,transparent 72%)!important;
-        filter:blur(13px)!important;
+        filter:blur(12px)!important;
         pointer-events:none!important;
       }
       .inside-grid--glass-v107 .inside-card>span{
         position:absolute!important;
         z-index:3!important;
-        top:10px!important;
-        right:13px!important;
+        top:8px!important;
+        right:11px!important;
         margin:0!important;
         padding:0!important;
         border:0!important;
         color:rgba(239,207,113,.86)!important;
-        font-size:9px!important;
+        font-size:8px!important;
         line-height:1!important;
         letter-spacing:.13em!important;
         font-weight:800!important;
@@ -95,11 +95,11 @@
       .inside-v107-icon{
         position:relative!important;
         z-index:2!important;
-        width:50px!important;
-        height:50px!important;
+        width:40px!important;
+        height:40px!important;
         display:grid!important;
         place-items:center!important;
-        border-radius:16px!important;
+        border-radius:13px!important;
         border:1px solid rgba(231,195,104,.28)!important;
         background:
           radial-gradient(circle at 32% 25%,rgba(93,214,220,.11),transparent 42%),
@@ -107,12 +107,12 @@
           rgba(3,31,40,.34)!important;
         box-shadow:
           inset 0 1px 0 rgba(255,255,255,.09),
-          0 0 16px rgba(239,202,105,.08),
-          0 0 16px rgba(83,211,218,.06)!important;
+          0 0 14px rgba(239,202,105,.08),
+          0 0 14px rgba(83,211,218,.06)!important;
       }
       .inside-v107-icon svg{
-        width:38px!important;
-        height:38px!important;
+        width:30px!important;
+        height:30px!important;
         fill:none!important;
         stroke:#efd07a!important;
         stroke-width:1.65!important;
@@ -130,10 +130,10 @@
         grid-column:2!important;
         align-self:center!important;
         margin:0!important;
-        padding:0 18px 0 0!important;
+        padding:0 15px 0 0!important;
         color:#f7e7b2!important;
-        font-size:17px!important;
-        line-height:1.26!important;
+        font-size:16px!important;
+        line-height:1.22!important;
         font-weight:690!important;
         text-wrap:balance!important;
         overflow-wrap:normal!important;
@@ -142,37 +142,37 @@
       @media(min-width:901px){
         .inside-grid.inside-grid--glass-v107{
           grid-template-columns:repeat(3,minmax(0,1fr))!important;
-          gap:14px!important;
+          gap:11px!important;
         }
         .inside-grid--glass-v107 .inside-card{
-          min-height:116px!important;
-          padding:16px!important;
-          grid-template-columns:52px minmax(0,1fr)!important;
+          min-height:88px!important;
+          padding:11px 12px!important;
+          grid-template-columns:42px minmax(0,1fr)!important;
         }
-        .inside-v107-icon{width:52px!important;height:52px!important}
-        .inside-grid--glass-v107 .inside-card h3{font-size:17px!important}
+        .inside-v107-icon{width:42px!important;height:42px!important}
+        .inside-grid--glass-v107 .inside-card h3{font-size:16px!important}
       }
       @media(max-width:700px){
         .inside-grid.inside-grid--glass-v107{
           grid-template-columns:1fr!important;
-          gap:10px!important;
+          gap:7px!important;
         }
         .inside-grid--glass-v107 .inside-card{
-          min-height:88px!important;
-          padding:12px 13px!important;
-          grid-template-columns:44px minmax(0,1fr)!important;
-          column-gap:12px!important;
-          border-radius:19px!important;
+          min-height:70px!important;
+          padding:8px 10px!important;
+          grid-template-columns:36px minmax(0,1fr)!important;
+          column-gap:9px!important;
+          border-radius:17px!important;
         }
-        .inside-grid--glass-v107 .inside-card::before{inset:6px!important;border-radius:14px!important}
-        .inside-v107-icon{width:44px!important;height:44px!important;border-radius:14px!important}
-        .inside-v107-icon svg{width:33px!important;height:33px!important}
+        .inside-grid--glass-v107 .inside-card::before{inset:5px!important;border-radius:12px!important}
+        .inside-v107-icon{width:36px!important;height:36px!important;border-radius:12px!important}
+        .inside-v107-icon svg{width:27px!important;height:27px!important}
         .inside-grid--glass-v107 .inside-card h3{
-          font-size:16px!important;
-          line-height:1.23!important;
-          padding-right:15px!important;
+          font-size:15px!important;
+          line-height:1.18!important;
+          padding-right:13px!important;
         }
-        .inside-grid--glass-v107 .inside-card>span{top:9px!important;right:11px!important;font-size:8px!important}
+        .inside-grid--glass-v107 .inside-card>span{top:7px!important;right:9px!important;font-size:7px!important}
       }
     `;
     document.head.appendChild(style);
