@@ -17,6 +17,10 @@
       .directions.section{
         padding-top:16px!important;
       }
+      .section:has(.audience__intro){
+        padding-top:12px!important;
+        padding-bottom:16px!important;
+      }
 
       .section:not(.hero) .section-heading,
       .section:not(.hero) .section-heading--split,
@@ -24,6 +28,9 @@
       .section:not(.hero) .audience__intro{
         margin-top:0!important;
         margin-bottom:26px!important;
+      }
+      .section:not(.hero) .audience__intro{
+        margin-bottom:10px!important;
       }
 
       .section:not(.hero) .section-kicker{
@@ -69,7 +76,7 @@
       }
 
       .audience{
-        gap:26px!important;
+        gap:10px!important;
       }
       .audience__content{
         padding-top:0!important;
@@ -127,10 +134,17 @@
       .directions.section{
         padding-top:32px!important;
       }
+      .section:has(.audience__intro){
+        padding-top:28px!important;
+        padding-bottom:32px!important;
+      }
       .section:not(.hero) .section-heading,
       .section:not(.hero) .section-heading--split,
       .section:not(.hero) .directions__heading{
         margin-bottom:36px!important;
+      }
+      .section:not(.hero) .audience__intro{
+        margin-bottom:16px!important;
       }
       .section:not(.hero) .section-kicker{
         margin-bottom:11px!important;
@@ -140,9 +154,11 @@
       .section:not(.hero) .directions__heading>p:last-child{
         margin-top:14px!important;
       }
-      .connection,
-      .audience{
+      .connection{
         gap:56px!important;
+      }
+      .audience{
+        gap:18px!important;
       }
       .return__card,
       .access__card{
