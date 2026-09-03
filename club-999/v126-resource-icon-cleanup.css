@@ -1,0 +1,12 @@
+.club999-resource-row-v124::before,
+.club999-resource-row-v124::after{
+  content:none!important;
+  display:none!important;
+  width:0!important;
+  height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:none!important;
+}
