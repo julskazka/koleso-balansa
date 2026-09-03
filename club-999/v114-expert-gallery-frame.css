@@ -1,24 +1,33 @@
 .club999-expert-gallery-v110{
   box-sizing:border-box!important;
-  padding:12px 12px 16px!important;
-  border:1px solid rgba(232,196,92,.46)!important;
-  border-radius:24px!important;
-  background:linear-gradient(180deg,rgba(13,72,79,.24),rgba(4,41,50,.12))!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+.club999-expert-gallery-stage-v110{
+  box-sizing:border-box!important;
+  border:1px solid rgba(238,199,88,.88)!important;
+  border-radius:18px!important;
+  background:rgba(3,39,48,.18)!important;
   box-shadow:
-    0 12px 30px rgba(0,0,0,.16),
-    0 0 24px rgba(230,193,88,.10),
-    inset 0 1px 0 rgba(255,236,174,.07)!important;
-  -webkit-backdrop-filter:blur(7px);
-  backdrop-filter:blur(7px);
+    0 0 0 1px rgba(255,224,126,.22),
+    0 0 9px rgba(240,194,65,.58),
+    0 0 22px rgba(228,180,45,.18),
+    inset 0 0 0 1px rgba(255,239,181,.34)!important;
 }
 
 @media(max-width:700px){
-  .club999-expert-gallery-v110{
-    padding:10px 10px 14px!important;
-    border-radius:21px!important;
+  .club999-expert-gallery-stage-v110{
+    border-radius:16px!important;
     box-shadow:
-      0 10px 26px rgba(0,0,0,.15),
-      0 0 20px rgba(230,193,88,.10),
-      inset 0 1px 0 rgba(255,236,174,.07)!important;
+      0 0 0 1px rgba(255,224,126,.22),
+      0 0 8px rgba(240,194,65,.54),
+      0 0 18px rgba(228,180,45,.17),
+      inset 0 0 0 1px rgba(255,239,181,.34)!important;
   }
 }
