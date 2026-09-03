@@ -1,5 +1,5 @@
 (()=>{
-  const STYLE_ID='club999-resource-list-polish-v122';
+  const STYLE_ID='club999-resource-list-polish-v123';
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
   const ITEMS=[
     'Быстрый переход к нужной сфере',
@@ -8,100 +8,102 @@
     'Возможность задать вопрос',
     'Возвращение к материалу, когда он снова актуален'
   ];
-  const ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7.2 12.4 3.1 3.2 6.6-7"/></svg>';
+  const ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8c.7 4.3 3.1 6.7 7.4 7.4-4.3.7-6.7 3.1-7.4 7.4-.7-4.3-3.1-6.7-7.4-7.4 4.3-.7 6.7-3.1 7.4-7.4Z"/><circle cx="18.7" cy="5.5" r="1"/></svg>';
 
   function addStyle(){
     if(document.getElementById(STYLE_ID)) return;
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
-      .club999-resource-box-v122{
+      .club999-resource-box-v123{
         box-sizing:border-box!important;
+        display:block!important;
         min-height:0!important;
         height:auto!important;
-        padding:14px 18px 14px!important;
+        padding:12px 16px 13px!important;
+        gap:0!important;
       }
-      .club999-resource-kicker-v122{
-        margin:0 0 8px!important;
+      .club999-resource-kicker-v123{
+        margin:0 0 7px!important;
         padding:0!important;
-        line-height:1.12!important;
+        line-height:1.1!important;
       }
-      .club999-resource-list-v122{
+      .club999-resource-list-v123{
         display:grid!important;
-        gap:6px!important;
+        grid-template-columns:1fr!important;
+        gap:5px!important;
+        min-height:0!important;
         margin:0!important;
         padding:0!important;
       }
-      .club999-resource-row-v122{
+      .club999-resource-row-v123{
         box-sizing:border-box!important;
         display:grid!important;
-        grid-template-columns:26px minmax(0,1fr)!important;
+        grid-template-columns:21px minmax(0,1fr)!important;
         align-items:center!important;
-        gap:8px!important;
-        min-height:38px!important;
+        gap:7px!important;
+        width:100%!important;
+        min-width:0!important;
+        min-height:34px!important;
         height:auto!important;
         margin:0!important;
-        padding:5px 10px!important;
-        border-radius:14px!important;
+        padding:5px 9px!important;
+        border-radius:13px!important;
       }
-      .club999-resource-row-v122 > *{
-        margin-top:0!important;
-        margin-bottom:0!important;
-      }
-      .club999-resource-row-v122 > *:not(.club999-resource-icon-v122):not(.club999-resource-copy-wrap-v122){
-        display:none!important;
-      }
-      .club999-resource-icon-v122{
-        width:24px!important;
-        height:24px!important;
+      .club999-resource-icon-v123{
+        width:19px!important;
+        height:19px!important;
         display:grid!important;
         place-items:center!important;
-        border-radius:50%!important;
-        border:1px solid rgba(245,209,103,.78)!important;
-        background:linear-gradient(145deg,rgba(17,83,87,.80),rgba(4,47,56,.88))!important;
-        box-shadow:0 0 8px rgba(239,198,76,.18),inset 0 1px 0 rgba(255,245,210,.12)!important;
+        align-self:center!important;
+        justify-self:center!important;
       }
-      .club999-resource-icon-v122 svg{
-        width:15px!important;
-        height:15px!important;
-        fill:none!important;
-        stroke:#ffe293!important;
-        stroke-width:2!important;
+      .club999-resource-icon-v123 svg{
+        width:18px!important;
+        height:18px!important;
+        fill:rgba(244,207,102,.14)!important;
+        stroke:#f5d36f!important;
+        stroke-width:1.45!important;
         stroke-linecap:round!important;
         stroke-linejoin:round!important;
-        filter:drop-shadow(0 0 2px rgba(246,204,89,.34));
+        filter:drop-shadow(0 0 4px rgba(241,198,72,.38));
       }
-      .club999-resource-copy-wrap-v122,
-      .club999-resource-copy-v122{
+      .club999-resource-copy-v123{
+        display:block!important;
         min-width:0!important;
+        width:100%!important;
+        max-width:none!important;
         margin:0!important;
         padding:0!important;
-      }
-      .club999-resource-copy-v122{
+        color:inherit!important;
         font-size:14px!important;
-        line-height:1.22!important;
+        line-height:1.2!important;
         font-weight:650!important;
+        white-space:normal!important;
+        word-break:normal!important;
+        overflow-wrap:normal!important;
+        text-align:left!important;
       }
-      .club999-resource-footer-v122{
-        margin:10px 0 0!important;
-        padding:10px 0 0!important;
-        line-height:1.28!important;
+      .club999-resource-footer-v123{
+        margin:9px 0 0!important;
+        padding:9px 0 0!important;
+        line-height:1.25!important;
       }
       @media(max-width:700px){
-        .club999-resource-box-v122{padding:13px 16px 13px!important}
-        .club999-resource-kicker-v122{margin-bottom:7px!important}
-        .club999-resource-list-v122{gap:5px!important}
-        .club999-resource-row-v122{
-          grid-template-columns:24px minmax(0,1fr)!important;
+        .club999-resource-box-v123{padding:11px 16px 12px!important}
+        .club999-resource-kicker-v123{margin-bottom:6px!important}
+        .club999-resource-list-v123{gap:4px!important}
+        .club999-resource-row-v123{
+          grid-template-columns:20px minmax(0,1fr)!important;
           gap:7px!important;
-          min-height:36px!important;
-          padding:4px 9px!important;
-          border-radius:13px!important;
+          min-height:32px!important;
+          padding:4px 8px!important;
+          border-radius:12px!important;
         }
-        .club999-resource-icon-v122{width:22px!important;height:22px!important}
-        .club999-resource-icon-v122 svg{width:14px!important;height:14px!important}
-        .club999-resource-copy-v122{font-size:13.5px!important;line-height:1.2!important}
-        .club999-resource-footer-v122{margin-top:9px!important;padding-top:9px!important;line-height:1.26!important}
+        .club999-resource-icon-v123{width:18px!important;height:18px!important}
+        .club999-resource-icon-v123 svg{width:17px!important;height:17px!important}
+        .club999-resource-copy-v123{font-size:13.5px!important;line-height:1.18!important}
+        .club999-resource-footer-v123{margin-top:8px!important;padding-top:8px!important;line-height:1.23!important}
       }
     `;
     document.head.appendChild(style);
@@ -148,36 +150,39 @@
       const textEl=exactElement(text);
       if(!textEl) return null;
       const row=outerSameText(textEl,box);
-      return {textEl,row};
+      return {text,row};
     });
     if(found.some(x=>!x?.row)) return false;
 
     addStyle();
-    box.classList.add('club999-resource-box-v122');
-    outerSameText(kicker,box)?.classList.add('club999-resource-kicker-v122');
+    box.classList.remove('club999-resource-box-v121','club999-resource-box-v122');
+    box.classList.add('club999-resource-box-v123');
+    const kick=outerSameText(kicker,box);
+    if(kick){
+      kick.classList.remove('club999-resource-kicker-v121','club999-resource-kicker-v122');
+      kick.classList.add('club999-resource-kicker-v123');
+    }
 
     const rows=found.map(x=>x.row);
     const list=findList(rows,box);
-    if(list) list.classList.add('club999-resource-list-v122');
+    if(list){
+      list.classList.remove('club999-resource-list-v121','club999-resource-list-v122');
+      list.classList.add('club999-resource-list-v123');
+    }
 
-    found.forEach(({textEl,row})=>{
-      row.classList.add('club999-resource-row-v122');
-      textEl.classList.add('club999-resource-copy-v122');
-
-      let copyWrap=textEl;
-      while(copyWrap.parentElement&&copyWrap.parentElement!==row){copyWrap=copyWrap.parentElement}
-      copyWrap.classList.add('club999-resource-copy-wrap-v122');
-
-      [...row.querySelectorAll('.club999-resource-icon-v121,.club999-resource-icon-v122')].forEach(el=>el.remove());
-      const icon=document.createElement('span');
-      icon.className='club999-resource-icon-v122';
-      icon.setAttribute('aria-hidden','true');
-      icon.innerHTML=ICON;
-      row.insertBefore(icon,copyWrap);
+    found.forEach(({text,row})=>{
+      row.className=[...row.classList].filter(c=>!/^club999-resource-(row|copy|icon|copy-wrap)-v12[12]$/.test(c)).join(' ');
+      row.classList.add('club999-resource-row-v123');
+      row.innerHTML=`<span class="club999-resource-icon-v123" aria-hidden="true">${ICON}</span><span class="club999-resource-copy-v123"></span>`;
+      row.querySelector('.club999-resource-copy-v123').textContent=text;
     });
 
     const footer=[...box.querySelectorAll('p,div,strong')].find(el=>norm(el.textContent)==='не нужно смотреть всё подряд. выбирайте то, что поможет вам сейчас.');
-    if(footer) outerSameText(footer,box)?.classList.add('club999-resource-footer-v122');
+    if(footer){
+      const foot=outerSameText(footer,box);
+      foot?.classList.remove('club999-resource-footer-v121','club999-resource-footer-v122');
+      foot?.classList.add('club999-resource-footer-v123');
+    }
     return true;
   }
 
