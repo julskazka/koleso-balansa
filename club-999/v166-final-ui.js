@@ -1,14 +1,13 @@
 (()=>{
-  const STYLE_ID='club999-v167-style';
-  const CTA_CLASS='club999-v167-cta';
-  const COPY_CLASS='club999-v167-copy';
-  const SHINE_CLASS='club999-v167-shine';
+  const STYLE_ID='club999-v168-style';
+  const CTA_CLASS='club999-v168-cta';
+  const COPY_CLASS='club999-v168-copy';
+  const SHINE_CLASS='club999-v168-shine';
   const LINES=['Тем, кому нужен','не идеальный план, а','следующая точка опоры'];
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 
   function injectStyle(){
-    let old=document.getElementById(STYLE_ID);
-    if(old) return;
+    if(document.getElementById(STYLE_ID)) return;
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
@@ -46,37 +45,39 @@
         position:relative!important;
         isolation:isolate!important;
         overflow:hidden!important;
-        display:flex!important;
-        align-items:center!important;
-        justify-content:center!important;
         box-sizing:border-box!important;
         text-align:center!important;
         text-decoration:none!important;
         appearance:none!important;
         -webkit-appearance:none!important;
       }
+      .${CTA_CLASS}::after{display:none!important}
       .${CTA_CLASS}>.${COPY_CLASS}{
-        position:relative!important;
-        z-index:20!important;
-        display:block!important;
-        flex:0 1 auto!important;
-        width:auto!important;
-        max-width:100%!important;
+        position:absolute!important;
+        z-index:30!important;
+        inset:0!important;
+        display:grid!important;
+        place-items:center!important;
+        width:100%!important;
+        height:100%!important;
+        min-width:0!important;
+        max-width:none!important;
         box-sizing:border-box!important;
         margin:0!important;
-        padding:0!important;
-        left:auto!important;
-        right:auto!important;
+        padding:0 14px!important;
         transform:none!important;
         translate:none!important;
         text-align:center!important;
+        text-indent:0!important;
+        white-space:normal!important;
         line-height:inherit!important;
         color:inherit!important;
         -webkit-text-fill-color:currentColor!important;
+        pointer-events:none!important;
       }
       .${SHINE_CLASS}{
         position:absolute!important;
-        z-index:10!important;
+        z-index:20!important;
         pointer-events:none!important;
         top:-55%!important;
         left:-34%!important;
@@ -91,9 +92,9 @@
         filter:blur(.15px)!important;
         transform:rotate(18deg)!important;
         opacity:0!important;
-        animation:club999V167Shine 2.6s ease-in-out infinite!important;
+        animation:club999V168Shine 2.6s ease-in-out infinite!important;
       }
-      @keyframes club999V167Shine{
+      @keyframes club999V168Shine{
         0%,32%{left:-34%;opacity:0}
         39%{opacity:1}
         68%{left:116%;opacity:1}
@@ -147,7 +148,7 @@
         t.includes('вступить в «центр ресурса»')||
         t.includes('вступить в "центр ресурса"');
     });
-    return {first,buttons:[...new Set([...found,...byText])].filter(el=>el && el!==first && (el.matches('button,a')||el.getAttribute('role')==='button'))};
+    return {first,buttons:[...new Set([first,...found,...byText])].filter(el=>el && (el.matches('button,a')||el.getAttribute('role')==='button'))};
   }
 
   const props=[
@@ -170,11 +171,15 @@
   }
 
   function labelOf(button){
-    if(button.dataset.club999V167Label) return button.dataset.club999V167Label;
+    if(button.dataset.club999V168Label) return button.dataset.club999V168Label;
+    if(button.dataset.club999V167Label){
+      button.dataset.club999V168Label=button.dataset.club999V167Label;
+      return button.dataset.club999V168Label;
+    }
     const clone=button.cloneNode(true);
     [...clone.querySelectorAll('[class*="shine"],[class*="arrow"],b,i,svg')].forEach(el=>el.remove());
     const label=(clone.textContent||'').replace(/[→➜➝➤›»⟶➡]+/g,' ').replace(/\s+/g,' ').trim();
-    if(label) button.dataset.club999V167Label=label;
+    if(label) button.dataset.club999V168Label=label;
     return label;
   }
 
@@ -224,21 +229,23 @@
   function fixButtons(){
     const {first,buttons}=collectButtons();
     if(!first) return false;
-    const ref=first.getBoundingClientRect();
-    const refWidth=ref.width;
+    const refWidth=first.getBoundingClientRect().width;
     if(refWidth<=0) return false;
 
     buttons.forEach(button=>{
       const label=labelOf(button);
       if(!label) return;
 
-      button.classList.remove('club999-v166-cta','club999-unified-cta-v163','club999-unified-cta-v162');
+      button.classList.remove('club999-v167-cta','club999-v166-cta','club999-unified-cta-v163','club999-unified-cta-v162');
       button.classList.add(CTA_CLASS);
-      copyLook(first,button);
-      placeLikeFirst(button,refWidth);
+
+      if(button!==first){
+        copyLook(first,button);
+        placeLikeFirst(button,refWidth);
+      }
 
       const copy=button.querySelector(':scope > .'+COPY_CLASS);
-      if(!copy || copy.textContent!==label) rebuild(button,label);
+      if(!copy || copy.textContent!==label || button.children.length!==2) rebuild(button,label);
     });
 
     const action=document.getElementById('club999-audience-question-action-v152');
