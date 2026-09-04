@@ -1,7 +1,7 @@
 (()=>{
-  const STYLE_ID='club999-unified-cta-style-v156';
-  const CLASS='club999-unified-cta-v155';
-  const SHINE_CLASS='club999-unified-shine-v156';
+  const STYLE_ID='club999-unified-cta-style-v161';
+  const CLASS='club999-unified-cta-v161';
+  const SHINE_CLASS='club999-unified-shine-v161';
 
   const COPY_PROPS=[
     'background','backgroundColor','backgroundImage','backgroundPosition','backgroundSize',
@@ -14,9 +14,11 @@
   ];
 
   const cssName=name=>name.replace(/[A-Z]/g,m=>'-'+m.toLowerCase());
+  const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 
   function injectStyle(){
-    if(document.getElementById(STYLE_ID)) return;
+    let old=document.getElementById(STYLE_ID);
+    if(old) return;
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
@@ -27,15 +29,13 @@
         display:flex!important;
         align-items:center!important;
         justify-content:center!important;
-        width:100%!important;
-        max-width:100%!important;
         box-sizing:border-box!important;
-        gap:0!important;
         appearance:none!important;
         -webkit-appearance:none!important;
         text-decoration:none!important;
         text-align:center!important;
         cursor:pointer!important;
+        gap:0!important;
       }
       .${CLASS}>b,
       .${CLASS}>i,
@@ -44,15 +44,20 @@
       .${CLASS} svg[data-arrow]{display:none!important}
       .${CLASS}::after{display:none!important}
       .${CLASS}>span:not(.${SHINE_CLASS}),
-      .${CLASS}>strong{position:relative!important;z-index:3!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}
+      .${CLASS}>strong{
+        position:relative!important;
+        z-index:21!important;
+        color:inherit!important;
+        -webkit-text-fill-color:currentColor!important;
+      }
       .${SHINE_CLASS}{
         position:absolute!important;
-        z-index:2!important;
+        z-index:20!important;
         pointer-events:none!important;
-        top:-55%!important;
-        left:-36%!important;
-        width:24%!important;
-        height:210%!important;
+        top:-48%!important;
+        left:-38%!important;
+        width:29%!important;
+        height:200%!important;
         display:block!important;
         border:0!important;
         border-radius:0!important;
@@ -61,47 +66,36 @@
         transform:rotate(18deg)!important;
         background:linear-gradient(90deg,
           transparent 0%,
-          rgba(255,255,255,.08) 18%,
-          rgba(255,255,246,.62) 40%,
-          rgba(255,255,255,.98) 50%,
-          rgba(255,255,246,.62) 60%,
-          rgba(255,255,255,.08) 82%,
+          rgba(255,255,255,.10) 16%,
+          rgba(255,255,246,.66) 38%,
+          rgba(255,255,255,1) 50%,
+          rgba(255,255,246,.66) 62%,
+          rgba(255,255,255,.10) 84%,
           transparent 100%)!important;
-        box-shadow:0 0 12px rgba(255,255,238,.72)!important;
-        filter:blur(.25px)!important;
+        box-shadow:0 0 14px rgba(255,255,240,.88)!important;
+        filter:blur(.15px)!important;
+        mix-blend-mode:screen!important;
         opacity:0!important;
         will-change:left,opacity!important;
-        animation:club999UnifiedShine156 2.7s ease-in-out infinite!important;
+        animation:club999UnifiedShine161 2.45s ease-in-out infinite!important;
       }
-      @keyframes club999UnifiedShine156{
-        0%,38%{left:-36%;opacity:0}
-        43%{opacity:.98}
-        68%{left:116%;opacity:.98}
-        74%,100%{left:116%;opacity:0}
+      @keyframes club999UnifiedShine161{
+        0%,30%{left:-38%;opacity:0}
+        35%{opacity:1}
+        66%{left:118%;opacity:1}
+        72%,100%{left:118%;opacity:0}
       }
       @media(max-width:700px){
         .${CLASS}{min-height:48px!important}
-        .${SHINE_CLASS}{width:27%!important}
+        .${SHINE_CLASS}{width:31%!important}
       }
     `;
     document.head.appendChild(style);
   }
 
-  function copyFirstButtonStyle(source,target,fontSize){
-    const cs=getComputedStyle(source);
-    COPY_PROPS.forEach(prop=>{
-      const value=cs[prop];
-      if(value) target.style.setProperty(cssName(prop),value,'important');
-    });
-    target.style.setProperty('font-size',fontSize+'px','important');
-    target.style.setProperty('width','100%','important');
-    target.style.setProperty('max-width','100%','important');
-    target.style.setProperty('box-sizing','border-box','important');
-    target.style.setProperty('transform','none','important');
-  }
-
   function cleanArrow(button){
     [...button.querySelectorAll('b,i,span,strong')].forEach(el=>{
+      if(el.classList.contains(SHINE_CLASS)) return;
       const t=(el.textContent||'').replace(/\s+/g,' ').trim();
       if(/^(→|➜|➝|➤|›|»|⟶|➡)$/.test(t)) el.style.setProperty('display','none','important');
     });
@@ -110,11 +104,77 @@
   function ensureShine(button){
     let shine=button.querySelector(':scope > .'+SHINE_CLASS);
     if(!shine){
+      [...button.querySelectorAll(':scope > [class*="club999-unified-shine-"]')].forEach(el=>el.remove());
       shine=document.createElement('span');
       shine.className=SHINE_CLASS;
       shine.setAttribute('aria-hidden','true');
       button.insertBefore(shine,button.firstChild);
     }
+  }
+
+  function copyLook(source,target,fontSize){
+    const cs=getComputedStyle(source);
+    COPY_PROPS.forEach(prop=>{
+      const value=cs[prop];
+      if(value) target.style.setProperty(cssName(prop),value,'important');
+    });
+    target.style.setProperty('font-size',fontSize+'px','important');
+    target.style.setProperty('box-sizing','border-box','important');
+    target.style.setProperty('transform','none','important');
+    target.style.setProperty('right','auto','important');
+  }
+
+  function collectButtons(first){
+    const selectors=[
+      '[data-purchase]',
+      '.button--primary',
+      '.section-action .button',
+      '.club999-question-button-v152'
+    ];
+    const nodes=[first,...selectors.flatMap(sel=>[...document.querySelectorAll(sel)])];
+
+    const textButtons=[...document.querySelectorAll('button,a,[role="button"]')].filter(el=>{
+      const t=norm(el.textContent);
+      return t.includes('посмотреть, что есть внутри') ||
+        t.includes('вступить в клуб за 999') ||
+        t.includes('найти свою точку опоры') ||
+        t.includes('вступить в клуб и задать вопрос') ||
+        t.includes('вступить в «центр ресурса»') ||
+        t.includes('вступить в "центр ресурса"');
+    });
+    return [...new Set([...nodes,...textButtons])].filter(el=>el && (el.matches('button,a') || el.getAttribute('role')==='button'));
+  }
+
+  function alignMobile(button,refLeft,refWidth){
+    button.style.setProperty('width',refWidth+'px','important');
+    button.style.setProperty('max-width',refWidth+'px','important');
+    button.style.setProperty('margin-left','0px','important');
+    button.style.setProperty('margin-right','0px','important');
+    button.style.setProperty('left','auto','important');
+    button.style.setProperty('right','auto','important');
+    button.style.setProperty('transform','none','important');
+
+    const correct=()=>{
+      const r=button.getBoundingClientRect();
+      const current=parseFloat(getComputedStyle(button).marginLeft)||0;
+      const delta=refLeft-r.left;
+      if(Math.abs(delta)>.25){
+        button.style.setProperty('margin-left',(current+delta)+'px','important');
+      }
+    };
+    correct();
+    requestAnimationFrame(correct);
+    setTimeout(correct,60);
+  }
+
+  function alignDesktop(button,refWidth){
+    button.style.setProperty('width','100%','important');
+    button.style.setProperty('max-width',refWidth+'px','important');
+    button.style.setProperty('margin-left','auto','important');
+    button.style.setProperty('margin-right','auto','important');
+    button.style.setProperty('left','auto','important');
+    button.style.setProperty('right','auto','important');
+    button.style.setProperty('transform','none','important');
   }
 
   function apply(){
@@ -123,39 +183,49 @@
     injectStyle();
 
     if(!first.dataset.club999UnifiedBaseFontSize){
-      const base=parseFloat(getComputedStyle(first).fontSize)||15;
-      first.dataset.club999UnifiedBaseFontSize=String(base);
+      first.dataset.club999UnifiedBaseFontSize=String(parseFloat(getComputedStyle(first).fontSize)||15);
     }
     const baseFont=parseFloat(first.dataset.club999UnifiedBaseFontSize)||15;
     const unifiedFont=Math.min(baseFont+1.4,19);
 
-    const nodes=[
-      first,
-      ...document.querySelectorAll('[data-purchase]'),
-      ...document.querySelectorAll('.button--primary'),
-      ...document.querySelectorAll('.section-action .button'),
-      ...document.querySelectorAll('.club999-question-button-v152')
-    ];
-    const buttons=[...new Set(nodes)].filter(el=>el && (el.matches('button,a') || el.getAttribute('role')==='button'));
-
-    buttons.forEach(button=>{
-      button.classList.add(CLASS);
-      copyFirstButtonStyle(first,button,unifiedFont);
-      cleanArrow(button);
-      ensureShine(button);
-    });
-
+    first.style.setProperty('font-size',unifiedFont+'px','important');
+    cleanArrow(first);
     const heroArrow=first.querySelector('b');
     if(heroArrow) heroArrow.style.setProperty('display','none','important');
+
+    const ref=first.getBoundingClientRect();
+    const refLeft=ref.left;
+    const refWidth=ref.width;
+    const buttons=collectButtons(first);
+
+    buttons.forEach(button=>{
+      if(button===first) return;
+      button.classList.add(CLASS);
+      copyLook(first,button,unifiedFont);
+      cleanArrow(button);
+      ensureShine(button);
+      if(innerWidth<=700) alignMobile(button,refLeft,refWidth);
+      else alignDesktop(button,refWidth);
+    });
+
     return buttons.length>0;
+  }
+
+  function burst(){
+    apply();
+    requestAnimationFrame(()=>requestAnimationFrame(apply));
+    [180,450,900,1300,1800,2400,3200].forEach(ms=>setTimeout(apply,ms));
+    if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{apply();setTimeout(apply,120);});
   }
 
   let tries=0;
   const timer=setInterval(()=>{
     tries++;
-    if(apply()||tries>100) clearInterval(timer);
+    apply();
+    if(tries>=35) clearInterval(timer);
   },100);
-  requestAnimationFrame(()=>requestAnimationFrame(apply));
-  setTimeout(apply,400);
-  setTimeout(apply,900);
+
+  addEventListener('resize',()=>setTimeout(burst,80),{passive:true});
+  if(window.visualViewport) visualViewport.addEventListener('resize',()=>setTimeout(burst,80),{passive:true});
+  burst();
 })();
