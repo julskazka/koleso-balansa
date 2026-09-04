@@ -1,13 +1,14 @@
 (()=>{
-  const STYLE_ID='club999-v166-style';
-  const CTA_CLASS='club999-v166-cta';
-  const COPY_CLASS='club999-v166-copy';
-  const SHINE_CLASS='club999-v166-shine';
+  const STYLE_ID='club999-v167-style';
+  const CTA_CLASS='club999-v167-cta';
+  const COPY_CLASS='club999-v167-copy';
+  const SHINE_CLASS='club999-v167-shine';
   const LINES=['Тем, кому нужен','не идеальный план, а','следующая точка опоры'];
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 
   function injectStyle(){
-    if(document.getElementById(STYLE_ID)) return;
+    let old=document.getElementById(STYLE_ID);
+    if(old) return;
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
@@ -48,16 +49,20 @@
         display:flex!important;
         align-items:center!important;
         justify-content:center!important;
-        text-align:center!important;
         box-sizing:border-box!important;
+        text-align:center!important;
+        text-decoration:none!important;
+        appearance:none!important;
+        -webkit-appearance:none!important;
       }
       .${CTA_CLASS}>.${COPY_CLASS}{
         position:relative!important;
         z-index:20!important;
         display:block!important;
-        flex:1 1 auto!important;
-        width:100%!important;
+        flex:0 1 auto!important;
+        width:auto!important;
         max-width:100%!important;
+        box-sizing:border-box!important;
         margin:0!important;
         padding:0!important;
         left:auto!important;
@@ -65,6 +70,7 @@
         transform:none!important;
         translate:none!important;
         text-align:center!important;
+        line-height:inherit!important;
         color:inherit!important;
         -webkit-text-fill-color:currentColor!important;
       }
@@ -74,23 +80,24 @@
         pointer-events:none!important;
         top:-55%!important;
         left:-34%!important;
-        width:24%!important;
+        width:26%!important;
         height:210%!important;
         margin:0!important;
         padding:0!important;
         border:0!important;
-        background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.08) 18%,rgba(255,255,246,.62) 40%,rgba(255,255,255,.98) 50%,rgba(255,255,246,.62) 60%,rgba(255,255,255,.08) 82%,transparent 100%)!important;
-        box-shadow:0 0 12px rgba(255,255,238,.72)!important;
-        filter:blur(.2px)!important;
+        border-radius:0!important;
+        background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.10) 16%,rgba(255,255,246,.70) 39%,rgba(255,255,255,1) 50%,rgba(255,255,246,.70) 61%,rgba(255,255,255,.10) 84%,transparent 100%)!important;
+        box-shadow:0 0 13px rgba(255,255,238,.82)!important;
+        filter:blur(.15px)!important;
         transform:rotate(18deg)!important;
         opacity:0!important;
-        animation:club999V166Shine 2.7s ease-in-out infinite!important;
+        animation:club999V167Shine 2.6s ease-in-out infinite!important;
       }
-      @keyframes club999V166Shine{
-        0%,34%{left:-34%;opacity:0}
-        40%{opacity:.98}
-        68%{left:116%;opacity:.98}
-        75%,100%{left:116%;opacity:0}
+      @keyframes club999V167Shine{
+        0%,32%{left:-34%;opacity:0}
+        39%{opacity:1}
+        68%{left:116%;opacity:1}
+        76%,100%{left:116%;opacity:0}
       }
     `;
     document.head.appendChild(style);
@@ -109,27 +116,16 @@
     if(!section) return false;
     const heading=section.querySelector('h2');
     if(!heading) return false;
-
     heading.classList.add('club999-v166-title');
     heading.dataset.v75Title='Тем, кому нужен не идеальный план, а следующая точка опоры';
-    heading.replaceChildren(...LINES.map(text=>{
-      const span=document.createElement('span');
-      span.className='club999-v166-title-line';
-      span.textContent=text;
-      return span;
-    }));
-
-    if((window.visualViewport?.width||document.documentElement.clientWidth||innerWidth)<=700){
-      heading.style.removeProperty('font-size');
-      const lines=[...heading.querySelectorAll(':scope > .club999-v166-title-line')];
-      let size=parseFloat(getComputedStyle(heading).fontSize)||30;
-      const min=24;
-      const available=Math.max(240,heading.clientWidth-4);
-      const overflow=()=>lines.some(line=>line.scrollWidth>available+.5);
-      while(size>min&&overflow()){
-        size-=.5;
-        heading.style.setProperty('font-size',size+'px','important');
-      }
+    const current=[...heading.querySelectorAll(':scope > .club999-v166-title-line')].map(el=>el.textContent);
+    if(current.length!==3 || current.some((text,i)=>text!==LINES[i])){
+      heading.replaceChildren(...LINES.map(text=>{
+        const span=document.createElement('span');
+        span.className='club999-v166-title-line';
+        span.textContent=text;
+        return span;
+      }));
     }
     return true;
   }
@@ -142,10 +138,27 @@
     const first=firstButton();
     const selectors=['[data-purchase]','.button--primary','.section-action .button','.club999-question-button-v152'];
     const found=selectors.flatMap(sel=>[...document.querySelectorAll(sel)]);
-    return {first,buttons:[...new Set(found)].filter(el=>el && el!==first && (el.matches('button,a')||el.getAttribute('role')==='button'))};
+    const byText=[...document.querySelectorAll('button,a,[role="button"]')].filter(el=>{
+      const t=norm(el.textContent);
+      return t.includes('посмотреть, что есть внутри')||
+        t.includes('вступить в клуб за 999')||
+        t.includes('найти свою точку опоры')||
+        t.includes('вступить в клуб и задать вопрос')||
+        t.includes('вступить в «центр ресурса»')||
+        t.includes('вступить в "центр ресурса"');
+    });
+    return {first,buttons:[...new Set([...found,...byText])].filter(el=>el && el!==first && (el.matches('button,a')||el.getAttribute('role')==='button'))};
   }
 
-  const props=['background','backgroundColor','backgroundImage','backgroundPosition','backgroundSize','borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','borderTopStyle','borderRightStyle','borderBottomStyle','borderLeftStyle','borderTopColor','borderRightColor','borderBottomColor','borderLeftColor','borderRadius','boxShadow','color','fontFamily','fontWeight','fontSize','lineHeight','letterSpacing','textShadow','textTransform','minHeight','paddingTop','paddingRight','paddingBottom','paddingLeft'];
+  const props=[
+    'background','backgroundColor','backgroundImage','backgroundPosition','backgroundSize',
+    'borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth',
+    'borderTopStyle','borderRightStyle','borderBottomStyle','borderLeftStyle',
+    'borderTopColor','borderRightColor','borderBottomColor','borderLeftColor',
+    'borderRadius','boxShadow','color','fontFamily','fontWeight','fontSize','lineHeight',
+    'letterSpacing','textShadow','textTransform','minHeight',
+    'paddingTop','paddingRight','paddingBottom','paddingLeft'
+  ];
   const cssName=name=>name.replace(/[A-Z]/g,m=>'-'+m.toLowerCase());
 
   function copyLook(source,target){
@@ -157,9 +170,12 @@
   }
 
   function labelOf(button){
+    if(button.dataset.club999V167Label) return button.dataset.club999V167Label;
     const clone=button.cloneNode(true);
     [...clone.querySelectorAll('[class*="shine"],[class*="arrow"],b,i,svg')].forEach(el=>el.remove());
-    return (clone.textContent||'').replace(/[→➜➝➤›»⟶➡]+/g,' ').replace(/\s+/g,' ').trim();
+    const label=(clone.textContent||'').replace(/[→➜➝➤›»⟶➡]+/g,' ').replace(/\s+/g,' ').trim();
+    if(label) button.dataset.club999V167Label=label;
+    return label;
   }
 
   function rebuild(button,label){
@@ -172,37 +188,70 @@
     button.replaceChildren(shine,copy);
   }
 
+  function parentContentLeft(parent){
+    const r=parent.getBoundingClientRect();
+    const cs=getComputedStyle(parent);
+    const border=parseFloat(cs.borderLeftWidth)||0;
+    const padding=parseFloat(cs.paddingLeft)||0;
+    return r.left+border+padding;
+  }
+
+  function placeLikeFirst(button,refWidth){
+    const vw=Math.round(window.visualViewport?.width||document.documentElement.clientWidth||innerWidth);
+    const width=Math.min(refWidth,Math.max(260,vw-32));
+    const targetLeft=(vw-width)/2;
+
+    button.style.setProperty('width',width+'px','important');
+    button.style.setProperty('max-width',width+'px','important');
+    button.style.setProperty('box-sizing','border-box','important');
+    button.style.setProperty('left','auto','important');
+    button.style.setProperty('right','auto','important');
+    button.style.setProperty('transform','none','important');
+    button.style.setProperty('translate','none','important');
+    button.style.setProperty('margin-right','0','important');
+
+    const parent=button.parentElement;
+    if(parent){
+      parent.style.setProperty('overflow-x','visible','important');
+      const ml=targetLeft-parentContentLeft(parent);
+      button.style.setProperty('margin-left',ml+'px','important');
+    }else{
+      button.style.setProperty('margin-left','auto','important');
+      button.style.setProperty('margin-right','auto','important');
+    }
+  }
+
   function fixButtons(){
     const {first,buttons}=collectButtons();
     if(!first) return false;
-    const refWidth=first.getBoundingClientRect().width;
+    const ref=first.getBoundingClientRect();
+    const refWidth=ref.width;
+    if(refWidth<=0) return false;
 
     buttons.forEach(button=>{
       const label=labelOf(button);
       if(!label) return;
+
+      button.classList.remove('club999-v166-cta','club999-unified-cta-v163','club999-unified-cta-v162');
       button.classList.add(CTA_CLASS);
       copyLook(first,button);
-      button.style.setProperty('left','auto','important');
-      button.style.setProperty('right','auto','important');
-      button.style.setProperty('transform','none','important');
-      button.style.setProperty('margin-left','auto','important');
-      button.style.setProperty('margin-right','auto','important');
-      if(refWidth>0){
-        const parentWidth=button.parentElement?.getBoundingClientRect().width||refWidth;
-        const width=Math.min(refWidth,parentWidth);
-        button.style.setProperty('width',width+'px','important');
-        button.style.setProperty('max-width','100%','important');
-      }
-      rebuild(button,label);
+      placeLikeFirst(button,refWidth);
+
+      const copy=button.querySelector(':scope > .'+COPY_CLASS);
+      if(!copy || copy.textContent!==label) rebuild(button,label);
     });
 
     const action=document.getElementById('club999-audience-question-action-v152');
     if(action){
-      action.style.setProperty('margin-left','auto','important');
-      action.style.setProperty('margin-right','auto','important');
+      action.style.setProperty('width','100%','important');
+      action.style.setProperty('max-width','none','important');
+      action.style.setProperty('margin-left','0','important');
+      action.style.setProperty('margin-right','0','important');
       action.style.setProperty('left','auto','important');
       action.style.setProperty('right','auto','important');
       action.style.setProperty('transform','none','important');
+      action.style.setProperty('translate','none','important');
+      action.style.setProperty('overflow-x','visible','important');
     }
     return buttons.length>0;
   }
