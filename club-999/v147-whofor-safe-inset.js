@@ -1,12 +1,18 @@
 (()=>{
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
   const TITLE='тем, кому нужен не идеальный план, а следующая точка опоры';
-  const TITLE_LINES=['Тем, кому нужен','не идеальный план,','а следующая точка','опоры'];
+  const TITLE_LINES=['Тем, кому нужен','не идеальный план, а','следующая точка','опоры'];
+
+  function viewportWidth(){
+    return document.documentElement.clientWidth || innerWidth;
+  }
 
   function centerInViewport(el,widthPx){
     if(!el) return;
-    el.style.setProperty('width',`${widthPx}px`,'important');
-    el.style.setProperty('max-width',`${widthPx}px`,'important');
+    const vw=viewportWidth();
+    const safeWidth=Math.min(widthPx,Math.max(260,vw-40));
+    el.style.setProperty('width',`${safeWidth}px`,'important');
+    el.style.setProperty('max-width',`${safeWidth}px`,'important');
     el.style.setProperty('box-sizing','border-box','important');
     el.style.setProperty('margin-left','0','important');
     el.style.setProperty('margin-right','0','important');
@@ -14,7 +20,7 @@
     el.style.setProperty('right','auto','important');
     el.style.setProperty('transform','none','important');
     const r=el.getBoundingClientRect();
-    const targetLeft=Math.max(0,(innerWidth-r.width)/2);
+    const targetLeft=Math.max(20,(vw-safeWidth)/2);
     const dx=targetLeft-r.left;
     el.style.setProperty('transform',`translateX(${dx}px)`,'important');
   }
@@ -38,6 +44,9 @@
       return original===TITLE || original.includes('тем, кому нужен не идеальный план');
     });
 
+    const vw=viewportWidth();
+    const contentWidth=Math.max(260,vw-40);
+
     if(heading){
       heading.dataset.v75Title='Тем, кому нужен не идеальный план, а следующая точка опоры';
       heading.innerHTML=TITLE_LINES.map(line=>`<span class="content-title-line-v73">${line}</span>`).join('');
@@ -52,22 +61,21 @@
       heading.style.setProperty('padding-left','0','important');
       heading.style.setProperty('padding-right','0','important');
       heading.style.setProperty('overflow','visible','important');
-      centerInViewport(heading,Math.max(280,innerWidth-40));
+      centerInViewport(heading,contentWidth);
     }
 
     const rows=[...section.querySelectorAll('.club999-whofor-row-v136')];
-    const rowWidth=Math.max(280,innerWidth-36);
     rows.forEach(row=>{
       row.style.setProperty('padding-left','10px','important');
       row.style.setProperty('padding-right','14px','important');
-      centerInViewport(row,rowWidth);
+      centerInViewport(row,contentWidth);
     });
 
     const footer=section.querySelector('.club999-whofor-footer-v136');
     if(footer){
       footer.style.setProperty('padding-left','18px','important');
       footer.style.setProperty('padding-right','18px','important');
-      centerInViewport(footer,rowWidth);
+      centerInViewport(footer,contentWidth);
     }
 
     return rows.length>0;
