@@ -1,6 +1,5 @@
 (()=>{
   const TEXT='Тем, кому нужен не идеальный план, а следующая точка опоры';
-  const LINES=['Тем, кому нужен','не идеальный план, а','следующая точка опоры'];
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
   const vw=()=>Math.round(window.visualViewport?.width||document.documentElement.clientWidth||innerWidth);
 
@@ -22,31 +21,29 @@
     if(!heading) return false;
 
     heading.dataset.v75Title=TEXT;
-    heading.innerHTML=LINES.map(line=>`<span class="content-title-line-v73">${line}</span>`).join('');
-    heading.style.setProperty('width','calc(100vw - 40px)','important');
-    heading.style.setProperty('max-width','calc(100vw - 40px)','important');
+    heading.innerHTML='<span class="club999-whofor-title-line-v163">Тем, кому нужен</span><br><span class="club999-whofor-title-line-v163">не идеальный план, а</span><br><span class="club999-whofor-title-line-v163">следующая точка опоры</span>';
+    heading.style.setProperty('width','calc(100% - 32px)','important');
+    heading.style.setProperty('max-width','100%','important');
     heading.style.setProperty('margin-left','auto','important');
     heading.style.setProperty('margin-right','auto','important');
     heading.style.setProperty('padding','0','important');
-    heading.style.setProperty('transform','none','important');
     heading.style.setProperty('left','auto','important');
     heading.style.setProperty('right','auto','important');
+    heading.style.setProperty('transform','none','important');
     heading.style.setProperty('text-align','center','important');
     heading.style.setProperty('overflow','visible','important');
 
-    const lines=[...heading.querySelectorAll(':scope > .content-title-line-v73')];
+    const lines=[...heading.querySelectorAll('.club999-whofor-title-line-v163')];
     lines.forEach(line=>{
-      line.style.setProperty('display','block','important');
-      line.style.setProperty('width','max-content','important');
-      line.style.setProperty('max-width','100%','important');
-      line.style.setProperty('margin','0 auto','important');
+      line.style.setProperty('display','inline-block','important');
       line.style.setProperty('white-space','nowrap','important');
+      line.style.setProperty('max-width','100%','important');
     });
 
     heading.style.removeProperty('font-size');
     let size=parseFloat(getComputedStyle(heading).fontSize)||30;
     const min=24;
-    const available=Math.max(240,vw()-44);
+    const available=Math.max(240,heading.clientWidth-6);
     const over=()=>lines.some(line=>line.scrollWidth>available+.5);
     while(size>min&&over()){
       size-=.5;
@@ -58,10 +55,10 @@
   function burst(){
     apply();
     requestAnimationFrame(()=>requestAnimationFrame(apply));
-    [100,250,500,900,1500,2400,3600].forEach(ms=>setTimeout(apply,ms));
+    [120,320,700,1200,2200].forEach(ms=>setTimeout(apply,ms));
   }
   let n=0;
-  const timer=setInterval(()=>{n++;apply();if(n>=45)clearInterval(timer)},100);
+  const timer=setInterval(()=>{n++;apply();if(n>=35)clearInterval(timer)},100);
   addEventListener('resize',()=>setTimeout(burst,80),{passive:true});
   if(window.visualViewport)visualViewport.addEventListener('resize',()=>setTimeout(burst,80),{passive:true});
   burst();
