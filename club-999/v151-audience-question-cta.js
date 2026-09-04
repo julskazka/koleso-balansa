@@ -149,19 +149,27 @@
     return host;
   }
 
-  function centerToViewport(el,maxWidth=420,side=18){
-    if(!el || innerWidth>700) return;
-    const width=Math.min(Math.max(260,innerWidth-side*2),maxWidth);
+  function visibleWidth(){
+    const visual=Math.round(window.visualViewport?.width||0);
+    const client=document.documentElement.clientWidth||0;
+    return visual>0?Math.min(visual,client||visual):(client||innerWidth);
+  }
+
+  function centerToViewport(el,maxWidth=420,side=20){
+    if(!el || visibleWidth()>700) return;
+    const vw=visibleWidth();
+    const width=Math.min(Math.max(260,vw-side*2),maxWidth);
     el.style.setProperty('width',width+'px','important');
-    el.style.setProperty('max-width','none','important');
+    el.style.setProperty('max-width',width+'px','important');
     el.style.setProperty('margin-left','0','important');
     el.style.setProperty('margin-right','0','important');
     el.style.setProperty('transform','none','important');
     el.style.setProperty('left','auto','important');
     el.style.setProperty('right','auto','important');
     requestAnimationFrame(()=>{
+      el.style.setProperty('transform','none','important');
       const rect=el.getBoundingClientRect();
-      const desired=(innerWidth-width)/2;
+      const desired=(vw-width)/2;
       const dx=desired-rect.left;
       el.style.setProperty('transform',`translateX(${dx}px)`,'important');
     });
@@ -201,9 +209,9 @@
       footer.insertAdjacentElement('afterend',action);
     }
 
-    if(innerWidth<=700){
-      centerToViewport(footer,420,18);
-      centerToViewport(action,420,18);
+    if(visibleWidth()<=700){
+      centerToViewport(footer,420,20);
+      centerToViewport(action,420,20);
     }else{
       footer.style.setProperty('max-width','620px','important');
       footer.style.setProperty('margin-left','auto','important');
