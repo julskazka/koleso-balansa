@@ -1,7 +1,7 @@
 (()=>{
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
   const TITLE='тем, кому нужен не идеальный план, а следующая точка опоры';
-  const TITLE_LINES=['Тем, кому нужен','не идеальный план, а','следующая точка','опоры'];
+  const TITLE_LINES=['Тем, кому нужен','не идеальный план, а','следующая точка опоры'];
 
   function viewportWidth(){
     return document.documentElement.clientWidth || innerWidth;
@@ -23,6 +23,22 @@
     const targetLeft=Math.max(20,(vw-safeWidth)/2);
     const dx=targetLeft-r.left;
     el.style.setProperty('transform',`translateX(${dx}px)`,'important');
+  }
+
+  function fitHeading(heading){
+    if(!heading) return;
+    const lines=[...heading.querySelectorAll('.content-title-line-v73')];
+    if(!lines.length) return;
+    heading.style.removeProperty('font-size');
+    const base=parseFloat(getComputedStyle(heading).fontSize)||30;
+    const min=24;
+    const available=Math.max(240,heading.clientWidth-8);
+    let size=base;
+    const over=()=>lines.some(line=>line.scrollWidth>available+.5);
+    while(size>min&&over()){
+      size-=.5;
+      heading.style.setProperty('font-size',`${size}px`,'important');
+    }
   }
 
   function apply(){
@@ -52,16 +68,19 @@
       heading.innerHTML=TITLE_LINES.map(line=>`<span class="content-title-line-v73">${line}</span>`).join('');
       heading.querySelectorAll('.content-title-line-v73').forEach(line=>{
         line.style.setProperty('display','block','important');
-        line.style.setProperty('width','auto','important');
+        line.style.setProperty('width','max-content','important');
         line.style.setProperty('max-width','100%','important');
         line.style.setProperty('margin-left','auto','important');
         line.style.setProperty('margin-right','auto','important');
         line.style.setProperty('white-space','nowrap','important');
+        line.style.setProperty('word-break','keep-all','important');
+        line.style.setProperty('overflow-wrap','normal','important');
       });
       heading.style.setProperty('padding-left','0','important');
       heading.style.setProperty('padding-right','0','important');
       heading.style.setProperty('overflow','visible','important');
       centerInViewport(heading,contentWidth);
+      requestAnimationFrame(()=>fitHeading(heading));
     }
 
     const rows=[...section.querySelectorAll('.club999-whofor-row-v136')];
