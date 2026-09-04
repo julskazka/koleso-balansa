@@ -1,13 +1,14 @@
 (()=>{
-  const STYLE_ID='club999-unified-cta-style-v155';
+  const STYLE_ID='club999-unified-cta-style-v156';
   const CLASS='club999-unified-cta-v155';
+  const SHINE_CLASS='club999-unified-shine-v156';
 
   const COPY_PROPS=[
     'background','backgroundColor','backgroundImage','backgroundPosition','backgroundSize',
     'borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth',
     'borderTopStyle','borderRightStyle','borderBottomStyle','borderLeftStyle',
     'borderTopColor','borderRightColor','borderBottomColor','borderLeftColor',
-    'borderRadius','boxShadow','color','fontFamily','fontSize','fontWeight','lineHeight',
+    'borderRadius','boxShadow','color','fontFamily','fontWeight','lineHeight',
     'letterSpacing','textShadow','textTransform','minHeight',
     'paddingTop','paddingRight','paddingBottom','paddingLeft'
   ];
@@ -41,42 +42,58 @@
       .${CLASS} .button-arrow,
       .${CLASS} [class*="arrow"],
       .${CLASS} svg[data-arrow]{display:none!important}
-      .${CLASS}>span,
+      .${CLASS}::after{display:none!important}
+      .${CLASS}>span:not(.${SHINE_CLASS}),
       .${CLASS}>strong{position:relative!important;z-index:3!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}
-      .${CLASS}::after{
-        content:""!important;
+      .${SHINE_CLASS}{
         position:absolute!important;
         z-index:2!important;
         pointer-events:none!important;
-        top:-45%!important;
-        left:-48%!important;
-        width:34%!important;
-        height:190%!important;
-        transform:rotate(20deg)!important;
-        background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),rgba(255,255,248,.82),rgba(255,255,255,.10),transparent)!important;
-        filter:blur(.2px)!important;
+        top:-55%!important;
+        left:-36%!important;
+        width:24%!important;
+        height:210%!important;
+        display:block!important;
+        border:0!important;
+        border-radius:0!important;
+        padding:0!important;
+        margin:0!important;
+        transform:rotate(18deg)!important;
+        background:linear-gradient(90deg,
+          transparent 0%,
+          rgba(255,255,255,.08) 18%,
+          rgba(255,255,246,.62) 40%,
+          rgba(255,255,255,.98) 50%,
+          rgba(255,255,246,.62) 60%,
+          rgba(255,255,255,.08) 82%,
+          transparent 100%)!important;
+        box-shadow:0 0 12px rgba(255,255,238,.72)!important;
+        filter:blur(.25px)!important;
         opacity:0!important;
-        animation:club999UnifiedShine155 3.3s ease-in-out infinite!important;
+        will-change:left,opacity!important;
+        animation:club999UnifiedShine156 2.7s ease-in-out infinite!important;
       }
-      @keyframes club999UnifiedShine155{
-        0%,55%{left:-48%;opacity:0}
-        60%{opacity:1}
-        78%{left:116%;opacity:1}
-        84%,100%{left:116%;opacity:0}
+      @keyframes club999UnifiedShine156{
+        0%,38%{left:-36%;opacity:0}
+        43%{opacity:.98}
+        68%{left:116%;opacity:.98}
+        74%,100%{left:116%;opacity:0}
       }
       @media(max-width:700px){
         .${CLASS}{min-height:48px!important}
+        .${SHINE_CLASS}{width:27%!important}
       }
     `;
     document.head.appendChild(style);
   }
 
-  function copyFirstButtonStyle(source,target){
+  function copyFirstButtonStyle(source,target,fontSize){
     const cs=getComputedStyle(source);
     COPY_PROPS.forEach(prop=>{
       const value=cs[prop];
       if(value) target.style.setProperty(cssName(prop),value,'important');
     });
+    target.style.setProperty('font-size',fontSize+'px','important');
     target.style.setProperty('width','100%','important');
     target.style.setProperty('max-width','100%','important');
     target.style.setProperty('box-sizing','border-box','important');
@@ -90,10 +107,27 @@
     });
   }
 
+  function ensureShine(button){
+    let shine=button.querySelector(':scope > .'+SHINE_CLASS);
+    if(!shine){
+      shine=document.createElement('span');
+      shine.className=SHINE_CLASS;
+      shine.setAttribute('aria-hidden','true');
+      button.insertBefore(shine,button.firstChild);
+    }
+  }
+
   function apply(){
     const first=document.querySelector('.hero41__button');
     if(!first) return false;
     injectStyle();
+
+    if(!first.dataset.club999UnifiedBaseFontSize){
+      const base=parseFloat(getComputedStyle(first).fontSize)||15;
+      first.dataset.club999UnifiedBaseFontSize=String(base);
+    }
+    const baseFont=parseFloat(first.dataset.club999UnifiedBaseFontSize)||15;
+    const unifiedFont=Math.min(baseFont+1.4,19);
 
     const nodes=[
       first,
@@ -106,8 +140,9 @@
 
     buttons.forEach(button=>{
       button.classList.add(CLASS);
-      copyFirstButtonStyle(first,button);
+      copyFirstButtonStyle(first,button,unifiedFont);
       cleanArrow(button);
+      ensureShine(button);
     });
 
     const heroArrow=first.querySelector('b');
