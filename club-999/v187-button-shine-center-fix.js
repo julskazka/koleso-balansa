@@ -1,12 +1,15 @@
 (()=>{
-  const STYLE_ID='club999-button-shine-v187-style';
-  const TARGET='club999-shine-v187-target';
+  const STYLE_ID='club999-button-shine-v188-style';
+  const TARGET='club999-shine-v188-target';
+  const LAYER='club999-shine-v188-layer';
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 
   function injectStyle(){
+    if(document.getElementById(STYLE_ID)) return;
+
+    document.getElementById('club999-button-shine-v187-style')?.remove();
     document.getElementById('club999-button-shine-v186-style')?.remove();
     document.getElementById('club999-all-button-shine-v185-style')?.remove();
-    document.getElementById(STYLE_ID)?.remove();
 
     const style=document.createElement('style');
     style.id=STYLE_ID;
@@ -22,14 +25,10 @@
         text-indent:0!important;
       }
 
-      .${TARGET}>.club999-v168-shine,
-      .${TARGET}>.club999-shine-v185-layer{
-        display:none!important;
-      }
-
+      /* Keep the text centering from v187 exactly as approved. */
       .${TARGET}>.club999-v168-copy{
         position:absolute!important;
-        z-index:12!important;
+        z-index:30!important;
         inset:0!important;
         left:0!important;
         right:0!important;
@@ -52,90 +51,101 @@
         pointer-events:none!important;
       }
 
-      .${TARGET}>span:not(.club999-v168-copy):not(.club999-v168-shine):not(.club999-shine-v185-layer),
-      .${TARGET}>strong,
-      .${TARGET}>b{
-        position:relative!important;
-        z-index:12!important;
-        inset:auto!important;
-        left:auto!important;
-        right:auto!important;
-        top:auto!important;
-        bottom:auto!important;
+      /* Dedicated absolute overlay. It never participates in button layout. */
+      .${TARGET}>.${LAYER}{
         display:block!important;
-        flex:0 1 auto!important;
-        width:auto!important;
-        max-width:calc(100% - 28px)!important;
+        position:absolute!important;
+        z-index:20!important;
+        inset:0!important;
+        left:0!important;
+        right:0!important;
+        top:0!important;
+        bottom:0!important;
+        width:100%!important;
+        height:100%!important;
+        min-width:0!important;
+        min-height:0!important;
+        max-width:none!important;
+        max-height:none!important;
         margin:0!important;
         padding:0!important;
+        border:0!important;
+        border-radius:inherit!important;
+        background:none!important;
+        box-shadow:none!important;
+        filter:none!important;
+        opacity:1!important;
         transform:none!important;
         translate:none!important;
-        text-align:center!important;
-        text-indent:0!important;
-        white-space:normal!important;
+        animation:none!important;
+        overflow:hidden!important;
+        pointer-events:none!important;
       }
 
-      .${TARGET}::before{
+      /* Soft lacquer highlight at the top. */
+      .${TARGET}>.${LAYER}::before{
         content:""!important;
         position:absolute!important;
-        z-index:4!important;
-        pointer-events:none!important;
+        z-index:1!important;
         top:2px!important;
-        left:9%!important;
-        width:82%!important;
+        left:8%!important;
+        width:84%!important;
         height:10px!important;
         margin:0!important;
         padding:0!important;
         border:0!important;
         border-radius:999px!important;
-        background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.84) 0%,rgba(255,255,255,.44) 30%,rgba(255,248,214,.16) 60%,rgba(255,255,255,0) 82%)!important;
+        background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.92) 0%,rgba(255,255,255,.54) 24%,rgba(255,248,214,.18) 56%,rgba(255,255,255,0) 80%)!important;
         box-shadow:none!important;
-        filter:blur(.2px)!important;
-        opacity:.78!important;
+        filter:blur(.18px)!important;
+        opacity:.90!important;
         transform:none!important;
         animation:none!important;
+        pointer-events:none!important;
       }
 
-      .${TARGET}::after{
+      /* Visible moving shine, isolated from the button's own pseudo-elements. */
+      .${TARGET}>.${LAYER}::after{
         content:""!important;
         position:absolute!important;
-        z-index:6!important;
-        pointer-events:none!important;
-        top:-82%!important;
-        left:-42%!important;
-        width:22%!important;
-        height:270%!important;
+        z-index:2!important;
+        top:-92%!important;
+        left:-48%!important;
+        width:25%!important;
+        height:290%!important;
         margin:0!important;
         padding:0!important;
         border:0!important;
-        border-radius:45%!important;
+        border-radius:42%!important;
         background:linear-gradient(90deg,
           rgba(255,255,255,0) 0%,
-          rgba(255,255,255,.08) 15%,
-          rgba(255,250,228,.62) 34%,
-          rgba(255,255,255,.98) 50%,
-          rgba(255,250,228,.68) 66%,
-          rgba(255,255,255,.08) 84%,
+          rgba(255,255,255,.10) 12%,
+          rgba(255,250,226,.72) 32%,
+          rgba(255,255,255,1) 48%,
+          rgba(255,255,255,1) 52%,
+          rgba(255,250,226,.76) 68%,
+          rgba(255,255,255,.10) 88%,
           rgba(255,255,255,0) 100%)!important;
-        box-shadow:0 0 12px rgba(255,255,245,.78),0 0 22px rgba(246,216,135,.38)!important;
-        filter:blur(.25px)!important;
+        box-shadow:0 0 16px rgba(255,255,245,.94),0 0 30px rgba(246,216,135,.50)!important;
+        filter:blur(.22px)!important;
         opacity:0!important;
         transform:rotate(18deg)!important;
-        animation:club999ButtonSweepV187 2.15s ease-in-out infinite!important;
+        animation:club999ButtonSweepV188 2.55s ease-in-out infinite!important;
         will-change:left,opacity!important;
+        pointer-events:none!important;
       }
 
-      @keyframes club999ButtonSweepV187{
-        0%,18%{left:-42%;opacity:0}
-        25%{opacity:.94}
-        68%{left:122%;opacity:.94}
-        78%,100%{left:122%;opacity:0}
+      @keyframes club999ButtonSweepV188{
+        0%,14%{left:-48%;opacity:0}
+        22%{opacity:1}
+        70%{left:123%;opacity:1}
+        82%,100%{left:123%;opacity:0}
       }
 
       @media(max-width:700px){
         .${TARGET}>.club999-v168-copy{padding:0 14px!important}
-        .${TARGET}::before{left:8%!important;width:84%!important;height:9px!important}
-        .${TARGET}::after{width:25%!important;animation-duration:2.25s!important}
+        .${TARGET}>.${LAYER}::before{left:7%!important;width:86%!important;height:9px!important}
+        .${TARGET}>.${LAYER}::after{width:29%!important;animation-duration:2.7s!important}
       }
     `;
     document.head.appendChild(style);
@@ -172,39 +182,51 @@
     return [...new Set([...direct,...links])].filter(visibleButton);
   }
 
-  function cleanup(btn){
-    btn.classList.remove('club999-shine-v185-target','club999-shine-v186-target');
-    btn.querySelectorAll(':scope > .club999-shine-v185-layer').forEach(el=>el.remove());
+  function ensureButton(btn){
+    btn.classList.remove('club999-shine-v185-target','club999-shine-v186-target','club999-shine-v187-target');
     btn.classList.add(TARGET);
-    btn.style.setProperty('position','relative','important');
-    btn.style.setProperty('overflow','hidden','important');
-    btn.style.setProperty('isolation','isolate','important');
-    btn.style.setProperty('display','flex','important');
-    btn.style.setProperty('align-items','center','important');
-    btn.style.setProperty('justify-content','center','important');
-    btn.style.setProperty('text-align','center','important');
-    btn.style.setProperty('text-indent','0','important');
+
+    /* Main CTA buttons already have this absolute child from v166; reuse it so
+       v166 keeps its expected 2-child structure and never rebuilds the label. */
+    let layer=btn.querySelector(':scope > .club999-v168-shine');
+    if(layer){
+      layer.classList.add(LAYER);
+    }else{
+      layer=btn.querySelector(':scope > .'+LAYER);
+      if(!layer){
+        layer=document.createElement('span');
+        layer.className=LAYER;
+        layer.setAttribute('aria-hidden','true');
+        btn.appendChild(layer);
+      }
+    }
   }
 
   function apply(){
     injectStyle();
-    collect().forEach(cleanup);
+    collect().forEach(ensureButton);
   }
 
-  let raf=0;
+  let scheduled=false;
   const observer=new MutationObserver(()=>{
-    cancelAnimationFrame(raf);
-    raf=requestAnimationFrame(apply);
+    if(scheduled) return;
+    scheduled=true;
+    requestAnimationFrame(()=>{
+      scheduled=false;
+      apply();
+    });
   });
-  observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+  /* childList only: do not observe our own class/style updates, so the animation
+     is never restarted by a self-triggering observer loop. */
+  observer.observe(document.documentElement,{subtree:true,childList:true});
 
   let tries=0;
   const timer=setInterval(()=>{
     tries++;
     apply();
-    if(tries>=100) clearInterval(timer);
-  },100);
+    if(tries>=45) clearInterval(timer);
+  },140);
 
   requestAnimationFrame(()=>requestAnimationFrame(apply));
-  [250,600,1200,2200,4000,6500,9000].forEach(ms=>setTimeout(apply,ms));
+  [300,700,1400,2400,4800,7000].forEach(ms=>setTimeout(apply,ms));
 })();
