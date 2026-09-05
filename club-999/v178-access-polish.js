@@ -5,31 +5,56 @@
   const norm=s=>(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 
   function injectStyle(){
-    if(document.getElementById(STYLE_ID)) return;
+    let old=document.getElementById(STYLE_ID);
+    if(old) old.remove();
     const style=document.createElement('style');
     style.id=STYLE_ID;
     style.textContent=`
       .${TARGET_CLASS}{
-        margin-top:12px!important;
+        position:relative!important;
+        overflow:hidden!important;
+        margin-top:18px!important;
       }
       .${TARGET_CLASS} > .club999-v168-shine{
         display:block!important;
         z-index:20!important;
         top:-58%!important;
-        left:-34%!important;
-        width:25%!important;
-        height:216%!important;
+        left:-36%!important;
+        width:27%!important;
+        height:220%!important;
         opacity:0!important;
-        background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.06) 12%,rgba(255,255,244,.78) 38%,rgba(255,255,255,1) 50%,rgba(255,255,244,.78) 62%,rgba(255,255,255,.06) 88%,transparent 100%)!important;
-        box-shadow:0 0 15px rgba(255,255,235,.86)!important;
-        filter:blur(.1px)!important;
-        animation:club999AccessShineV178 2.9s ease-in-out infinite!important;
+        background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.08) 12%,rgba(255,255,246,.88) 38%,rgba(255,255,255,1) 50%,rgba(255,255,246,.88) 62%,rgba(255,255,255,.08) 88%,transparent 100%)!important;
+        box-shadow:0 0 18px rgba(255,255,238,.95)!important;
+        filter:blur(.15px)!important;
+        animation:club999AccessShineV178 2.55s ease-in-out infinite!important;
+      }
+      .${TARGET_CLASS}::before{
+        content:""!important;
+        position:absolute!important;
+        z-index:18!important;
+        pointer-events:none!important;
+        top:-45%!important;
+        left:-38%!important;
+        width:22%!important;
+        height:190%!important;
+        border-radius:999px!important;
+        background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 22%,rgba(255,255,255,.92) 50%,rgba(255,255,255,.18) 78%,transparent 100%)!important;
+        box-shadow:0 0 14px rgba(255,255,255,.75)!important;
+        transform:rotate(17deg)!important;
+        opacity:0!important;
+        animation:club999AccessShineFallbackV178 2.55s ease-in-out infinite!important;
       }
       @keyframes club999AccessShineV178{
-        0%,34%{left:-34%;opacity:0}
-        40%{opacity:1}
-        66%{left:114%;opacity:1}
-        74%,100%{left:114%;opacity:0}
+        0%,30%{left:-36%;opacity:0}
+        37%{opacity:1}
+        69%{left:116%;opacity:1}
+        77%,100%{left:116%;opacity:0}
+      }
+      @keyframes club999AccessShineFallbackV178{
+        0%,30%{left:-38%;opacity:0}
+        38%{opacity:.9}
+        68%{left:118%;opacity:.9}
+        76%,100%{left:118%;opacity:0}
       }
     `;
     document.head.appendChild(style);
@@ -75,7 +100,9 @@
     const button=findButton(section);
     if(button){
       button.classList.add(TARGET_CLASS);
-      button.style.setProperty('margin-top','12px','important');
+      button.style.setProperty('margin-top','18px','important');
+      button.style.setProperty('position','relative','important');
+      button.style.setProperty('overflow','hidden','important');
     }
     return true;
   }
