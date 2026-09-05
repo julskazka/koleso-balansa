@@ -95,20 +95,53 @@
     });
   }
 
-  function tightenGap(section){
-    section.style.setProperty('margin-top','8px','important');
-    const prev=section.previousElementSibling;
-    if(prev){
-      prev.style.setProperty('margin-bottom','8px','important');
-      const pb=parseFloat(getComputedStyle(prev).paddingBottom)||0;
-      if(pb>16) prev.style.setProperty('padding-bottom','8px','important');
+  function outerSection(inner){
+    if(!inner) return null;
+    let node=inner;
+    while(node.parentElement && node.parentElement!==document.body){
+      const parent=node.parentElement;
+      const t=compact(parent.textContent);
+      if(!t.includes('условиядоступа') || !t.includes('полныйдоступкцентруресурса')) break;
+      node=parent;
+      if(node.matches?.('section,.section')) break;
     }
-    const parent=section.parentElement;
+    return node;
+  }
+
+  function previousSection(shell){
+    if(!shell) return null;
+    let prev=shell.previousElementSibling;
+    while(prev){
+      if(prev.matches?.('section,.section')) return prev;
+      if((prev.textContent||'').trim()) return prev;
+      prev=prev.previousElementSibling;
+    }
+    return null;
+  }
+
+  function tightenGap(section){
+    section.style.setProperty('margin-top','0','important');
+
+    const shell=outerSection(section)||section;
+    shell.style.setProperty('margin-top','0','important');
+    shell.style.setProperty('min-height','0','important');
+    if(shell!==section){
+      shell.style.setProperty('padding-top','4px','important');
+    }
+
+    const prev=previousSection(shell);
+    if(prev){
+      prev.style.setProperty('margin-bottom','0','important');
+      prev.style.setProperty('padding-bottom','4px','important');
+      prev.style.setProperty('min-height','0','important');
+    }
+
+    const parent=shell.parentElement;
     if(parent){
-      const gap=parseFloat(getComputedStyle(parent).rowGap)||parseFloat(getComputedStyle(parent).gap)||0;
-      if(gap>18){
-        parent.style.setProperty('row-gap','10px','important');
-        parent.style.setProperty('gap','10px','important');
+      const display=getComputedStyle(parent).display;
+      if(display.includes('grid') || display.includes('flex')){
+        parent.style.setProperty('row-gap','6px','important');
+        parent.style.setProperty('gap','6px','important');
       }
     }
   }
