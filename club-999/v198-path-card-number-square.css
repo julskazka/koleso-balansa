@@ -1,0 +1,39 @@
+.path-card li > span:first-child{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  flex:0 0 30px!important;
+  display:grid!important;
+  place-items:center!important;
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+  border:1px solid rgba(242,212,119,.88)!important;
+  background:radial-gradient(circle at 34% 24%,rgba(255,241,182,.18) 0%,rgba(255,241,182,.05) 34%,transparent 50%),linear-gradient(145deg,rgba(10,82,94,.94),rgba(3,34,44,.99))!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.045),inset 0 0 8px rgba(82,205,196,.07),0 0 6px rgba(242,212,119,.24),0 0 12px rgba(66,188,184,.10)!important;
+  color:#f2d477!important;
+  -webkit-text-fill-color:#f2d477!important;
+  font-weight:700!important;
+  font-size:14px!important;
+  line-height:1!important;
+  text-align:center!important;
+  text-shadow:0 0 5px rgba(242,212,119,.30)!important;
+  margin:0!important;
+  padding:0!important;
+}
+.path-card li > span:first-child::before,
+.path-card li > span:first-child::after{
+  content:none!important;
+  display:none!important;
+}
+@media(max-width:380px){
+  .path-card li > span:first-child{
+    width:28px!important;
+    height:28px!important;
+    min-width:28px!important;
+    min-height:28px!important;
+    flex-basis:28px!important;
+    font-size:13px!important;
+    border-radius:8px!important;
+  }
+}
