@@ -157,11 +157,6 @@
 
   function tuneSection(section){
     section.classList.add(SECTION_CLASS);
-    const cs=getComputedStyle(section);
-    const pt=parseFloat(cs.paddingTop)||0;
-    const pb=parseFloat(cs.paddingBottom)||0;
-    if(pt>20) section.style.setProperty('padding-top','18px','important');
-    if(pb>20) section.style.setProperty('padding-bottom','18px','important');
     const title=[...section.querySelectorAll('h2,h3,p,div')]
       .filter(el=>compact(el.textContent)==='вподпискувходят')
       .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0];
