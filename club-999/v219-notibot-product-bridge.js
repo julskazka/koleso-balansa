@@ -152,8 +152,10 @@
   function isPaymentButton(el){
     if(!el) return false;
     if(el.matches?.('[data-notibot-product="'+PRODUCT_ID+'"]')) return true;
+    if(el.matches?.('.button--pay-v109,#inside .section-action [data-purchase]')) return true;
     const text=norm(el.textContent);
-    return text.includes('вступить в центр ресурса') ||
+    return text.includes('посмотреть, что есть внутри') ||
+      text.includes('вступить в центр ресурса') ||
       text.includes('вступить в «центр ресурса»') ||
       text.includes('вступить в клуб за 999') ||
       text.includes('вступить в клуб и задать вопрос') ||
