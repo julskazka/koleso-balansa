@@ -10,7 +10,7 @@
     const el=document.createElement('style');
     el.id=STYLE_ID;
     el.textContent=`
-      .${CLASS}{position:relative!important;overflow:hidden!important;margin-top:18px!important}
+      .${CLASS}{position:relative!important;overflow:hidden!important;margin-top:28px!important}
       .${CLASS}>.club999-v168-shine{
         display:block!important;z-index:22!important;top:-62%!important;left:-40%!important;
         width:30%!important;height:224%!important;opacity:0!important;
@@ -53,7 +53,7 @@
       .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0];
     if(!btn) return false;
     btn.classList.add(CLASS);
-    btn.style.setProperty('margin-top','18px','important');
+    btn.style.setProperty('margin-top','28px','important');
     btn.style.setProperty('position','relative','important');
     btn.style.setProperty('overflow','hidden','important');
     return true;
