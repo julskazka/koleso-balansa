@@ -46,7 +46,7 @@
       .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0]||null;
   }
 
-  function clickableFor(el,section){
+  function clickableFor(el){
     if(!el) return null;
     return el.closest('button,a,[data-purchase]') || el;
   }
@@ -95,57 +95,6 @@
     });
   }
 
-  function outerSection(inner){
-    if(!inner) return null;
-    let node=inner;
-    while(node.parentElement && node.parentElement!==document.body){
-      const parent=node.parentElement;
-      const t=compact(parent.textContent);
-      if(!t.includes('условиядоступа') || !t.includes('полныйдоступкцентруресурса')) break;
-      node=parent;
-      if(node.matches?.('section,.section')) break;
-    }
-    return node;
-  }
-
-  function previousSection(shell){
-    if(!shell) return null;
-    let prev=shell.previousElementSibling;
-    while(prev){
-      if(prev.matches?.('section,.section')) return prev;
-      if((prev.textContent||'').trim()) return prev;
-      prev=prev.previousElementSibling;
-    }
-    return null;
-  }
-
-  function tightenGap(section){
-    section.style.setProperty('margin-top','0','important');
-
-    const shell=outerSection(section)||section;
-    shell.style.setProperty('margin-top','0','important');
-    shell.style.setProperty('min-height','0','important');
-    if(shell!==section){
-      shell.style.setProperty('padding-top','4px','important');
-    }
-
-    const prev=previousSection(shell);
-    if(prev){
-      prev.style.setProperty('margin-bottom','0','important');
-      prev.style.setProperty('padding-bottom','4px','important');
-      prev.style.setProperty('min-height','0','important');
-    }
-
-    const parent=shell.parentElement;
-    if(parent){
-      const display=getComputedStyle(parent).display;
-      if(display.includes('grid') || display.includes('flex')){
-        parent.style.setProperty('row-gap','6px','important');
-        parent.style.setProperty('gap','6px','important');
-      }
-    }
-  }
-
   function addNote(section,button){
     if(!button) return;
     section.querySelectorAll('.'+NOTE_CLASS).forEach((el,i)=>{if(i>0)el.remove()});
@@ -155,7 +104,7 @@
       note.className=NOTE_CLASS;
       note.innerHTML='<span>Подписка продлевается ежемесячно.</span><span>Отменить её можно в любой момент.</span>';
     }
-    const anchor=clickableFor(button,section);
+    const anchor=clickableFor(button);
     if(anchor.nextElementSibling!==note) anchor.insertAdjacentElement('afterend',note);
   }
 
@@ -164,8 +113,7 @@
     const section=findSection();
     if(!section) return false;
     const buttonText=findButton(section);
-    const button=clickableFor(buttonText,section);
-    tightenGap(section);
+    const button=clickableFor(buttonText);
     hidePrice(section,button);
     hideRenewalCopies(section,button);
     addNote(section,buttonText||button);
