@@ -1,0 +1,179 @@
+/* v205 — stable spacing + final card. Static CSS: no delayed layout rewrites. */
+html body .section:not(.hero):not(.final){
+  box-sizing:border-box!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+
+@media(max-width:700px){
+  html body .section:not(.hero):not(.final){
+    padding-top:14px!important;
+    padding-bottom:14px!important;
+  }
+  html body #directions.section,
+  html body .club999-cross-section-v103,
+  html body .club999-expert-section-v112,
+  html body .section:has(.audience__intro){
+    padding-top:11px!important;
+    padding-bottom:12px!important;
+  }
+  html body .section:not(.hero):not(.final) .section-heading,
+  html body .section:not(.hero):not(.final) .section-heading--split,
+  html body .section:not(.hero):not(.final) .directions__heading,
+  html body .section:not(.hero):not(.final) .audience__intro{
+    margin-top:0!important;
+    margin-bottom:14px!important;
+  }
+  html body .section:not(.hero):not(.final) .section-action{
+    margin-top:15px!important;
+  }
+  html body .club999-expert-gallery-copy-v111{
+    margin-top:10px!important;
+  }
+}
+
+@media(max-width:380px){
+  html body .section:not(.hero):not(.final){
+    padding-top:12px!important;
+    padding-bottom:12px!important;
+  }
+  html body #directions.section,
+  html body .club999-cross-section-v103,
+  html body .club999-expert-section-v112,
+  html body .section:has(.audience__intro){
+    padding-top:10px!important;
+    padding-bottom:11px!important;
+  }
+}
+
+@media(min-width:701px){
+  html body .section:not(.hero):not(.final){
+    padding-top:30px!important;
+    padding-bottom:30px!important;
+  }
+  html body #directions.section,
+  html body .club999-cross-section-v103,
+  html body .club999-expert-section-v112,
+  html body .section:has(.audience__intro){
+    padding-top:24px!important;
+    padding-bottom:25px!important;
+  }
+  html body .section:not(.hero):not(.final) .section-heading,
+  html body .section:not(.hero):not(.final) .section-heading--split,
+  html body .section:not(.hero):not(.final) .directions__heading,
+  html body .section:not(.hero):not(.final) .audience__intro{
+    margin-top:0!important;
+    margin-bottom:22px!important;
+  }
+}
+
+/* Final CTA card — stable from first paint. */
+html body .section.final{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  min-height:0!important;
+  height:auto!important;
+  border:1px solid rgba(239,204,104,.42)!important;
+  border-radius:22px!important;
+  background:
+    radial-gradient(95% 70% at 8% 6%,rgba(36,167,173,.13) 0%,rgba(36,167,173,.04) 38%,transparent 62%),
+    radial-gradient(70% 60% at 94% 100%,rgba(230,191,79,.085) 0%,transparent 58%),
+    linear-gradient(155deg,rgba(7,70,80,.96),rgba(3,39,51,.985))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 0 28px rgba(48,176,177,.035),
+    0 10px 32px rgba(0,14,24,.22),
+    0 0 18px rgba(224,183,63,.075)!important;
+}
+html body .section.final::before{
+  content:""!important;
+  position:absolute!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  width:190px!important;
+  height:86px!important;
+  left:-58px!important;
+  top:-32px!important;
+  border-radius:50%!important;
+  background:radial-gradient(ellipse,rgba(76,211,211,.13) 0%,rgba(31,142,151,.06) 42%,transparent 72%)!important;
+  filter:blur(14px)!important;
+  opacity:.82!important;
+}
+html body .section.final::after{
+  content:""!important;
+  position:absolute!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  width:180px!important;
+  height:72px!important;
+  right:-54px!important;
+  bottom:-28px!important;
+  border-radius:50%!important;
+  background:radial-gradient(ellipse,rgba(232,194,83,.105) 0%,rgba(232,194,83,.035) 45%,transparent 72%)!important;
+  filter:blur(15px)!important;
+  opacity:.72!important;
+}
+html body .section.final > *{
+  position:relative!important;
+  z-index:2!important;
+}
+
+@media(max-width:700px){
+  html body .section.final{
+    width:calc(100% - 32px)!important;
+    max-width:calc(100% - 32px)!important;
+    margin:12px 16px max(16px,env(safe-area-inset-bottom))!important;
+    padding:28px 12px 22px!important;
+  }
+}
+@media(max-width:380px){
+  html body .section.final{
+    width:calc(100% - 28px)!important;
+    max-width:calc(100% - 28px)!important;
+    margin:11px 14px max(14px,env(safe-area-inset-bottom))!important;
+    padding:26px 11px 21px!important;
+  }
+}
+@media(min-width:701px){
+  html body .section.final{
+    width:calc(100% - 48px)!important;
+    max-width:1120px!important;
+    margin:24px auto 28px!important;
+    padding:46px 32px 38px!important;
+    border-radius:28px!important;
+  }
+}
+
+/* Direction popup image — independent from legacy hidden hero ids/classes. */
+.club999-v205-popup-picture{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  aspect-ratio:16/9!important;
+  flex:0 0 auto!important;
+  margin:12px 0 13px!important;
+  overflow:hidden!important;
+  border-radius:17px!important;
+  border:1px solid rgba(239,204,104,.30)!important;
+  background-color:#012a34!important;
+  background-repeat:no-repeat!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 20px rgba(0,10,18,.18)!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+.club999-v205-popup-picture::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 64%,rgba(1,18,25,.20) 100%)!important;
+}
+@media(max-width:700px){
+  .club999-v205-popup-picture{
+    aspect-ratio:16/8.7!important;
+    margin:10px 0 11px!important;
+    border-radius:15px!important;
+  }
+}
