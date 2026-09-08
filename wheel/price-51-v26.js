@@ -18,12 +18,12 @@
       }
 
       .wheel-copy-clean-v28 {
-        font-weight: 450 !important;
+        font-weight: 400 !important;
       }
 
       .wheel-copy-clean-v28 strong,
       .wheel-copy-clean-v28 b {
-        font-weight: 650 !important;
+        font-weight: 600 !important;
       }
 
       .wheel-price-highlight-v28 {
@@ -112,12 +112,11 @@
   const markCleanCopy = (root) => {
     if (!root) return;
 
-    const candidates = root.querySelectorAll('p,div,span');
-    candidates.forEach((element) => {
+    root.querySelectorAll('p,div,span').forEach((element) => {
       const text = normalize(element.textContent);
 
       if (
-        text.startsWith('Сегодня колесо привело вас к теме') ||
+        (text.startsWith('Сегодня колесо привело вас к теме') && text.length < 360) ||
         text === 'В «Центре Ресурсов» собраны практики, эксперты и материалы для разных состояний и жизненных запросов.'
       ) {
         element.classList.add('wheel-copy-clean-v28');
@@ -131,7 +130,10 @@
         }
       }
 
-      if (text.startsWith('Посмотрите, как можно продолжить работу с собой в течение 7 дней за')) {
+      if (
+        text.startsWith('Посмотрите, как можно продолжить работу с собой в течение 7 дней за') &&
+        text.length < 180
+      ) {
         element.classList.add('wheel-price-highlight-v28');
 
         let parent = element.parentElement;
@@ -149,6 +151,7 @@
     addStyles();
     const root = document.getElementById(ROOT_ID) || document.body;
     fixTextNodes(root);
+    fixTextNodes(document.body);
     fixClubButtons();
     markCleanCopy(root);
   };
@@ -166,11 +169,14 @@
     });
   };
 
-  const root = document.getElementById(ROOT_ID);
-  if (root) {
+  const startObserver = () => {
+    if (!document.body) return;
     const observer = new MutationObserver(scheduleApply);
-    observer.observe(root, { childList: true, subtree: true, characterData: true });
-  }
+    observer.observe(document.body, { childList: true, subtree: true });
+  };
+
+  if (document.body) startObserver();
+  else document.addEventListener('DOMContentLoaded', startObserver, { once: true });
 
   [200, 600, 1200, 2200].forEach((delay) => setTimeout(apply, delay));
 })();
