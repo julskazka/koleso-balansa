@@ -1,75 +1,82 @@
 (() => {
   'use strict';
 
-  const STYLE_ID = 'wheel-post-spin-fix-v29-style';
+  const STYLE_ID = 'wheel-post-spin-fix-v30-style';
   const ROOT_ID = 'app-root';
 
   const normalize = (value) => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
 
-  const addStyles = () => {
-    if (document.getElementById(STYLE_ID)) return;
+  const styleText = `
+    /* Финальный override: этот style каждый раз переносится в конец <head>,
+       чтобы payload.css не мог перекрыть исправление после асинхронной загрузки. */
+    .continuation-card {
+      isolation: isolate !important;
+      background:
+        radial-gradient(circle at 86% 10%, rgba(73, 157, 181, .14) 0%, transparent 31%),
+        radial-gradient(circle at 14% 88%, rgba(219, 181, 87, .055) 0%, transparent 24%),
+        linear-gradient(180deg, rgba(5, 48, 61, .97) 0%, rgba(3, 30, 43, .985) 100%) !important;
+      background-color: rgba(3, 30, 43, .985) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 247, 215, .055),
+        0 18px 38px rgba(0, 0, 0, .22),
+        0 0 22px rgba(217, 171, 65, .045) !important;
+    }
 
-    const style = document.createElement('style');
-    style.id = STYLE_ID;
-    style.textContent = `
-      /* Единый фон смыслового блока после практики. */
-      .continuation-card {
-        isolation: isolate !important;
-        background:
-          radial-gradient(circle at 86% 10%, rgba(73, 157, 181, .14) 0%, transparent 31%),
-          radial-gradient(circle at 14% 88%, rgba(219, 181, 87, .055) 0%, transparent 24%),
-          linear-gradient(180deg, rgba(5, 48, 61, .97) 0%, rgba(3, 30, 43, .985) 100%) !important;
-        box-shadow:
-          inset 0 1px 0 rgba(255, 247, 215, .055),
-          0 18px 38px rgba(0, 0, 0, .22),
-          0 0 22px rgba(217, 171, 65, .045) !important;
-      }
+    /* Убираем именно прямоугольные подложки у обычного текста. */
+    .continuation-card > p:not(.continuation-note),
+    .continuation-card > p:not(.continuation-note) *,
+    .continuation-card .wheel-copy-clean-v28,
+    .continuation-card .wheel-copy-clean-v28 * {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
 
-      /* Обычные абзацы должны лежать прямо на общем фоне карточки,
-         без прямоугольных тёмных подложек. */
-      .continuation-card p:not(.continuation-note),
-      .continuation-card p:not(.continuation-note) * {
-        background: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        filter: none !important;
-      }
+    .continuation-card > p:not(.continuation-note) {
+      font-weight: 400 !important;
+    }
 
-      .continuation-card p:not(.continuation-note) {
-        font-weight: 400 !important;
-      }
+    .continuation-card > p:not(.continuation-note) strong,
+    .continuation-card > p:not(.continuation-note) b {
+      font-weight: 600 !important;
+    }
 
-      .continuation-card p:not(.continuation-note) strong,
-      .continuation-card p:not(.continuation-note) b {
-        font-weight: 600 !important;
-      }
+    .continuation-card > p:not(.continuation-note)::before,
+    .continuation-card > p:not(.continuation-note)::after {
+      content: none !important;
+      display: none !important;
+      background: transparent !important;
+    }
 
-      .continuation-card p:not(.continuation-note)::before,
-      .continuation-card p:not(.continuation-note)::after {
-        content: none !important;
-        display: none !important;
-      }
+    /* Нижняя акцентная плашка остаётся отдельной. */
+    .continuation-card .continuation-note {
+      background:
+        radial-gradient(circle at 92% 12%, rgba(73, 157, 181, .10), transparent 32%),
+        linear-gradient(180deg, rgba(7, 57, 69, .90), rgba(4, 40, 53, .94)) !important;
+      background-color: rgba(4, 40, 53, .94) !important;
+      border-color: rgba(230, 194, 101, .42) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
+      font-weight: 600 !important;
+    }
 
-      /* Акцентную плашку с предложением 7 дней сохраняем отдельной. */
-      .continuation-card .continuation-note {
-        background:
-          radial-gradient(circle at 92% 12%, rgba(73, 157, 181, .10), transparent 32%),
-          linear-gradient(180deg, rgba(7, 57, 69, .90), rgba(4, 40, 53, .94)) !important;
-        background-image:
-          radial-gradient(circle at 92% 12%, rgba(73, 157, 181, .10), transparent 32%),
-          linear-gradient(180deg, rgba(7, 57, 69, .90), rgba(4, 40, 53, .94)) !important;
-        border-color: rgba(230, 194, 101, .42) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
-        font-weight: 600 !important;
-      }
+    .continuation-card .continuation-note,
+    .continuation-card .continuation-note * {
+      font-weight: 600 !important;
+    }
+  `;
 
-      .continuation-card .continuation-note,
-      .continuation-card .continuation-note * {
-        font-weight: 600 !important;
-      }
-    `;
+  const ensureStylesLast = () => {
+    let style = document.getElementById(STYLE_ID);
+    if (!style) {
+      style = document.createElement('style');
+      style.id = STYLE_ID;
+      style.textContent = styleText;
+    }
 
+    /* appendChild существующего элемента переносит его в конец head. */
     document.head.appendChild(style);
   };
 
@@ -144,10 +151,13 @@
   };
 
   const apply = () => {
-    addStyles();
+    ensureStylesLast();
     fixTextNodes(document.getElementById(ROOT_ID));
     fixTextNodes(document.getElementById('wheelUsedOfferV24'));
     fixClubButtons();
+
+    /* После появления continuation-card ещё раз гарантируем последний CSS. */
+    if (document.querySelector('.continuation-card')) ensureStylesLast();
   };
 
   apply();
@@ -172,5 +182,5 @@
   if (document.body) startObserver();
   else document.addEventListener('DOMContentLoaded', startObserver, { once: true });
 
-  [200, 600, 1200, 2200].forEach((delay) => setTimeout(apply, delay));
+  [200, 600, 1200, 2200, 3500].forEach((delay) => setTimeout(apply, delay));
 })();
