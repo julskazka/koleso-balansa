@@ -1,19 +1,176 @@
 (() => {
   'use strict';
 
-  const apply = () => {
+  const STYLE_ID = 'wheel-post-spin-fix-v28-style';
+  const ROOT_ID = 'app-root';
+
+  const normalize = (value) => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+
+  const addStyles = () => {
+    if (document.getElementById(STYLE_ID)) return;
+    const style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = `
+      .wheel-copy-clean-v28,
+      .wheel-copy-clean-v28 * {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .wheel-copy-clean-v28 {
+        font-weight: 450 !important;
+      }
+
+      .wheel-copy-clean-v28 strong,
+      .wheel-copy-clean-v28 b {
+        font-weight: 650 !important;
+      }
+
+      .wheel-price-highlight-v28 {
+        background: linear-gradient(180deg, rgba(9, 60, 70, .82), rgba(5, 41, 53, .90)) !important;
+        border-color: rgba(230, 194, 101, .42) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
+        font-weight: 600 !important;
+      }
+
+      .wheel-price-highlight-v28,
+      .wheel-price-highlight-v28 * {
+        font-weight: 600 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  const replaceKnownPriceText = (value) => {
+    let next = value || '';
+
+    next = next.replace(
+      /Открыть все направления за\s+(?:5+)?1\s*₽/gu,
+      'Открыть все направления за 51 ₽'
+    );
+
+    next = next.replace(
+      /Узнать, что входит в 7 дней за\s+(?:5+)?1\s*₽/gu,
+      'Узнать, что входит в 7 дней за 51 ₽'
+    );
+
+    next = next.replace(
+      /(Посмотрите, как можно продолжить работу с собой в течение 7 дней за)\s+(?:5+)?1\s*₽/gu,
+      '$1 51 ₽'
+    );
+
+    next = next.replace(
+      /(7 дней в «Центре Ресурсов» за)\s+(?:5+)?1\s*₽/gu,
+      '$1 51 ₽'
+    );
+
+    return next;
+  };
+
+  const fixTextNodes = (root) => {
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      const current = node.nodeValue || '';
+      const next = replaceKnownPriceText(current);
+      if (next !== current) node.nodeValue = next;
+    }
+  };
+
+  const setButtonLabel = (button, label) => {
+    if (!button) return;
+    const spans = Array.from(button.querySelectorAll('span'));
+    const labelSpan = spans.length ? spans[spans.length - 1] : null;
+    if (labelSpan) {
+      labelSpan.textContent = label;
+      return;
+    }
+
+    const textNodes = Array.from(button.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
+    if (textNodes.length) {
+      textNodes[textNodes.length - 1].nodeValue = label;
+      return;
+    }
+
+    button.textContent = label;
+  };
+
+  const fixClubButtons = () => {
     document.querySelectorAll('[data-open-wheel-club]').forEach((button) => {
-      const text = button.textContent || '';
-      if (text.includes('1 ₽')) {
-        button.textContent = text.replace(/1\s*₽/g, '51 ₽');
+      setButtonLabel(button, 'Открыть все направления за 51 ₽');
+    });
+
+    document.querySelectorAll('button,a').forEach((button) => {
+      const text = normalize(button.textContent);
+      if (/^Узнать, что входит в 7 дней за\s+(?:5+)?1\s*₽$/u.test(text)) {
+        setButtonLabel(button, 'Узнать, что входит в 7 дней за 51 ₽');
       }
     });
+  };
+
+  const markCleanCopy = (root) => {
+    if (!root) return;
+
+    const candidates = root.querySelectorAll('p,div,span');
+    candidates.forEach((element) => {
+      const text = normalize(element.textContent);
+
+      if (
+        text.startsWith('Сегодня колесо привело вас к теме') ||
+        text === 'В «Центре Ресурсов» собраны практики, эксперты и материалы для разных состояний и жизненных запросов.'
+      ) {
+        element.classList.add('wheel-copy-clean-v28');
+
+        let parent = element.parentElement;
+        let depth = 0;
+        while (parent && depth < 2 && normalize(parent.textContent) === text) {
+          parent.classList.add('wheel-copy-clean-v28');
+          parent = parent.parentElement;
+          depth += 1;
+        }
+      }
+
+      if (text.startsWith('Посмотрите, как можно продолжить работу с собой в течение 7 дней за')) {
+        element.classList.add('wheel-price-highlight-v28');
+
+        let parent = element.parentElement;
+        let depth = 0;
+        while (parent && depth < 2 && normalize(parent.textContent) === text) {
+          parent.classList.add('wheel-price-highlight-v28');
+          parent = parent.parentElement;
+          depth += 1;
+        }
+      }
+    });
+  };
+
+  const apply = () => {
+    addStyles();
+    const root = document.getElementById(ROOT_ID) || document.body;
+    fixTextNodes(root);
+    fixClubButtons();
+    markCleanCopy(root);
   };
 
   apply();
   document.addEventListener('DOMContentLoaded', apply, { once: true });
 
-  // Экран после вращения создаётся динамически, поэтому проверяем только
-  // целевые кнопки клуба. В DOM страницы больше не вмешиваемся.
-  setInterval(apply, 1000);
+  let scheduled = false;
+  const scheduleApply = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      apply();
+    });
+  };
+
+  const root = document.getElementById(ROOT_ID);
+  if (root) {
+    const observer = new MutationObserver(scheduleApply);
+    observer.observe(root, { childList: true, subtree: true, characterData: true });
+  }
+
+  [200, 600, 1200, 2200].forEach((delay) => setTimeout(apply, delay));
 })();
