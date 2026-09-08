@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const STYLE_ID = 'wheel-post-spin-block-v31-style';
-  const ROOT_CLASS = 'wheel-next-step-redesign-v31';
+  const STYLE_ID = 'wheel-post-spin-block-v32-style';
+  const ROOT_CLASS = 'wheel-next-step-redesign-v32';
 
   const normalize = (value) => String(value || '')
     .replace(/\u00a0/g, ' ')
@@ -10,68 +10,63 @@
     .trim();
 
   const styleText = `
-    /* Новый дизайн только для блока «Вы увидели только один сектор из шести». */
     .${ROOT_CLASS} {
       position: relative !important;
-      margin: 20px 10px 4px !important;
-      padding: 20px 6px 8px !important;
-      border: 0 !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-      box-shadow: none !important;
+      margin: 16px 6px 8px !important;
+      padding: 18px 16px 16px !important;
+      border: 1px solid rgba(229,190,91,.38) !important;
+      border-radius: 18px !important;
+      background:
+        radial-gradient(circle at 86% 8%, rgba(49,137,156,.11), transparent 34%),
+        linear-gradient(180deg, rgba(5,48,60,.90), rgba(3,31,43,.95)) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.035),
+        0 12px 28px rgba(0,0,0,.13) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      overflow: visible !important;
+      overflow: hidden !important;
       text-align: left !important;
     }
 
     .${ROOT_CLASS}::before {
-      content: '' !important;
-      display: block !important;
-      width: 96px !important;
-      height: 1px !important;
-      margin: 0 0 18px !important;
-      background: linear-gradient(90deg, #e6bd62 0%, rgba(230,189,98,.48) 55%, transparent 100%) !important;
-      box-shadow: 0 0 12px rgba(230,189,98,.16) !important;
+      content: none !important;
+      display: none !important;
     }
 
-    .wheel-next-step-kicker-v31 {
-      margin: 0 0 10px !important;
+    .wheel-next-step-kicker-v32 {
+      margin: 0 0 7px !important;
       padding: 0 !important;
       border: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
-      color: #e5bd64 !important;
-      -webkit-text-fill-color: #e5bd64 !important;
-      font-size: 12px !important;
+      color: #e3bc67 !important;
+      -webkit-text-fill-color: #e3bc67 !important;
+      font-size: 10px !important;
       font-weight: 800 !important;
       line-height: 1.2 !important;
-      letter-spacing: .13em !important;
+      letter-spacing: .12em !important;
       text-transform: uppercase !important;
     }
 
-    .wheel-next-step-title-v31 {
-      margin: 0 0 20px !important;
+    .wheel-next-step-title-v32 {
+      margin: 0 0 13px !important;
       padding: 0 !important;
       border: 0 !important;
       background: transparent !important;
-      background-image: none !important;
       box-shadow: none !important;
-      color: #f3d98f !important;
-      -webkit-text-fill-color: #f3d98f !important;
+      color: #f2d78c !important;
+      -webkit-text-fill-color: #f2d78c !important;
       font-family: Georgia, 'Times New Roman', serif !important;
-      font-size: clamp(28px, 7.2vw, 36px) !important;
+      font-size: 24px !important;
       font-weight: 600 !important;
-      line-height: 1.08 !important;
-      letter-spacing: -.02em !important;
-      text-shadow: 0 0 16px rgba(243,217,143,.08) !important;
+      line-height: 1.12 !important;
+      letter-spacing: -.015em !important;
+      text-shadow: 0 0 12px rgba(243,217,143,.06) !important;
       text-align: left !important;
     }
 
-    .wheel-next-step-copy-v31,
-    .wheel-next-step-copy-v31 * {
+    .wheel-next-step-copy-v32,
+    .wheel-next-step-copy-v32 * {
       margin-left: 0 !important;
       margin-right: 0 !important;
       padding-left: 0 !important;
@@ -87,90 +82,90 @@
       filter: none !important;
     }
 
-    .wheel-next-step-copy-v31 {
+    .wheel-next-step-copy-v32 {
       margin-top: 0 !important;
-      margin-bottom: 17px !important;
-      color: rgba(248,245,235,.92) !important;
-      font-size: 17px !important;
+      margin-bottom: 12px !important;
+      color: rgba(248,245,235,.90) !important;
+      font-size: 15px !important;
       font-weight: 400 !important;
-      line-height: 1.56 !important;
+      line-height: 1.48 !important;
       text-align: left !important;
     }
 
-    .wheel-next-step-copy-v31 strong,
-    .wheel-next-step-copy-v31 b {
+    .wheel-next-step-copy-v32 strong,
+    .wheel-next-step-copy-v32 b {
       font-weight: 600 !important;
     }
 
-    .wheel-next-step-note-v31 {
+    .wheel-next-step-note-v32 {
       position: relative !important;
-      margin: 22px 0 0 !important;
-      padding: 16px 17px 16px 42px !important;
-      border: 1px solid rgba(229,190,91,.38) !important;
-      border-left: 3px solid #e2b94f !important;
-      border-radius: 16px !important;
+      margin: 15px 0 0 !important;
+      padding: 12px 13px 12px 34px !important;
+      border: 1px solid rgba(229,190,91,.30) !important;
+      border-left: 2px solid #dfb649 !important;
+      border-radius: 13px !important;
       background:
-        radial-gradient(circle at 92% 10%, rgba(40,132,151,.13), transparent 34%),
-        linear-gradient(180deg, rgba(7,53,66,.92), rgba(4,37,50,.96)) !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.035),
-        0 10px 24px rgba(0,0,0,.14) !important;
+        linear-gradient(180deg, rgba(8,58,70,.74), rgba(5,42,54,.82)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.025) !important;
       color: #f7f1df !important;
-      font-size: 16px !important;
+      font-size: 14.5px !important;
       font-weight: 600 !important;
-      line-height: 1.5 !important;
+      line-height: 1.42 !important;
       text-align: left !important;
     }
 
-    .wheel-next-step-note-v31::before {
+    .wheel-next-step-note-v32::before {
       content: '✦' !important;
       position: absolute !important;
-      left: 16px !important;
-      top: 17px !important;
-      color: #e5bd64 !important;
-      font-size: 14px !important;
+      left: 12px !important;
+      top: 13px !important;
+      color: #e3bc67 !important;
+      font-size: 12px !important;
       line-height: 1 !important;
-      text-shadow: 0 0 10px rgba(229,189,100,.28) !important;
+      text-shadow: 0 0 8px rgba(229,189,100,.22) !important;
     }
 
-    .wheel-next-step-note-v31,
-    .wheel-next-step-note-v31 * {
+    .wheel-next-step-note-v32,
+    .wheel-next-step-note-v32 * {
       color: #f7f1df !important;
       -webkit-text-fill-color: #f7f1df !important;
     }
 
     @media (max-width: 520px) {
       .${ROOT_CLASS} {
-        margin: 16px 8px 2px !important;
-        padding: 18px 4px 6px !important;
+        margin: 14px 5px 6px !important;
+        padding: 16px 14px 14px !important;
+        border-radius: 16px !important;
       }
 
-      .${ROOT_CLASS}::before {
-        width: 82px !important;
-        margin-bottom: 16px !important;
+      .wheel-next-step-kicker-v32 {
+        margin-bottom: 6px !important;
+        font-size: 9.5px !important;
       }
 
-      .wheel-next-step-title-v31 {
-        margin-bottom: 17px !important;
-        font-size: clamp(27px, 8vw, 33px) !important;
+      .wheel-next-step-title-v32 {
+        margin-bottom: 12px !important;
+        font-size: 22px !important;
+        line-height: 1.13 !important;
       }
 
-      .wheel-next-step-copy-v31 {
-        margin-bottom: 15px !important;
-        font-size: 16px !important;
-        line-height: 1.52 !important;
+      .wheel-next-step-copy-v32 {
+        margin-bottom: 11px !important;
+        font-size: 14.5px !important;
+        line-height: 1.46 !important;
       }
 
-      .wheel-next-step-note-v31 {
-        margin-top: 19px !important;
-        padding: 15px 15px 15px 39px !important;
-        border-radius: 15px !important;
-        font-size: 15.5px !important;
+      .wheel-next-step-note-v32 {
+        margin-top: 13px !important;
+        padding: 11px 12px 11px 32px !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
       }
 
-      .wheel-next-step-note-v31::before {
-        left: 14px !important;
-        top: 16px !important;
+      .wheel-next-step-note-v32::before {
+        left: 11px !important;
+        top: 12px !important;
       }
     }
   `;
@@ -238,27 +233,38 @@
     if (!target?.root) return;
 
     const root = target.root;
+    root.classList.remove('wheel-next-step-redesign-v31');
     root.classList.add(ROOT_CLASS);
 
     const kicker = findSmallestByText(root, (text) => text === 'СЛЕДУЮЩИЙ ШАГ');
-    climbSameText(kicker, root)?.classList.add('wheel-next-step-kicker-v31');
+    const kickerEl = climbSameText(kicker, root);
+    kickerEl?.classList.remove('wheel-next-step-kicker-v31');
+    kickerEl?.classList.add('wheel-next-step-kicker-v32');
 
-    climbSameText(target.heading, root)?.classList.add('wheel-next-step-title-v31');
+    const titleEl = climbSameText(target.heading, root);
+    titleEl?.classList.remove('wheel-next-step-title-v31');
+    titleEl?.classList.add('wheel-next-step-title-v32');
 
     const firstCopy = findSmallestByText(root, (text) =>
       text.startsWith('Сегодня колесо привело вас к теме') && text.length < 420
     );
-    climbSameText(firstCopy, root)?.classList.add('wheel-next-step-copy-v31');
+    const firstCopyEl = climbSameText(firstCopy, root);
+    firstCopyEl?.classList.remove('wheel-next-step-copy-v31');
+    firstCopyEl?.classList.add('wheel-next-step-copy-v32');
 
     const secondCopy = findSmallestByText(root, (text) =>
       text.startsWith('В «Центре Ресурсов» собраны практики') && text.length < 260
     );
-    climbSameText(secondCopy, root)?.classList.add('wheel-next-step-copy-v31');
+    const secondCopyEl = climbSameText(secondCopy, root);
+    secondCopyEl?.classList.remove('wheel-next-step-copy-v31');
+    secondCopyEl?.classList.add('wheel-next-step-copy-v32');
 
     const note = findSmallestByText(root, (text) =>
       text.startsWith('Посмотрите, как можно продолжить работу с собой') && text.length < 240
     );
-    climbSameText(note, root)?.classList.add('wheel-next-step-note-v31');
+    const noteEl = climbSameText(note, root);
+    noteEl?.classList.remove('wheel-next-step-note-v31');
+    noteEl?.classList.add('wheel-next-step-note-v32');
 
     ensureStylesLast();
   }
