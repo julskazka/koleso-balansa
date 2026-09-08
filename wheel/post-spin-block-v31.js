@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const STYLE_ID = 'wheel-post-spin-block-v32-style';
+  const STYLE_ID = 'wheel-post-spin-block-v33-style';
   const ROOT_CLASS = 'wheel-next-step-redesign-v32';
 
   const normalize = (value) => String(value || '')
@@ -28,9 +28,12 @@
       text-align: left !important;
     }
 
-    .${ROOT_CLASS}::before {
+    .${ROOT_CLASS}::before,
+    .${ROOT_CLASS}::after {
       content: none !important;
       display: none !important;
+      background: none !important;
+      box-shadow: none !important;
     }
 
     .wheel-next-step-kicker-v32 {
@@ -46,6 +49,14 @@
       line-height: 1.2 !important;
       letter-spacing: .12em !important;
       text-transform: uppercase !important;
+    }
+
+    .wheel-next-step-kicker-v32::before,
+    .wheel-next-step-kicker-v32::after {
+      content: none !important;
+      display: none !important;
+      background: none !important;
+      box-shadow: none !important;
     }
 
     .wheel-next-step-title-v32 {
@@ -100,7 +111,7 @@
     .wheel-next-step-note-v32 {
       position: relative !important;
       margin: 15px 0 0 !important;
-      padding: 12px 13px 12px 34px !important;
+      padding: 12px 13px !important;
       border: 1px solid rgba(229,190,91,.30) !important;
       border-left: 2px solid #dfb649 !important;
       border-radius: 13px !important;
@@ -114,15 +125,12 @@
       text-align: left !important;
     }
 
-    .wheel-next-step-note-v32::before {
-      content: '✦' !important;
-      position: absolute !important;
-      left: 12px !important;
-      top: 13px !important;
-      color: #e3bc67 !important;
-      font-size: 12px !important;
-      line-height: 1 !important;
-      text-shadow: 0 0 8px rgba(229,189,100,.22) !important;
+    .wheel-next-step-note-v32::before,
+    .wheel-next-step-note-v32::after {
+      content: none !important;
+      display: none !important;
+      background: none !important;
+      box-shadow: none !important;
     }
 
     .wheel-next-step-note-v32,
@@ -157,15 +165,10 @@
 
       .wheel-next-step-note-v32 {
         margin-top: 13px !important;
-        padding: 11px 12px 11px 32px !important;
+        padding: 11px 12px !important;
         border-radius: 12px !important;
         font-size: 14px !important;
         line-height: 1.4 !important;
-      }
-
-      .wheel-next-step-note-v32::before {
-        left: 11px !important;
-        top: 12px !important;
       }
     }
   `;
