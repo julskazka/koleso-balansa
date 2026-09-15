@@ -5,21 +5,6 @@
   const ROOT_ID = 'reflectionQuizV25';
   const SECTORS = ['Тело','Дело','Энергия','Отношения','Окружение','Красота'];
   const STATES = ['Стало легче','Стало спокойнее','Появилось больше энергии','Что-то изменилось, но пока не понимаю что','Пока не заметил(а) изменений'];
-  const SECTOR_VALUES = {
-    'Тело': 'body',
-    'Дело': 'work',
-    'Энергия': 'energy',
-    'Отношения': 'relationships',
-    'Окружение': 'environment',
-    'Красота': 'beauty'
-  };
-  const STATE_VALUES = {
-    'Стало легче': 'lighter',
-    'Стало спокойнее': 'calmer',
-    'Появилось больше энергии': 'more_energy',
-    'Что-то изменилось, но пока не понимаю что': 'changed_unclear',
-    'Пока не заметил(а) изменений': 'no_changes'
-  };
   const norm = (value) => String(value ?? '').trim();
   let getQuizValues = null;
   let quizSubmit = null;
@@ -30,9 +15,12 @@
 
   function friendlyError(error) {
     const text = norm(error?.message || error);
+    const code = norm(error?.code);
     if (/too many|много запрос|429/i.test(text)) return 'Слишком много запросов. Подождите несколько секунд и попробуйте ещё раз.';
-    if (/failed to submit form/i.test(text)) return 'Не удалось сохранить ответ. Попробуйте ещё раз через несколько секунд.';
-    return text || 'Не удалось сохранить ответ. Попробуйте ещё раз.';
+    if (text) return code && code !== 'ERR_UNKNOWN'
+      ? `Ошибка Notibot: ${code} — ${text}`
+      : `Ошибка Notibot: ${text}`;
+    return 'Не удалось сохранить ответ. Попробуйте ещё раз.';
   }
 
   function addStyle() {
@@ -73,16 +61,13 @@
       }
 
       const v = getQuizValues();
-      const sectorValue = SECTOR_VALUES[v.sector];
-      const stateValue = STATE_VALUES[v.state];
-
-      if (!sectorValue || !stateValue || !v.observation || !v.name) {
+      if (!v.sector || !v.state || !v.observation || !v.name) {
         return Promise.reject(new Error('Не заполнены обязательные поля формы'));
       }
 
       const mappedAnswers = [
-        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [sectorValue] },
-        { title: 'Как изменилось ваше состояние после практики?', answers: [stateValue] },
+        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
+        { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
         { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
         { title: 'Ваше имя', answers: [v.name] }
       ];
@@ -95,7 +80,12 @@
         if (quizStatus) quizStatus.textContent = '';
         return result;
       }).catch((error) => {
-        console.error('Reflection form V2 submit failed', error);
+        console.error('Reflection form V2 submit failed', {
+          code: error?.code,
+          origin: error?.origin,
+          message: error?.message,
+          details: error?.details
+        });
         submitting = false;
         if (quizSubmit) quizSubmit.disabled = false;
         if (quizStatus) quizStatus.textContent = friendlyError(error);
