@@ -3,6 +3,7 @@
 
   const STYLE_ID = 'wheel-post-spin-block-v33-style';
   const ROOT_CLASS = 'wheel-next-step-redesign-v32';
+  const FINAL_COPY = 'В «Центре Ресурсов» собраны практики, эксперты и материалы для разных состояний и жизненных запросов. Выбирайте раздел, который ближе вам сегодня.';
 
   const normalize = (value) => String(value || '')
     .replace(/\u00a0/g, ' ')
@@ -256,11 +257,14 @@
     firstCopyEl?.classList.add('wheel-next-step-copy-v32');
 
     const secondCopy = findSmallestByText(root, (text) =>
-      text.startsWith('В «Центре Ресурсов» собраны практики') && text.length < 260
+      text.startsWith('В «Центре Ресурсов» собраны практики') && text.length < 320
     );
     const secondCopyEl = climbSameText(secondCopy, root);
-    secondCopyEl?.classList.remove('wheel-next-step-copy-v31');
-    secondCopyEl?.classList.add('wheel-next-step-copy-v32');
+    if (secondCopyEl) {
+      secondCopyEl.textContent = FINAL_COPY;
+      secondCopyEl.classList.remove('wheel-next-step-copy-v31');
+      secondCopyEl.classList.add('wheel-next-step-copy-v32');
+    }
 
     const note = findSmallestByText(root, (text) =>
       text.startsWith('Посмотрите, как можно продолжить работу с собой') && text.length < 240
