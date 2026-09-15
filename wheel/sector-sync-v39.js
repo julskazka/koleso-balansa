@@ -8,118 +8,87 @@
     .trim();
 
   let observer = null;
-  let scheduled = false;
-  let syncedSector = '';
-
-  function hasSavedResult() {
-    const resultText = normalize(document.getElementById('result')?.textContent);
-    return Boolean(
-      document.documentElement.classList.contains('wheel-free-spin-used-v24') ||
-      document.getElementById('wheelUsedCardV24') ||
-      resultText.startsWith('Ваш сектор:')
-    );
-  }
+  let appliedSector = '';
 
   function getSavedSector() {
-    if (!hasSavedResult()) return '';
-
-    const cardSector = normalize(document.querySelector('#wheelUsedCardV24 .wheel-used-sector-v24')?.textContent);
-    const fromCard = SECTORS.find((sector) => cardSector.includes(sector));
+    const cardText = normalize(
+      document.querySelector('#wheelUsedCardV24 .wheel-used-sector-v24')?.textContent
+    );
+    const fromCard = SECTORS.find((sector) => cardText.includes(sector));
     if (fromCard) return fromCard;
 
     const resultText = normalize(document.getElementById('result')?.textContent);
-    const fromResult = SECTORS.find((sector) => resultText.includes(sector));
-    return fromResult || '';
+    if (!resultText.startsWith('Ваш сектор:')) return '';
+    return SECTORS.find((sector) => resultText.includes(sector)) || '';
   }
 
-  function getSectorLabels(svg) {
-    const known = new Set(SECTORS.map((sector) => sector.toUpperCase()));
-    return Array.from(svg.querySelectorAll('text')).filter((element) =>
-      known.has(normalize(element.textContent).toUpperCase())
-    );
-  }
-
-  function sortClockwiseFromTop(svg, labels) {
-    const svgRect = svg.getBoundingClientRect();
-    const centerX = svgRect.left + svgRect.width / 2;
-    const centerY = svgRect.top + svgRect.height / 2;
-
-    return labels.map((label) => {
-      const rect = label.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      const dx = x - centerX;
-      const dy = y - centerY;
-      let angle = Math.atan2(dx, -dy);
-      if (angle < 0) angle += Math.PI * 2;
-      return { label, angle };
-    }).sort((a, b) => a.angle - b.angle).map(({ label }) => label);
-  }
-
-  function syncWheelToSector() {
+  function applySavedSector() {
     const sector = getSavedSector();
     if (!sector) return false;
-    if (sector === syncedSector) return true;
 
     const wheel = document.getElementById('wheel');
-    const svg = wheel?.querySelector('svg');
-    if (!wheel || !svg || wheel.classList.contains('is-spinning')) return false;
+    if (!wheel || wheel.classList.contains('is-spinning')) return false;
 
-    const labels = getSectorLabels(svg);
-    if (labels.length !== 6) return false;
+    const index = SECTORS.indexOf(sector);
+    if (index < 0) return false;
 
-    const ordered = sortClockwiseFromTop(svg, labels);
-    if (ordered.length !== 6) return false;
-
-    const startIndex = SECTORS.indexOf(sector);
-    ordered.forEach((label, position) => {
-      label.textContent = SECTORS[(startIndex + position) % SECTORS.length].toUpperCase();
-    });
-
-    syncedSector = sector;
+    const angle = -60 * index;
+    wheel.style.setProperty('transition', 'none', 'important');
+    wheel.style.setProperty('transform', `rotate(${angle}deg)`, 'important');
     wheel.dataset.syncedSector = sector;
-    wheel.dataset.sectorSyncMode = 'saved-result-v44';
+    wheel.dataset.sectorSyncMode = 'saved-record-angle-v45';
+    appliedSector = sector;
     return true;
   }
 
-  function scheduleSync() {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(() => {
-      scheduled = false;
-      if (syncWheelToSector() && observer) {
-        observer.disconnect();
-        observer = null;
-      }
-    });
+  function stopObserver() {
+    observer?.disconnect();
+    observer = null;
   }
 
-  function observeUntilSynced() {
-    if (observer || syncedSector || !document.documentElement) return;
-    observer = new MutationObserver(scheduleSync);
+  function trySync() {
+    if (applySavedSector()) {
+      stopObserver();
+      return true;
+    }
+    return false;
+  }
+
+  function observeUntilSavedStateExists() {
+    if (observer || appliedSector) return;
+    observer = new MutationObserver(() => {
+      requestAnimationFrame(trySync);
+    });
     observer.observe(document.documentElement, {
       childList: true,
       subtree: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ['class']
+      characterData: true
     });
   }
 
-  scheduleSync();
-  observeUntilSynced();
+  trySync();
+  observeUntilSavedStateExists();
 
   document.addEventListener('DOMContentLoaded', () => {
-    scheduleSync();
-    observeUntilSynced();
+    trySync();
+    observeUntilSavedStateExists();
   }, { once: true });
 
-  window.addEventListener('load', scheduleSync, { once: true });
-  window.addEventListener('wheel:free-spin-used', () => {
-    syncedSector = '';
-    scheduleSync();
-    observeUntilSynced();
+  window.addEventListener('wheel:free-spin-used', (event) => {
+    appliedSector = '';
+    const sector = normalize(event?.detail?.sector);
+    if (SECTORS.includes(sector)) {
+      requestAnimationFrame(() => {
+        setTimeout(trySync, 80);
+      });
+    } else {
+      observeUntilSavedStateExists();
+    }
   });
 
-  [150, 400, 800, 1400, 2400, 4000, 6500].forEach((delay) => setTimeout(scheduleSync, delay));
+  [250, 700, 1500, 3000, 5000].forEach((delay) => {
+    setTimeout(() => {
+      if (!appliedSector) trySync();
+    }, delay);
+  });
 })();
