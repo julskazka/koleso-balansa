@@ -7,83 +7,77 @@
     .replace(/\s+/g, ' ')
     .trim();
 
+  let observer = null;
   let scheduled = false;
-  let lockedSector = '';
 
   function getSavedSector() {
+    const cardSector = normalize(document.querySelector('.wheel-used-sector-v24')?.textContent);
+    const fromCard = SECTORS.find((sector) => cardSector.includes(sector));
+    if (fromCard) return fromCard;
+
     const resultText = normalize(document.getElementById('result')?.textContent);
     const fromResult = SECTORS.find((sector) => resultText.includes(sector));
     if (fromResult) return fromResult;
 
-    const cardText = normalize(document.querySelector('.wheel-used-sector-v24')?.textContent);
-    const fromCard = SECTORS.find((sector) => cardText.includes(sector));
-    if (fromCard) return fromCard;
-
     const practiceText = normalize(document.getElementById('practiceSector')?.textContent);
-    if (SECTORS.includes(practiceText)) return practiceText;
-
-    return '';
-  }
-
-  function hasSavedResult() {
-    return Boolean(
-      document.documentElement.classList.contains('wheel-free-spin-used-v24') ||
-      document.getElementById('wheelUsedCardV24') ||
-      normalize(document.getElementById('result')?.textContent).startsWith('Ваш сектор:')
-    );
+    return SECTORS.includes(practiceText) ? practiceText : '';
   }
 
   function getSectorLabels(svg) {
     const known = new Set(SECTORS.map((sector) => sector.toUpperCase()));
-    return Array.from(svg.querySelectorAll('text')).filter((text) => {
-      const current = normalize(text.textContent).toUpperCase();
-      const original = normalize(text.dataset.sectorSyncOriginalText).toUpperCase();
+    return Array.from(svg.querySelectorAll('text')).filter((element) => {
+      const current = normalize(element.textContent).toUpperCase();
+      const original = normalize(element.dataset.sectorSyncOriginalText).toUpperCase();
       return known.has(current) || known.has(original);
     }).slice(0, 6);
   }
 
-  function rememberOriginalLabels(labels) {
+  function sortLabelsClockwiseFromTop(svg, labels) {
+    const svgRect = svg.getBoundingClientRect();
+    const centerX = svgRect.left + svgRect.width / 2;
+    const centerY = svgRect.top + svgRect.height / 2;
+
+    return labels.map((label) => {
+      const rect = label.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const dx = x - centerX;
+      const dy = y - centerY;
+      let angle = Math.atan2(dx, -dy);
+      if (angle < 0) angle += Math.PI * 2;
+      return { label, angle };
+    }).sort((a, b) => a.angle - b.angle).map((item) => item.label);
+  }
+
+  function syncWheelToSector() {
+    const sector = getSavedSector();
+    const wheel = document.getElementById('wheel');
+    const svg = wheel?.querySelector('svg');
+    if (!sector || !wheel || !svg || wheel.classList.contains('is-spinning')) return false;
+
+    const labels = getSectorLabels(svg);
+    if (labels.length !== 6) return false;
+
     labels.forEach((label) => {
       if (!label.dataset.sectorSyncOriginalText) {
         label.dataset.sectorSyncOriginalText = normalize(label.textContent);
       }
     });
-  }
 
-  function arrangeLabels(labels, sector) {
+    const ordered = sortLabelsClockwiseFromTop(svg, labels);
+    if (ordered.length !== 6) return false;
+
     const startIndex = SECTORS.indexOf(sector);
-    if (startIndex < 0 || labels.length !== 6) return;
-
-    labels.forEach((label, position) => {
-      const nextSector = SECTORS[(startIndex + position) % SECTORS.length];
-      label.textContent = nextSector.toUpperCase();
+    ordered.forEach((label, position) => {
+      const expected = SECTORS[(startIndex + position) % SECTORS.length].toUpperCase();
+      if (normalize(label.textContent).toUpperCase() !== expected) {
+        label.textContent = expected;
+      }
     });
-  }
 
-  function lockWheelVisual(wheel) {
-    wheel.style.setProperty('transition', 'none', 'important');
-    wheel.style.setProperty('transform', 'rotate(0deg)', 'important');
-  }
-
-  function syncWheelToSector() {
-    const wheel = document.getElementById('wheel');
-    const svg = wheel?.querySelector('svg');
-    if (!wheel || !svg || !hasSavedResult()) return;
-    if (wheel.classList.contains('is-spinning')) return;
-
-    const sector = getSavedSector();
-    if (!sector) return;
-
-    const labels = getSectorLabels(svg);
-    if (labels.length !== 6) return;
-
-    rememberOriginalLabels(labels);
-    lockWheelVisual(wheel);
-    arrangeLabels(labels, sector);
-
-    lockedSector = sector;
     wheel.dataset.syncedSector = sector;
-    wheel.dataset.sectorSyncMode = 'labels';
+    wheel.dataset.sectorSyncMode = 'position-labels-v43';
+    return true;
   }
 
   function scheduleSync() {
@@ -91,31 +85,34 @@
     scheduled = true;
     requestAnimationFrame(() => {
       scheduled = false;
-      syncWheelToSector();
+      const done = syncWheelToSector();
+      if (done && observer) {
+        observer.disconnect();
+        observer = null;
+      }
+    });
+  }
+
+  function observeUntilSynced() {
+    if (observer || !document.documentElement) return;
+    observer = new MutationObserver(() => scheduleSync());
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      characterData: true
     });
   }
 
   scheduleSync();
-  document.addEventListener('DOMContentLoaded', scheduleSync, { once: true });
+  observeUntilSynced();
+  document.addEventListener('DOMContentLoaded', () => {
+    scheduleSync();
+    observeUntilSynced();
+  }, { once: true });
   window.addEventListener('load', scheduleSync, { once: true });
-  window.addEventListener('wheel:free-spin-used', scheduleSync);
-
-  const observer = new MutationObserver((mutations) => {
-    if (mutations.some((mutation) =>
-      mutation.type === 'childList' ||
-      mutation.type === 'characterData' ||
-      mutation.type === 'attributes'
-    )) {
-      scheduleSync();
-    }
-  });
-
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ['class', 'style']
+  window.addEventListener('wheel:free-spin-used', () => {
+    scheduleSync();
+    observeUntilSynced();
   });
 
   [100, 250, 500, 900, 1600, 3000, 5000, 8000].forEach((delay) => {
