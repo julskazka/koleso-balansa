@@ -4,7 +4,7 @@
   const STORAGE_PREFIX = 'wheel_free_spin_v24';
   const BROWSER_KEY = `${STORAGE_PREFIX}:browser`;
   const SECTORS = ['Тело', 'Энергия', 'Дело', 'Отношения', 'Окружение', 'Красота'];
-  let suppressClickUntil = 0;
+  let lastOpenAt = 0;
 
   const normalize = (value) => String(value ?? '').trim();
 
@@ -36,20 +36,30 @@
     }
   }
 
-  function findRecord() {
+  function getCandidateRecords() {
+    const candidates = [];
+    const seen = new Set();
+    const pushKey = (key) => {
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      const record = safeParse(localStorage.getItem(key));
+      if (record) candidates.push({ key, record });
+    };
+
     const identityId = getIdentityId();
-    const preferredKey = identityId ? makeAccountKey(identityId) : BROWSER_KEY;
-    const preferred = safeParse(localStorage.getItem(preferredKey));
-    if (preferred) return { key: preferredKey, record: preferred };
+    if (identityId) pushKey(makeAccountKey(identityId));
+    pushKey(BROWSER_KEY);
 
     for (let i = 0; i < localStorage.length; i += 1) {
       const key = localStorage.key(i);
-      if (!key || !key.startsWith(`${STORAGE_PREFIX}:`)) continue;
-      const record = safeParse(localStorage.getItem(key));
-      if (record?.practice) return { key, record };
+      if (key?.startsWith(`${STORAGE_PREFIX}:`)) pushKey(key);
     }
+    return candidates;
+  }
 
-    return preferred ? { key: preferredKey, record: preferred } : null;
+  function findRecord() {
+    const candidates = getCandidateRecords();
+    return candidates.find(({ record }) => record.practice) || candidates[0] || null;
   }
 
   function snapshotPractice(sector) {
@@ -93,7 +103,6 @@
         try { localStorage.setItem(key, JSON.stringify(record)); } catch (_) {}
       }
     }
-
     if (!practice) return false;
 
     const assignments = [
@@ -121,14 +130,13 @@
 
     const modal = document.getElementById('practiceModal');
     if (!modal) return false;
-
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('practice-open');
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     try { window.NotibotIntegration?.setScrollLock?.(true); } catch (_) {}
-
+    document.getElementById('practiceClose')?.focus();
     return true;
   }
 
@@ -140,28 +148,26 @@
   function handlePointerUp(event) {
     if (!getButton(event)) return;
     if (!openImmediately()) return;
-
-    suppressClickUntil = Date.now() + 800;
+    lastOpenAt = Date.now();
     event.preventDefault();
-    event.stopImmediatePropagation();
+    event.stopPropagation();
   }
 
   function handleClick(event) {
     if (!getButton(event)) return;
-
-    if (Date.now() < suppressClickUntil) {
+    if (Date.now() - lastOpenAt < 600) {
       event.preventDefault();
-      event.stopImmediatePropagation();
+      event.stopPropagation();
       return;
     }
-
     if (!openImmediately()) return;
+    lastOpenAt = Date.now();
     event.preventDefault();
-    event.stopImmediatePropagation();
+    event.stopPropagation();
   }
 
   const style = document.createElement('style');
-  style.textContent = '[data-open-saved-practice]{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent;}';
+  style.textContent = '[data-open-saved-practice]{position:relative!important;z-index:30!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent;}';
   document.head.appendChild(style);
 
   document.addEventListener('pointerup', handlePointerUp, true);
