@@ -36,15 +36,24 @@
       line-height: 1.5 !important;
     }
 
-    /* Более плотные списки во всех практиках. */
+    /* Ещё более плотные списки во всех практиках. */
+    .practice-content ul,
+    .practice-content ol {
+      margin-top: 10px !important;
+      margin-bottom: 16px !important;
+      padding-top: 12px !important;
+      padding-bottom: 2px !important;
+    }
+
     .practice-content li {
-      margin-bottom: 8px !important;
-      line-height: 1.48 !important;
+      min-height: 0 !important;
+      margin-bottom: 4px !important;
+      line-height: 1.38 !important;
     }
 
     .practice-content ul li:last-child,
     .practice-content ol li:last-child {
-      margin-bottom: 4px !important;
+      margin-bottom: 2px !important;
     }
 
     @media (min-width: 481px) {
