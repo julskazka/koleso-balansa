@@ -6,8 +6,19 @@
   const SECTORS = ['Тело','Дело','Энергия','Отношения','Окружение','Красота'];
   const STATES = ['Стало легче','Стало спокойнее','Появилось больше энергии','Что-то изменилось, но пока не понимаю что','Пока не заметил(а) изменений'];
   const norm = (value) => String(value ?? '').trim();
+  let getQuizValues = null;
+  let quizSubmit = null;
+  let quizStatus = null;
+  let submitting = false;
 
   window.WHEEL_NOTIBOT_CONFIG = Object.assign({}, window.WHEEL_NOTIBOT_CONFIG || {}, { reflectionFormId: FORM_ID });
+
+  function friendlyError(error) {
+    const text = norm(error?.message || error);
+    if (/too many|много запрос|429/i.test(text)) return 'Слишком много запросов. Подождите несколько секунд и попробуйте ещё раз.';
+    if (/failed to submit form/i.test(text)) return 'Не удалось сохранить ответ. Попробуйте ещё раз через несколько секунд.';
+    return text || 'Не удалось сохранить ответ. Попробуйте ещё раз.';
+  }
 
   function addStyle() {
     if (document.getElementById('reflectionQuizV25Style')) return;
@@ -15,6 +26,7 @@
     style.id = 'reflectionQuizV25Style';
     style.textContent = `
       .reflection-card.rq-active-v25 > :not(#${ROOT_ID}){display:none!important}
+      .reflection-stage.rq-quiz-active-v25 #reflectionSubmit{display:none!important}
       #${ROOT_ID}{display:block!important;width:100%;box-sizing:border-box}
       .rq-progress{margin:0 0 12px;color:rgba(242,215,140,.78);font:700 11px/1.2 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
       .rq-step{display:none}.rq-step.is-active{display:block}
@@ -34,9 +46,73 @@
     document.head.appendChild(style);
   }
 
+  function wrapSubmitForm() {
+    const notibot = window.NotibotIntegration;
+    if (!notibot || typeof notibot.submitForm !== 'function') return false;
+    if (notibot.submitForm.__reflectionQuizV25Wrapped) return true;
+
+    const originalSubmitForm = notibot.submitForm.bind(notibot);
+    const wrapped = (formId, answers, options) => {
+      if (String(formId) !== FORM_ID || typeof getQuizValues !== 'function') {
+        return originalSubmitForm(formId, answers, options);
+      }
+
+      const v = getQuizValues();
+      const mappedAnswers = [
+        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
+        { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
+        { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
+        { title: 'Ваше имя', answers: [v.name] }
+      ];
+      if (v.expert) mappedAnswers.push({ title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert] });
+
+      const request = originalSubmitForm(formId, mappedAnswers, { ...(options || {}), attachIdentity: false });
+      return Promise.resolve(request).then((result) => {
+        submitting = false;
+        if (quizSubmit) quizSubmit.disabled = false;
+        if (quizStatus) quizStatus.textContent = '';
+        return result;
+      }).catch((error) => {
+        submitting = false;
+        if (quizSubmit) quizSubmit.disabled = false;
+        if (quizStatus) quizStatus.textContent = friendlyError(error);
+        throw error;
+      });
+    };
+
+    wrapped.__reflectionQuizV25Wrapped = true;
+    notibot.submitForm = wrapped;
+    return true;
+  }
+
+  async function waitForNotibot(timeoutMs = 5000) {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+      wrapSubmitForm();
+      const notibot = window.NotibotIntegration;
+      if (notibot && typeof notibot.submitForm === 'function' && notibot.getState?.().connected) return true;
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+    return false;
+  }
+
+  function syncNativeFields(v) {
+    document.querySelectorAll('input[name="reflectionAnswer"]').forEach((radio) => {
+      radio.checked = norm(radio.value) === v.state;
+    });
+    const note = document.getElementById('reflectionNote');
+    if (note) note.value = v.observation;
+    const nativeSubmit = document.getElementById('reflectionSubmit');
+    if (nativeSubmit) nativeSubmit.disabled = false;
+  }
+
   function install() {
     const card = document.querySelector('.reflection-card');
-    if (!card || document.getElementById(ROOT_ID)) return false;
+    const stage = card?.closest('.reflection-stage');
+    if (!card || document.getElementById(ROOT_ID)) {
+      wrapSubmitForm();
+      return false;
+    }
     addStyle();
 
     card.insertAdjacentHTML('afterbegin', `
@@ -72,6 +148,7 @@
       </div>
     `);
     card.classList.add('rq-active-v25');
+    stage?.classList.add('rq-quiz-active-v25');
 
     const root = document.getElementById(ROOT_ID);
     const steps = [...root.querySelectorAll('[data-step]')];
@@ -82,16 +159,18 @@
     const status = root.querySelector('[data-status]');
     let step = 0;
 
-    const values = () => ({
+    getQuizValues = () => ({
       sector: norm(root.querySelector('input[name="rqSector"]:checked')?.value),
       state: norm(root.querySelector('input[name="rqState"]:checked')?.value),
       observation: norm(root.querySelector('#rqObservation')?.value),
       name: norm(root.querySelector('#rqName')?.value),
       expert: norm(root.querySelector('#rqExpert')?.value)
     });
+    quizSubmit = submit;
+    quizStatus = status;
 
     const valid = () => {
-      const v = values();
+      const v = getQuizValues();
       return step === 0 ? !!v.sector : step === 1 ? !!v.state : step === 2 ? !!v.observation : step === 3 ? !!v.name : true;
     };
 
@@ -101,35 +180,45 @@
       back.style.display = step ? '' : 'none';
       next.style.display = step < 4 ? '' : 'none';
       submit.style.display = step === 4 ? '' : 'none';
-      next.disabled = !valid();
+      if (!submitting) next.disabled = !valid();
     };
 
     root.addEventListener('input', render);
     root.addEventListener('change', render);
-    back.onclick = () => { if (step) step -= 1; render(); };
-    next.onclick = () => { if (valid() && step < 4) step += 1; render(); };
+    back.onclick = () => { if (!submitting && step) step -= 1; render(); };
+    next.onclick = () => { if (!submitting && valid() && step < 4) step += 1; render(); };
 
     submit.onclick = async () => {
-      const v = values();
+      if (submitting) return;
+      const v = getQuizValues();
+      submitting = true;
       submit.disabled = true;
-      status.textContent = 'Сохраняем ответ…';
-      const answers = [
-        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
-        { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
-        { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
-        { title: 'Ваше имя', answers: [v.name] }
-      ];
-      if (v.expert) answers.push({ title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert] });
-      try {
-        await window.NotibotIntegration.submitForm(FORM_ID, answers, { attachIdentity: false });
-        root.innerHTML = '<div class="rq-success">Спасибо! Ответ сохранён.</div>';
-        document.getElementById('practiceSheet')?.classList.add('reflection-saved');
-      } catch (error) {
+      status.textContent = 'Подключаем сохранение…';
+
+      const ready = await waitForNotibot();
+      if (!ready) {
+        submitting = false;
         submit.disabled = false;
-        status.textContent = norm(error?.message) || 'Не удалось сохранить ответ. Попробуйте ещё раз.';
+        status.textContent = 'Не удалось подключиться к Notibot. Закройте и снова откройте Mini App, затем повторите.';
+        return;
       }
+
+      syncNativeFields(v);
+      wrapSubmitForm();
+      status.textContent = 'Сохраняем ответ…';
+
+      const nativeSubmit = document.getElementById('reflectionSubmit');
+      if (!nativeSubmit) {
+        submitting = false;
+        submit.disabled = false;
+        status.textContent = 'Не удалось найти сохранение формы. Обновите Mini App и повторите.';
+        return;
+      }
+
+      nativeSubmit.click();
     };
 
+    wrapSubmitForm();
     render();
     return true;
   }
@@ -139,6 +228,8 @@
   let tries = 0;
   const timer = setInterval(() => {
     tries += 1;
-    if (install() || tries > 80) clearInterval(timer);
+    install();
+    wrapSubmitForm();
+    if (tries > 80 || (document.getElementById(ROOT_ID) && window.NotibotIntegration?.submitForm?.__reflectionQuizV25Wrapped)) clearInterval(timer);
   }, 150);
 })();
