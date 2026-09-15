@@ -222,7 +222,7 @@
       const answers = buildAnswers(v);
       status.textContent = 'Сохраняем ответ…';
       try {
-        await notibot.submitForm(FORM_ID, answers);
+        await notibot.submitForm(FORM_ID, answers, { attachIdentity: false });
         submitting = false;
         status.textContent = '';
         showSuccess(v);
