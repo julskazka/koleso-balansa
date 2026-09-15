@@ -45,6 +45,12 @@
     return message;
   }
 
+  function isValidationError(error) {
+    const code = norm(error?.code);
+    const text = norm(error?.message || error);
+    return code === 'ERR_VALIDATION_FAILED' || /validation|валидац/i.test(text);
+  }
+
   function addStyle() {
     if (document.getElementById('reflectionQuizV25Style')) return;
     const style = document.createElement('style');
@@ -81,10 +87,11 @@
     return null;
   }
 
-  function buildAnswers(v) {
+  function buildAnswers(v, choiceMode = 'label') {
+    const useValue = choiceMode === 'value';
     const answers = [
-      { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sectorValue] },
-      { title: 'Как изменилось ваше состояние после практики?', answers: [v.stateValue] },
+      { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [useValue ? v.sectorValue : v.sectorLabel] },
+      { title: 'Как изменилось ваше состояние после практики?', answers: [useValue ? v.stateValue : v.stateLabel] },
       { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
       { title: 'Ваше имя', answers: [v.name] }
     ];
@@ -94,6 +101,46 @@
     }
 
     return answers;
+  }
+
+  async function submitCompatible(notibot, v) {
+    const variants = [
+      { id: 'labels-default-identity', choiceMode: 'label', options: undefined },
+      { id: 'labels-no-identity', choiceMode: 'label', options: { attachIdentity: false } },
+      { id: 'values-default-identity', choiceMode: 'value', options: undefined },
+      { id: 'values-no-identity', choiceMode: 'value', options: { attachIdentity: false } }
+    ];
+
+    let lastError = null;
+    for (const variant of variants) {
+      const answers = buildAnswers(v, variant.choiceMode);
+      try {
+        const result = variant.options
+          ? await notibot.submitForm(FORM_ID, answers, variant.options)
+          : await notibot.submitForm(FORM_ID, answers);
+
+        console.info('Reflection form V2 submit succeeded', {
+          formId: FORM_ID,
+          variant: variant.id
+        });
+        return result;
+      } catch (error) {
+        lastError = error;
+        console.warn('Reflection form V2 submit variant failed', {
+          formId: FORM_ID,
+          variant: variant.id,
+          code: error?.code,
+          origin: error?.origin,
+          message: error?.message,
+          details: error?.details,
+          answers
+        });
+
+        if (!isValidationError(error)) throw error;
+      }
+    }
+
+    throw lastError || new Error('Failed to submit form');
   }
 
   function showSuccess(v) {
@@ -219,21 +266,19 @@
         return;
       }
 
-      const answers = buildAnswers(v);
       status.textContent = 'Сохраняем ответ…';
       try {
-        await notibot.submitForm(FORM_ID, answers, { attachIdentity: false });
+        await submitCompatible(notibot, v);
         submitting = false;
         status.textContent = '';
         showSuccess(v);
       } catch (error) {
-        console.error('Reflection form V2 submit failed', {
+        console.error('Reflection form V2 submit failed after compatibility attempts', {
           formId: FORM_ID,
           code: error?.code,
           origin: error?.origin,
           message: error?.message,
-          details: error?.details,
-          answers
+          details: error?.details
         });
         submitting = false;
         render();
