@@ -62,6 +62,29 @@
       line-height: 1.45 !important;
     }
 
+    /* Главная CTA-кнопка перехода к рефлексии. */
+    .reflection-cta-highlight-v35 {
+      background: linear-gradient(180deg, #f2d783 0%, #d9aa38 100%) !important;
+      color: #08313a !important;
+      -webkit-text-fill-color: #08313a !important;
+      border: 1px solid rgba(242, 215, 131, .96) !important;
+      box-shadow:
+        0 10px 24px rgba(217, 170, 56, .24),
+        inset 0 1px 0 rgba(255, 245, 207, .42) !important;
+      font-weight: 800 !important;
+    }
+
+    .reflection-cta-highlight-v35:hover {
+      transform: translateY(-1px) !important;
+      box-shadow:
+        0 12px 28px rgba(217, 170, 56, .30),
+        inset 0 1px 0 rgba(255, 245, 207, .5) !important;
+    }
+
+    .reflection-cta-highlight-v35:active {
+      transform: translateY(0) !important;
+    }
+
     @media (min-width: 481px) {
       .practice-content > p:first-child {
         padding: 14px 15px 14px 18px !important;
@@ -100,8 +123,17 @@
     element.style.setProperty('display', 'none', 'important');
   }
 
+  function highlightReflectionButton() {
+    document.querySelectorAll('button,a,[role="button"]').forEach((element) => {
+      if (normalize(element.textContent) === 'Перейти к рефлексии') {
+        element.classList.add('reflection-cta-highlight-v35');
+      }
+    });
+  }
+
   function clean() {
     ensureStyle();
+    highlightReflectionButton();
 
     const root = document.querySelector('.wheel-next-step-redesign-v32');
     const kicker = root?.querySelector('.wheel-next-step-kicker-v32');
