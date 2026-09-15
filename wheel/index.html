@@ -9,18 +9,26 @@
     html,body{margin:0;min-height:100%;background:#031c28}
     .boot-screen{min-height:100svh;display:grid;place-items:center;background:#031c28;color:#f3d98f;font:600 16px Arial,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
     [data-open-wheel-club],
-    .continuation-note{display:none!important}
+    .continuation-note,
+    .wheel-used-footnote-v25,
+    .wheel-used-divider-v25{display:none!important}
   </style>
+</head>
+<body>
+  <div id="app-root"><div class="boot-screen">Загружаем Колесо Баланса…</div></div>
+  <script src="./page-loader.js?v=23"></script>
+  <script src="./reflection-form-v24.js?v=24"></script>
   <script>
     (() => {
-      /* Одноразовый тестовый сброс конкретного сохранённого аккаунта.
-         Сам ID в публичном коде не хранится: сверяем только хэш ключа localStorage. */
-      const RESET_KEY_HASH = 0xad1ee755;
-      const RESET_MARKER = 'wheel_reset_20260915_v1_done';
+      const TARGET_ID_HASH = 0xe685960e;
+      const RESET_MARKER = 'wheel_reset_20260915_v2_done';
+      const STORAGE_PREFIX = 'wheel_free_spin_v24';
+      const BROWSER_KEY = `${STORAGE_PREFIX}:browser`;
 
+      const normalize = (value) => String(value ?? '').trim();
       const fnv1a = (value) => {
         let hash = 0x811c9dc5;
-        const bytes = new TextEncoder().encode(String(value));
+        const bytes = new TextEncoder().encode(normalize(value));
         for (const byte of bytes) {
           hash ^= byte;
           hash = Math.imul(hash, 0x01000193) >>> 0;
@@ -28,28 +36,75 @@
         return hash >>> 0;
       };
 
-      try {
-        if (localStorage.getItem(RESET_MARKER) !== '1') {
-          for (let index = localStorage.length - 1; index >= 0; index -= 1) {
-            const key = localStorage.key(index);
-            if (key && fnv1a(key) === RESET_KEY_HASH) {
-              localStorage.removeItem(key);
-              sessionStorage.removeItem('wheelReflectionName');
-              localStorage.setItem(RESET_MARKER, '1');
-              break;
-            }
-          }
+      const loadFreeSpin = () => {
+        const script = document.createElement('script');
+        script.src = './free-spin-v24.js?v=25';
+        script.async = false;
+        document.head.appendChild(script);
+      };
+
+      const getTelegramWebId = () => {
+        try {
+          return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '';
+        } catch (_) {
+          return '';
         }
-      } catch (_) {}
+      };
+
+      const resetForTarget = () => {
+        const notibot = window.NotibotIntegration;
+        if (!notibot) return false;
+
+        const identity = notibot.getIdentity?.() || {};
+        const user = notibot.getUser?.() || {};
+        const candidates = [
+          identity.telegramId,
+          identity.telegram_id,
+          user.telegramId,
+          user.telegram_id,
+          user.id,
+          user.userId,
+          user.user_id,
+          getTelegramWebId()
+        ].map(normalize).filter(Boolean);
+
+        const isTarget = candidates.some((value) => fnv1a(value) === TARGET_ID_HASH);
+        if (!isTarget) return Boolean(notibot.getState?.().connected);
+
+        if (localStorage.getItem(RESET_MARKER) !== '1') {
+          const primaryIdentity = normalize(
+            identity.notibotUserId ||
+            identity.telegramId ||
+            identity.maxId ||
+            user.notibotUserId ||
+            user.id ||
+            user.userId ||
+            user.user_id
+          );
+
+          if (primaryIdentity) {
+            localStorage.removeItem(`${STORAGE_PREFIX}:account:${encodeURIComponent(primaryIdentity)}`);
+          }
+          localStorage.removeItem(BROWSER_KEY);
+          sessionStorage.removeItem('wheelReflectionName');
+          localStorage.setItem(RESET_MARKER, '1');
+        }
+        return true;
+      };
+
+      (async () => {
+        const startedAt = Date.now();
+        while (Date.now() - startedAt < 5000) {
+          try {
+            if (resetForTarget()) break;
+          } catch (_) {}
+          await new Promise((resolve) => setTimeout(resolve, 80));
+        }
+        loadFreeSpin();
+      })();
     })();
   </script>
-</head>
-<body>
-  <div id="app-root"><div class="boot-screen">Загружаем Колесо Баланса…</div></div>
-  <script src="./page-loader.js?v=23"></script>
-  <script src="./reflection-form-v24.js?v=24"></script>
-  <script src="./free-spin-v24.js?v=24"></script>
-  <script src="./free-spin-design-v25.js?v=25"></script>
+  <script src="./free-spin-design-v25.js?v=26"></script>
   <script src="./naming-fix.js?v=3"></script>
   <script src="./mobile-first-screen-v22.js?v=22"></script>
   <script src="./price-51-v26.js?v=30"></script>
@@ -67,55 +122,24 @@
         'Но одна практика — это только начало. В клубе можно открыть все шесть направлений и выбирать практики под своё состояние, а не ждать случайного результата.'
       ]);
 
-      function removeDecorationNear(element) {
-        let next = element?.nextElementSibling;
-        while (next) {
-          const text = normalize(next.textContent);
-          const decorative = !text || STAR_ONLY.test(text);
-          if (!decorative) break;
-          const current = next;
-          next = next.nextElementSibling;
-          current.remove();
-        }
-      }
+      function cleanUpsell() {
+        document.querySelectorAll('[data-open-wheel-club], .continuation-note, .wheel-used-footnote-v25, .wheel-used-divider-v25')
+          .forEach((element) => element.remove());
 
-      function removeStandaloneDecorations() {
+        document.querySelectorAll('p,div,span,section,a,button').forEach((element) => {
+          if (!element.isConnected) return;
+          const text = normalize(element.textContent);
+          if (removeExact.has(text)) element.remove();
+        });
+
         document.querySelectorAll('div,span,p,section,hr').forEach((element) => {
           if (!element.isConnected) return;
           const text = normalize(element.textContent);
           const className = String(element.className || '').toLowerCase();
-          const looksDecorative = STAR_ONLY.test(text) ||
-            ((className.includes('divider') || className.includes('separator') || className.includes('ornament')) && (!text || STAR_ONLY.test(text)));
-          if (!looksDecorative) return;
-
-          let target = element;
-          let parent = target.parentElement;
-          while (
-            parent &&
-            parent !== document.body &&
-            parent.id !== 'app-root' &&
-            normalize(parent.textContent) === text &&
-            parent.children.length <= 4
-          ) {
-            target = parent;
-            parent = target.parentElement;
+          if (STAR_ONLY.test(text) || ((className.includes('divider') || className.includes('separator')) && (!text || STAR_ONLY.test(text)))) {
+            element.remove();
           }
-          target.remove();
         });
-      }
-
-      function cleanUpsell() {
-        document.querySelectorAll('[data-open-wheel-club]').forEach((element) => element.remove());
-        document.querySelectorAll('.continuation-note').forEach((element) => element.remove());
-
-        document.querySelectorAll('p,div,span,section,a,button').forEach((element) => {
-          const text = normalize(element.textContent);
-          if (!removeExact.has(text)) return;
-          removeDecorationNear(element);
-          element.remove();
-        });
-
-        removeStandaloneDecorations();
       }
 
       cleanUpsell();
