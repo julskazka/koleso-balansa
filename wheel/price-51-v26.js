@@ -120,6 +120,7 @@
 
   const setButtonLabel = (button, label) => {
     if (!button) return;
+    if (normalize(button.textContent) === normalize(label)) return;
 
     const spans = Array.from(button.querySelectorAll('span'));
     const labelSpan = spans.length ? spans[spans.length - 1] : null;
