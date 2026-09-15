@@ -8,14 +8,35 @@
   <style>
     html,body{margin:0;min-height:100%;background:#031c28}
     .boot-screen{min-height:100svh;display:grid;place-items:center;background:#031c28;color:#f3d98f;font:600 16px Arial,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
+
     [data-open-wheel-club],
     .continuation-note,
     .wheel-used-footnote-v25,
-    .wheel-used-divider-v25{display:none!important}
+    .wheel-used-divider-v25,
+    .wheel-used-card-v24 .wheel-used-sector-v24 + p,
+    .wheel-used-dialog-v24 .wheel-used-sector-v24 + p{
+      display:none!important
+    }
+
     .wheel-used-card-v24,
     .wheel-used-actions-v24,
     [data-open-saved-practice]{pointer-events:auto!important}
-    [data-open-saved-practice]{position:relative!important;z-index:20!important;touch-action:manipulation!important}
+
+    [data-open-saved-practice]{
+      position:relative!important;
+      z-index:20!important;
+      touch-action:manipulation!important
+    }
+
+    html body .wheel-used-card-v24 h3{
+      font-size:clamp(17px,4vw,24px)!important;
+      line-height:1.05!important;
+      letter-spacing:-.025em!important;
+      white-space:nowrap!important;
+      max-width:none!important;
+      width:100%!important;
+      text-align:center!important
+    }
   </style>
 </head>
 <body>
@@ -42,7 +63,7 @@
 
       const loadFreeSpin = () => {
         const script = document.createElement('script');
-        script.src = './free-spin-v24.js?v=25';
+        script.src = './free-spin-v24.js?v=26';
         script.async = false;
         document.head.appendChild(script);
       };
@@ -108,67 +129,12 @@
       })();
     })();
   </script>
-  <script src="./saved-practice-instant-v38.js?v=43"></script>
-  <script src="./free-spin-design-v25.js?v=27"></script>
-  <style id="wheel-used-title-nowrap-v43">
-    html body .wheel-used-card-v24 h3 {
-      font-size: clamp(16px, 2.2vw, 27px) !important;
-      line-height: 1.05 !important;
-      letter-spacing: -.035em !important;
-      white-space: nowrap !important;
-      max-width: none !important;
-      width: 100% !important;
-    }
-  </style>
-  <script src="./used-card-title-fix-v44.js?v=44"></script>
-  <script src="./sector-sync-v39.js?v=43"></script>
+  <script src="./free-spin-design-v25.js?v=28"></script>
+  <script src="./sector-sync-v39.js?v=44"></script>
   <script src="./naming-fix.js?v=3"></script>
   <script src="./mobile-first-screen-v22.js?v=22"></script>
   <script src="./price-51-v26.js?v=30"></script>
   <script src="./post-spin-block-v31.js?v=33"></script>
   <script src="./post-spin-decoration-clean-v34.js?v=34"></script>
-  <script>
-    (() => {
-      const normalize = (value) => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
-      const STAR_ONLY = /^[✦★✧✶✷✸✹✺✻✼⋆·•◆◇❖]+$/u;
-      const removeExact = new Set([
-        'Открыть все направления за 51 ₽',
-        'Открыть все направления за 1 ₽',
-        'Первая практика — наш подарок для вас. Остальные направления доступны в клубе.',
-        'В клубе можно открыть все шесть направлений и выбирать практики под своё состояние.',
-        'Но одна практика — это только начало. В клубе можно открыть все шесть направлений и выбирать практики под своё состояние, а не ждать случайного результата.'
-      ]);
-
-      function isHiddenDesignDecoration(element) {
-        return Boolean(element?.closest?.('.wheel-used-footnote-v25, .wheel-used-divider-v25'));
-      }
-
-      function cleanUpsell() {
-        document.querySelectorAll('[data-open-wheel-club], .continuation-note')
-          .forEach((element) => element.remove());
-
-        document.querySelectorAll('p,div,span,section,a,button').forEach((element) => {
-          if (!element.isConnected || isHiddenDesignDecoration(element)) return;
-          const text = normalize(element.textContent);
-          if (removeExact.has(text)) element.remove();
-        });
-
-        document.querySelectorAll('div,span,p,section,hr').forEach((element) => {
-          if (!element.isConnected || isHiddenDesignDecoration(element)) return;
-          const text = normalize(element.textContent);
-          const className = String(element.className || '').toLowerCase();
-          if (STAR_ONLY.test(text) || ((className.includes('divider') || className.includes('separator')) && (!text || STAR_ONLY.test(text)))) {
-            element.remove();
-          }
-        });
-      }
-
-      cleanUpsell();
-      document.addEventListener('DOMContentLoaded', cleanUpsell, { once: true });
-      const observer = new MutationObserver(() => requestAnimationFrame(cleanUpsell));
-      observer.observe(document.documentElement, { childList: true, subtree: true });
-      [100, 250, 500, 900, 1500, 2500, 4000].forEach((delay) => setTimeout(cleanUpsell, delay));
-    })();
-  </script>
 </body>
 </html>
