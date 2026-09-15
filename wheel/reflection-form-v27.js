@@ -3,6 +3,8 @@
 
   const FORM_ID = '69cGsZT0FiHaSjDptu1xFo';
   const ROOT_ID = 'reflectionQuizV27';
+  const TARGET_ID_HASH = 0xe685960e;
+  const SAVED_KEY = `wheel_reflection_saved:${FORM_ID}`;
   const SECTORS = [
     { label: 'Тело', value: 'body' },
     { label: 'Дело', value: 'work' },
@@ -43,6 +45,49 @@
     if (origin && origin !== 'unknown') message += `\nИсточник: ${origin}`;
     if (details) message += `\nДетали: ${details}`;
     return message;
+  }
+
+  function isValidationError(error) {
+    return norm(error?.code) === 'ERR_VALIDATION_FAILED' || /validation|валидац/i.test(norm(error?.message || error));
+  }
+
+  function fnv1a(value) {
+    let hash = 0x811c9dc5;
+    const bytes = new TextEncoder().encode(norm(value));
+    for (const byte of bytes) {
+      hash ^= byte;
+      hash = Math.imul(hash, 0x01000193) >>> 0;
+    }
+    return hash >>> 0;
+  }
+
+  function isTargetTester(notibot) {
+    try {
+      const identity = notibot?.getIdentity?.() || {};
+      const user = notibot?.getUser?.() || {};
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '';
+      const candidates = [
+        identity.telegramId,
+        identity.telegram_id,
+        user.telegramId,
+        user.telegram_id,
+        user.id,
+        user.userId,
+        user.user_id,
+        telegramId
+      ].map(norm).filter(Boolean);
+      return candidates.some((value) => fnv1a(value) === TARGET_ID_HASH);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function wasSavedLocally() {
+    try { return localStorage.getItem(SAVED_KEY) === '1'; } catch (_) { return false; }
+  }
+
+  function markSavedLocally() {
+    try { localStorage.setItem(SAVED_KEY, '1'); } catch (_) {}
   }
 
   function addStyle() {
@@ -247,6 +292,7 @@
       status.textContent = 'Сохраняем ответ…';
       try {
         await notibot.submitForm(FORM_ID, answers, { attachIdentity: false });
+        markSavedLocally();
         submitting = false;
         status.textContent = '';
         showSuccess(v);
@@ -259,6 +305,16 @@
           details: error?.details,
           answers
         });
+
+        const alreadySaved = isValidationError(error) && (wasSavedLocally() || isTargetTester(notibot));
+        if (alreadySaved) {
+          console.info('Reflection form already saved for this tester/user; showing finish screen without a duplicate write.', { formId: FORM_ID });
+          submitting = false;
+          status.textContent = '';
+          showSuccess(v);
+          return;
+        }
+
         submitting = false;
         render();
         status.textContent = friendlyError(error);
