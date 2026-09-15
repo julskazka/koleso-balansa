@@ -26,6 +26,23 @@
       box-shadow: none !important;
       text-decoration: none !important;
     }
+
+    /* Более компактный вводный блок во всех практиках. */
+    .practice-content > p:first-child {
+      margin-bottom: 18px !important;
+      padding: 12px 13px 12px 15px !important;
+      border-radius: 0 12px 12px 0 !important;
+      font-size: 15px !important;
+      line-height: 1.5 !important;
+    }
+
+    @media (min-width: 481px) {
+      .practice-content > p:first-child {
+        padding: 14px 15px 14px 18px !important;
+        font-size: 17px !important;
+        line-height: 1.55 !important;
+      }
+    }
   `;
 
   const normalize = (value) => String(value || '')
