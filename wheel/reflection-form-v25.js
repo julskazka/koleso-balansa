@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const FORM_ID = '6OilaTGVmsR7PrL9f6h2ni';
+  const FORM_ID = '69cGsZT0FiHaSjDptu1xFo';
   const ROOT_ID = 'reflectionQuizV25';
   const SECTORS = [
     { label: 'Тело', value: 'body' },
