@@ -13,14 +13,30 @@
 
   window.WHEEL_NOTIBOT_CONFIG = Object.assign({}, window.WHEEL_NOTIBOT_CONFIG || {}, { reflectionFormId: FORM_ID });
 
+  function stringifyDetails(value) {
+    if (value === null || value === undefined || value === '') return '';
+    if (typeof value === 'string') return value;
+    try {
+      return JSON.stringify(value);
+    } catch (_) {
+      return String(value);
+    }
+  }
+
   function friendlyError(error) {
     const text = norm(error?.message || error);
     const code = norm(error?.code);
+    const origin = norm(error?.origin);
+    const details = stringifyDetails(error?.details);
     if (/too many|много запрос|429/i.test(text)) return 'Слишком много запросов. Подождите несколько секунд и попробуйте ещё раз.';
-    if (text) return code && code !== 'ERR_UNKNOWN'
-      ? `Ошибка Notibot: ${code} — ${text}`
-      : `Ошибка Notibot: ${text}`;
-    return 'Не удалось сохранить ответ. Попробуйте ещё раз.';
+
+    let message = text
+      ? (code && code !== 'ERR_UNKNOWN' ? `Ошибка Notibot: ${code} — ${text}` : `Ошибка Notibot: ${text}`)
+      : 'Не удалось сохранить ответ. Попробуйте ещё раз.';
+
+    if (origin && origin !== 'unknown') message += `\nИсточник: ${origin}`;
+    if (details) message += `\nДетали: ${details}`;
+    return message;
   }
 
   function addStyle() {
@@ -43,7 +59,7 @@
       .rq-nav{display:flex;gap:9px;margin-top:16px}
       .rq-btn{min-height:44px;padding:10px 15px;border-radius:14px;border:1px solid rgba(238,202,111,.46);font:700 14px/1.2 Arial,sans-serif}
       .rq-back{background:transparent;color:#ead59a}.rq-next,.rq-submit{flex:1;background:linear-gradient(180deg,#f2d783,#d9aa38);color:#08313a}.rq-btn:disabled{opacity:.48}
-      .rq-status{margin:12px 0 0;color:#f5e4b0;font:600 13px/1.4 Arial,sans-serif}.rq-success{text-align:center;color:#fff5d8;font:600 16px/1.45 Arial,sans-serif}
+      .rq-status{margin:12px 0 0;color:#f5e4b0;font:600 13px/1.4 Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}.rq-success{text-align:center;color:#fff5d8;font:600 16px/1.45 Arial,sans-serif}
       @media(max-width:520px){.rq-title{font-size:17px}.rq-option{font-size:14.5px}}
     `;
     document.head.appendChild(style);
