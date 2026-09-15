@@ -6,9 +6,6 @@
   const SECTORS = ['Тело','Дело','Энергия','Отношения','Окружение','Красота'];
   const STATES = ['Стало легче','Стало спокойнее','Появилось больше энергии','Что-то изменилось, но пока не понимаю что','Пока не заметил(а) изменений'];
   const norm = (value) => String(value ?? '').trim();
-  let getQuizValues = null;
-  let quizSubmit = null;
-  let quizStatus = null;
   let submitting = false;
 
   window.WHEEL_NOTIBOT_CONFIG = Object.assign({}, window.WHEEL_NOTIBOT_CONFIG || {}, { reflectionFormId: FORM_ID });
@@ -16,11 +13,7 @@
   function stringifyDetails(value) {
     if (value === null || value === undefined || value === '') return '';
     if (typeof value === 'string') return value;
-    try {
-      return JSON.stringify(value);
-    } catch (_) {
-      return String(value);
-    }
+    try { return JSON.stringify(value); } catch (_) { return String(value); }
   }
 
   function friendlyError(error) {
@@ -65,83 +58,52 @@
     document.head.appendChild(style);
   }
 
-  function wrapSubmitForm() {
-    const notibot = window.NotibotIntegration;
-    if (!notibot || typeof notibot.submitForm !== 'function') return false;
-    if (notibot.submitForm.__reflectionQuizV25Wrapped) return true;
-
-    const originalSubmitForm = notibot.submitForm.bind(notibot);
-    const wrapped = (formId, answers, options) => {
-      if (String(formId) !== FORM_ID || typeof getQuizValues !== 'function') {
-        return originalSubmitForm(formId, answers, options);
-      }
-
-      const v = getQuizValues();
-      if (!v.sector || !v.state || !v.observation || !v.name) {
-        return Promise.reject(new Error('Не заполнены обязательные поля формы'));
-      }
-
-      const mappedAnswers = [
-        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
-        { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
-        { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
-        { title: 'Ваше имя', answers: [v.name] }
-      ];
-      if (v.expert) mappedAnswers.push({ title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert] });
-
-      const request = originalSubmitForm(formId, mappedAnswers, { ...(options || {}), attachIdentity: false });
-      return Promise.resolve(request).then((result) => {
-        submitting = false;
-        if (quizSubmit) quizSubmit.disabled = false;
-        if (quizStatus) quizStatus.textContent = '';
-        return result;
-      }).catch((error) => {
-        console.error('Reflection form V2 submit failed', {
-          code: error?.code,
-          origin: error?.origin,
-          message: error?.message,
-          details: error?.details
-        });
-        submitting = false;
-        if (quizSubmit) quizSubmit.disabled = false;
-        if (quizStatus) quizStatus.textContent = friendlyError(error);
-        throw error;
-      });
-    };
-
-    wrapped.__reflectionQuizV25Wrapped = true;
-    notibot.submitForm = wrapped;
-    return true;
-  }
-
   async function waitForNotibot(timeoutMs = 5000) {
     const started = Date.now();
     while (Date.now() - started < timeoutMs) {
-      wrapSubmitForm();
       const notibot = window.NotibotIntegration;
-      if (notibot && typeof notibot.submitForm === 'function' && notibot.getState?.().connected) return true;
+      if (notibot && typeof notibot.submitForm === 'function' && notibot.getState?.().connected) return notibot;
       await new Promise((resolve) => setTimeout(resolve, 150));
     }
-    return false;
+    return null;
   }
 
-  function syncNativeFields(v) {
-    document.querySelectorAll('input[name="reflectionAnswer"]').forEach((radio) => {
-      radio.checked = norm(radio.value) === v.state;
-    });
-    const note = document.getElementById('reflectionNote');
-    if (note) note.value = v.observation;
-    const nativeSubmit = document.getElementById('reflectionSubmit');
-    if (nativeSubmit) nativeSubmit.disabled = false;
+  function buildAnswers(v) {
+    return [
+      { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
+      { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
+      { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
+      { title: 'Ваше имя', answers: [v.name] },
+      { title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert || 'Не заполнено'] }
+    ];
+  }
+
+  function showSuccess(v) {
+    window.dispatchEvent(new CustomEvent('wheel:reflection-saved', {
+      detail: {
+        sector: v.sector,
+        answer: v.state,
+        note: v.observation,
+        name: v.name,
+        expertQuestion: v.expert,
+        createdAt: new Date().toISOString(),
+        notibot: true
+      }
+    }));
+
+    const sheet = document.getElementById('practiceSheet');
+    if (sheet) {
+      sheet.classList.add('reflection-saved');
+      requestAnimationFrame(() => { sheet.scrollTop = 0; });
+    }
+
+    try { window.NotibotIntegration?.hapticNotification?.('success'); } catch (_) {}
   }
 
   function install() {
     const card = document.querySelector('.reflection-card');
     const stage = card?.closest('.reflection-stage');
-    if (!card || document.getElementById(ROOT_ID)) {
-      wrapSubmitForm();
-      return false;
-    }
+    if (!card || document.getElementById(ROOT_ID)) return false;
     addStyle();
 
     card.insertAdjacentHTML('afterbegin', `
@@ -188,18 +150,16 @@
     const status = root.querySelector('[data-status]');
     let step = 0;
 
-    getQuizValues = () => ({
+    const values = () => ({
       sector: norm(root.querySelector('input[name="rqSector"]:checked')?.value),
       state: norm(root.querySelector('input[name="rqState"]:checked')?.value),
       observation: norm(root.querySelector('#rqObservation')?.value),
       name: norm(root.querySelector('#rqName')?.value),
       expert: norm(root.querySelector('#rqExpert')?.value)
     });
-    quizSubmit = submit;
-    quizStatus = status;
 
     const valid = () => {
-      const v = getQuizValues();
+      const v = values();
       return step === 0 ? !!v.sector : step === 1 ? !!v.state : step === 2 ? !!v.observation : step === 3 ? !!v.name : true;
     };
 
@@ -209,7 +169,8 @@
       back.style.display = step ? '' : 'none';
       next.style.display = step < 4 ? '' : 'none';
       submit.style.display = step === 4 ? '' : 'none';
-      if (!submitting) next.disabled = !valid();
+      next.disabled = submitting || !valid();
+      submit.disabled = submitting;
     };
 
     root.addEventListener('input', render);
@@ -219,35 +180,43 @@
 
     submit.onclick = async () => {
       if (submitting) return;
-      const v = getQuizValues();
+      const v = values();
+      if (!v.sector || !v.state || !v.observation || !v.name) return;
+
       submitting = true;
-      submit.disabled = true;
+      render();
       status.textContent = 'Подключаем сохранение…';
 
-      const ready = await waitForNotibot();
-      if (!ready) {
+      const notibot = await waitForNotibot();
+      if (!notibot) {
         submitting = false;
-        submit.disabled = false;
+        render();
         status.textContent = 'Не удалось подключиться к Notibot. Закройте и снова откройте Mini App, затем повторите.';
         return;
       }
 
-      syncNativeFields(v);
-      wrapSubmitForm();
       status.textContent = 'Сохраняем ответ…';
-
-      const nativeSubmit = document.getElementById('reflectionSubmit');
-      if (!nativeSubmit) {
+      try {
+        await notibot.submitForm(FORM_ID, buildAnswers(v), { attachIdentity: false });
         submitting = false;
-        submit.disabled = false;
-        status.textContent = 'Не удалось найти сохранение формы. Обновите Mini App и повторите.';
-        return;
+        status.textContent = '';
+        showSuccess(v);
+      } catch (error) {
+        console.error('Reflection form V2 submit failed', {
+          formId: FORM_ID,
+          code: error?.code,
+          origin: error?.origin,
+          message: error?.message,
+          details: error?.details,
+          answers: buildAnswers(v)
+        });
+        submitting = false;
+        render();
+        status.textContent = friendlyError(error);
+        try { notibot.hapticNotification?.('error'); } catch (_) {}
       }
-
-      nativeSubmit.click();
     };
 
-    wrapSubmitForm();
     render();
     return true;
   }
@@ -257,8 +226,6 @@
   let tries = 0;
   const timer = setInterval(() => {
     tries += 1;
-    install();
-    wrapSubmitForm();
-    if (tries > 80 || (document.getElementById(ROOT_ID) && window.NotibotIntegration?.submitForm?.__reflectionQuizV25Wrapped)) clearInterval(timer);
+    if (install() || tries > 80) clearInterval(timer);
   }, 150);
 })();
