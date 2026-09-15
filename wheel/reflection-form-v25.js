@@ -71,7 +71,7 @@
     document.head.appendChild(style);
   }
 
-  async function waitForNotibot(timeoutMs = 5000) {
+  async function waitForNotibot(timeoutMs = 15000) {
     const started = Date.now();
     while (Date.now() - started < timeoutMs) {
       const notibot = window.NotibotIntegration;
@@ -222,7 +222,7 @@
       const answers = buildAnswers(v);
       status.textContent = 'Сохраняем ответ…';
       try {
-        await notibot.submitForm(FORM_ID, answers, { attachIdentity: false });
+        await notibot.submitForm(FORM_ID, answers);
         submitting = false;
         status.textContent = '';
         showSuccess(v);
