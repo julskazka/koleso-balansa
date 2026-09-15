@@ -14,7 +14,8 @@
     const style = document.createElement('style');
     style.id = 'reflectionQuizV25Style';
     style.textContent = `
-      #${ROOT_ID}{width:100%;box-sizing:border-box}
+      .reflection-card.rq-active-v25 > :not(#${ROOT_ID}){display:none!important}
+      #${ROOT_ID}{display:block!important;width:100%;box-sizing:border-box}
       .rq-progress{margin:0 0 12px;color:rgba(242,215,140,.78);font:700 11px/1.2 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
       .rq-step{display:none}.rq-step.is-active{display:block}
       .rq-title{margin:0 0 14px;color:#fff5d8;font:700 18px/1.35 Arial,sans-serif}
@@ -38,7 +39,7 @@
     if (!card || document.getElementById(ROOT_ID)) return false;
     addStyle();
 
-    card.innerHTML = `
+    card.insertAdjacentHTML('afterbegin', `
       <div id="${ROOT_ID}">
         <div class="rq-progress">Вопрос <span data-current>1</span> из 5</div>
         <section class="rq-step is-active" data-step="0">
@@ -69,7 +70,8 @@
         </div>
         <div class="rq-status" data-status></div>
       </div>
-    `;
+    `);
+    card.classList.add('rq-active-v25');
 
     const root = document.getElementById(ROOT_ID);
     const steps = [...root.querySelectorAll('[data-step]')];
