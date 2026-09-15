@@ -10,11 +10,16 @@
     'Окружение': -240,
     'Красота': -300
   };
-  const normalize = (value) => String(value || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+
+  const normalize = (value) => String(value || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   let wheelObserver = null;
   let observedWheel = null;
   let scheduled = false;
+  let usedSeenAt = 0;
 
   function getSavedSector() {
     const resultText = normalize(document.getElementById('result')?.textContent);
@@ -39,6 +44,53 @@
     );
   }
 
+  function getElementRotation(element) {
+    if (!element) return 0;
+    const transform = getComputedStyle(element).transform;
+    if (!transform || transform === 'none') return 0;
+
+    const matrix3d = transform.match(/^matrix3d\((.+)\)$/);
+    if (matrix3d) {
+      const values = matrix3d[1].split(',').map(Number);
+      if (values.length >= 2 && values.every((value) => Number.isFinite(value))) {
+        return Math.atan2(values[1], values[0]) * 180 / Math.PI;
+      }
+    }
+
+    const matrix2d = transform.match(/^matrix\((.+)\)$/);
+    if (matrix2d) {
+      const values = matrix2d[1].split(',').map(Number);
+      if (values.length >= 2 && Number.isFinite(values[0]) && Number.isFinite(values[1])) {
+        return Math.atan2(values[1], values[0]) * 180 / Math.PI;
+      }
+    }
+
+    return 0;
+  }
+
+  function getBaseLabelAngle(text) {
+    if (!text.dataset.sectorSyncBaseTransform) {
+      text.dataset.sectorSyncBaseTransform = text.getAttribute('transform') || '';
+    }
+    const match = text.dataset.sectorSyncBaseTransform.match(/rotate\(\s*(-?\d+(?:\.\d+)?)/i);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function keepLabelsReadable(svg, targetAngle) {
+    const sectorNames = new Set(SECTORS.map((sector) => sector.toUpperCase()));
+
+    svg.querySelectorAll('text').forEach((text) => {
+      if (!sectorNames.has(normalize(text.textContent).toUpperCase())) return;
+
+      const x = Number(text.getAttribute('x'));
+      const y = Number(text.getAttribute('y'));
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+      const baseAngle = getBaseLabelAngle(text);
+      text.setAttribute('transform', `rotate(${baseAngle - targetAngle} ${x} ${y})`);
+    });
+  }
+
   function attachWheelObserver(wheel) {
     if (!wheel || observedWheel === wheel) return;
     wheelObserver?.disconnect();
@@ -52,26 +104,41 @@
 
   function syncWheelToSector() {
     const wheel = document.getElementById('wheel');
-    if (!wheel) return;
+    const svg = wheel?.querySelector('svg');
+    if (!wheel || !svg) return;
+
     attachWheelObserver(wheel);
 
-    if (!hasSavedResult() || wheel.classList.contains('is-spinning')) return;
+    if (!hasSavedResult()) {
+      usedSeenAt = 0;
+      return;
+    }
+
+    if (!usedSeenAt) usedSeenAt = Date.now();
+
+    // Не вмешиваемся в живое вращение. Если внешний скрипт по ошибке
+    // оставил класс is-spinning, через 4.5 с всё равно восстанавливаем итог.
+    if (wheel.classList.contains('is-spinning') && Date.now() - usedSeenAt < 4500) {
+      setTimeout(scheduleSync, 180);
+      return;
+    }
 
     const sector = getSavedSector();
     if (!sector || ANGLES[sector] === undefined) return;
 
-    const targetTransform = `rotate(${ANGLES[sector]}deg)`;
-    const currentTransform = normalize(wheel.style.getPropertyValue('transform')).replace(/\s+/g, '');
-    const normalizedTarget = targetTransform.replace(/\s+/g, '');
+    const targetAngle = ANGLES[sector];
+    const outerAngle = getElementRotation(wheel);
+    const innerAngle = targetAngle - outerAngle;
 
-    if (currentTransform !== normalizedTarget || wheel.style.getPropertyPriority('transform') !== 'important') {
-      wheel.style.setProperty('transition', 'none', 'important');
-      wheel.style.setProperty('transform', targetTransform, 'important');
-    }
+    svg.style.setProperty('transform-origin', '50% 50%', 'important');
+    svg.style.setProperty('transform-box', 'fill-box', 'important');
+    svg.style.setProperty('transition', 'none', 'important');
+    svg.style.setProperty('transform', `rotate(${innerAngle}deg)`, 'important');
 
-    if (wheel.dataset.syncedSector !== sector) {
-      wheel.dataset.syncedSector = sector;
-    }
+    keepLabelsReadable(svg, targetAngle);
+
+    wheel.dataset.syncedSector = sector;
+    wheel.dataset.syncedTargetAngle = String(targetAngle);
   }
 
   function scheduleSync() {
@@ -86,6 +153,7 @@
   scheduleSync();
   document.addEventListener('DOMContentLoaded', scheduleSync, { once: true });
   window.addEventListener('wheel:free-spin-used', scheduleSync);
+  window.addEventListener('load', scheduleSync, { once: true });
 
   const pageObserver = new MutationObserver((mutations) => {
     if (mutations.some((mutation) =>
@@ -105,7 +173,7 @@
     attributeFilter: ['class']
   });
 
-  [100, 250, 500, 900, 1600, 3000, 5200, 7000, 9000].forEach((delay) => {
+  [100, 250, 500, 900, 1600, 3000, 4800, 6500, 9000].forEach((delay) => {
     setTimeout(scheduleSync, delay);
   });
 })();
