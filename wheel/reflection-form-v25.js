@@ -3,8 +3,21 @@
 
   const FORM_ID = '6OilaTGVmsR7PrL9f6h2ni';
   const ROOT_ID = 'reflectionQuizV25';
-  const SECTORS = ['Тело','Дело','Энергия','Отношения','Окружение','Красота'];
-  const STATES = ['Стало легче','Стало спокойнее','Появилось больше энергии','Что-то изменилось, но пока не понимаю что','Пока не заметил(а) изменений'];
+  const SECTORS = [
+    { label: 'Тело', value: 'body' },
+    { label: 'Дело', value: 'work' },
+    { label: 'Энергия', value: 'energy' },
+    { label: 'Отношения', value: 'relationships' },
+    { label: 'Окружение', value: 'environment' },
+    { label: 'Красота', value: 'beauty' }
+  ];
+  const STATES = [
+    { label: 'Стало легче', value: 'lighter' },
+    { label: 'Стало спокойнее', value: 'calmer' },
+    { label: 'Появилось больше энергии', value: 'more_energy' },
+    { label: 'Что-то изменилось, но пока не понимаю что', value: 'changed_unclear' },
+    { label: 'Пока не заметил(а) изменений', value: 'no_changes' }
+  ];
   const norm = (value) => String(value ?? '').trim();
   let submitting = false;
 
@@ -69,20 +82,25 @@
   }
 
   function buildAnswers(v) {
-    return [
-      { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
-      { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
+    const answers = [
+      { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sectorValue] },
+      { title: 'Как изменилось ваше состояние после практики?', answers: [v.stateValue] },
       { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
-      { title: 'Ваше имя', answers: [v.name] },
-      { title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert || 'Не заполнено'] }
+      { title: 'Ваше имя', answers: [v.name] }
     ];
+
+    if (v.expert) {
+      answers.push({ title: 'Задайте свой вопрос эксперту по этой теме', answers: [v.expert] });
+    }
+
+    return answers;
   }
 
   function showSuccess(v) {
     window.dispatchEvent(new CustomEvent('wheel:reflection-saved', {
       detail: {
-        sector: v.sector,
-        answer: v.state,
+        sector: v.sectorLabel,
+        answer: v.stateLabel,
         note: v.observation,
         name: v.name,
         expertQuestion: v.expert,
@@ -111,11 +129,11 @@
         <div class="rq-progress">Вопрос <span data-current>1</span> из 5</div>
         <section class="rq-step is-active" data-step="0">
           <h3 class="rq-title">Какая сфера вам выпала в Колесе Ресурса?</h3>
-          <div class="rq-options">${SECTORS.map((v) => `<label class="rq-option"><input type="radio" name="rqSector" value="${v}"><span>${v}</span></label>`).join('')}</div>
+          <div class="rq-options">${SECTORS.map((item) => `<label class="rq-option"><input type="radio" name="rqSector" value="${item.value}" data-label="${item.label}"><span>${item.label}</span></label>`).join('')}</div>
         </section>
         <section class="rq-step" data-step="1">
           <h3 class="rq-title">Как изменилось ваше состояние после практики?</h3>
-          <div class="rq-options">${STATES.map((v) => `<label class="rq-option"><input type="radio" name="rqState" value="${v}"><span>${v}</span></label>`).join('')}</div>
+          <div class="rq-options">${STATES.map((item) => `<label class="rq-option"><input type="radio" name="rqState" value="${item.value}" data-label="${item.label}"><span>${item.label}</span></label>`).join('')}</div>
         </section>
         <section class="rq-step" data-step="2">
           <h3 class="rq-title">Что вы заметили в своём состоянии?</h3>
@@ -150,17 +168,23 @@
     const status = root.querySelector('[data-status]');
     let step = 0;
 
-    const values = () => ({
-      sector: norm(root.querySelector('input[name="rqSector"]:checked')?.value),
-      state: norm(root.querySelector('input[name="rqState"]:checked')?.value),
-      observation: norm(root.querySelector('#rqObservation')?.value),
-      name: norm(root.querySelector('#rqName')?.value),
-      expert: norm(root.querySelector('#rqExpert')?.value)
-    });
+    const values = () => {
+      const sector = root.querySelector('input[name="rqSector"]:checked');
+      const state = root.querySelector('input[name="rqState"]:checked');
+      return {
+        sectorValue: norm(sector?.value),
+        sectorLabel: norm(sector?.dataset.label),
+        stateValue: norm(state?.value),
+        stateLabel: norm(state?.dataset.label),
+        observation: norm(root.querySelector('#rqObservation')?.value),
+        name: norm(root.querySelector('#rqName')?.value),
+        expert: norm(root.querySelector('#rqExpert')?.value)
+      };
+    };
 
     const valid = () => {
       const v = values();
-      return step === 0 ? !!v.sector : step === 1 ? !!v.state : step === 2 ? !!v.observation : step === 3 ? !!v.name : true;
+      return step === 0 ? !!v.sectorValue : step === 1 ? !!v.stateValue : step === 2 ? !!v.observation : step === 3 ? !!v.name : true;
     };
 
     const render = () => {
@@ -181,7 +205,7 @@
     submit.onclick = async () => {
       if (submitting) return;
       const v = values();
-      if (!v.sector || !v.state || !v.observation || !v.name) return;
+      if (!v.sectorValue || !v.stateValue || !v.observation || !v.name) return;
 
       submitting = true;
       render();
@@ -195,9 +219,10 @@
         return;
       }
 
+      const answers = buildAnswers(v);
       status.textContent = 'Сохраняем ответ…';
       try {
-        await notibot.submitForm(FORM_ID, buildAnswers(v), { attachIdentity: false });
+        await notibot.submitForm(FORM_ID, answers, { attachIdentity: false });
         submitting = false;
         status.textContent = '';
         showSuccess(v);
@@ -208,7 +233,7 @@
           origin: error?.origin,
           message: error?.message,
           details: error?.details,
-          answers: buildAnswers(v)
+          answers
         });
         submitting = false;
         render();
