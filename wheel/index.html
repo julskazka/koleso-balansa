@@ -12,6 +12,10 @@
     .continuation-note,
     .wheel-used-footnote-v25,
     .wheel-used-divider-v25{display:none!important}
+    .wheel-used-card-v24,
+    .wheel-used-actions-v24,
+    [data-open-saved-practice]{pointer-events:auto!important}
+    [data-open-saved-practice]{position:relative!important;z-index:20!important;touch-action:manipulation!important}
   </style>
 </head>
 <body>
@@ -104,8 +108,8 @@
       })();
     })();
   </script>
-  <script src="./saved-practice-instant-v38.js?v=38"></script>
-  <script src="./free-spin-design-v25.js?v=26"></script>
+  <script src="./saved-practice-instant-v38.js?v=40"></script>
+  <script src="./free-spin-design-v25.js?v=27"></script>
   <script src="./sector-sync-v39.js?v=39"></script>
   <script src="./naming-fix.js?v=3"></script>
   <script src="./mobile-first-screen-v22.js?v=22"></script>
@@ -124,18 +128,22 @@
         'Но одна практика — это только начало. В клубе можно открыть все шесть направлений и выбирать практики под своё состояние, а не ждать случайного результата.'
       ]);
 
+      function isHiddenDesignDecoration(element) {
+        return Boolean(element?.closest?.('.wheel-used-footnote-v25, .wheel-used-divider-v25'));
+      }
+
       function cleanUpsell() {
-        document.querySelectorAll('[data-open-wheel-club], .continuation-note, .wheel-used-footnote-v25, .wheel-used-divider-v25')
+        document.querySelectorAll('[data-open-wheel-club], .continuation-note')
           .forEach((element) => element.remove());
 
         document.querySelectorAll('p,div,span,section,a,button').forEach((element) => {
-          if (!element.isConnected) return;
+          if (!element.isConnected || isHiddenDesignDecoration(element)) return;
           const text = normalize(element.textContent);
           if (removeExact.has(text)) element.remove();
         });
 
         document.querySelectorAll('div,span,p,section,hr').forEach((element) => {
-          if (!element.isConnected) return;
+          if (!element.isConnected || isHiddenDesignDecoration(element)) return;
           const text = normalize(element.textContent);
           const className = String(element.className || '').toLowerCase();
           if (STAR_ONLY.test(text) || ((className.includes('divider') || className.includes('separator')) && (!text || STAR_ONLY.test(text)))) {
