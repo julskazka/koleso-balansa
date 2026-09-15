@@ -36,6 +36,17 @@
       line-height: 1.5 !important;
     }
 
+    /* Более плотные списки во всех практиках. */
+    .practice-content li {
+      margin-bottom: 8px !important;
+      line-height: 1.48 !important;
+    }
+
+    .practice-content ul li:last-child,
+    .practice-content ol li:last-child {
+      margin-bottom: 4px !important;
+    }
+
     @media (min-width: 481px) {
       .practice-content > p:first-child {
         padding: 14px 15px 14px 18px !important;
