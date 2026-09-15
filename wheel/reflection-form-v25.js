@@ -5,6 +5,21 @@
   const ROOT_ID = 'reflectionQuizV25';
   const SECTORS = ['Тело','Дело','Энергия','Отношения','Окружение','Красота'];
   const STATES = ['Стало легче','Стало спокойнее','Появилось больше энергии','Что-то изменилось, но пока не понимаю что','Пока не заметил(а) изменений'];
+  const SECTOR_VALUES = {
+    'Тело': 'body',
+    'Дело': 'work',
+    'Энергия': 'energy',
+    'Отношения': 'relationships',
+    'Окружение': 'environment',
+    'Красота': 'beauty'
+  };
+  const STATE_VALUES = {
+    'Стало легче': 'lighter',
+    'Стало спокойнее': 'calmer',
+    'Появилось больше энергии': 'more_energy',
+    'Что-то изменилось, но пока не понимаю что': 'changed_unclear',
+    'Пока не заметил(а) изменений': 'no_changes'
+  };
   const norm = (value) => String(value ?? '').trim();
   let getQuizValues = null;
   let quizSubmit = null;
@@ -58,9 +73,16 @@
       }
 
       const v = getQuizValues();
+      const sectorValue = SECTOR_VALUES[v.sector];
+      const stateValue = STATE_VALUES[v.state];
+
+      if (!sectorValue || !stateValue || !v.observation || !v.name) {
+        return Promise.reject(new Error('Не заполнены обязательные поля формы'));
+      }
+
       const mappedAnswers = [
-        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [v.sector] },
-        { title: 'Как изменилось ваше состояние после практики?', answers: [v.state] },
+        { title: 'Какая сфера вам выпала в Колесе Ресурса?', answers: [sectorValue] },
+        { title: 'Как изменилось ваше состояние после практики?', answers: [stateValue] },
         { title: 'Что вы заметили в своём состоянии?', answers: [v.observation] },
         { title: 'Ваше имя', answers: [v.name] }
       ];
@@ -73,6 +95,7 @@
         if (quizStatus) quizStatus.textContent = '';
         return result;
       }).catch((error) => {
+        console.error('Reflection form V2 submit failed', error);
         submitting = false;
         if (quizSubmit) quizSubmit.disabled = false;
         if (quizStatus) quizStatus.textContent = friendlyError(error);
