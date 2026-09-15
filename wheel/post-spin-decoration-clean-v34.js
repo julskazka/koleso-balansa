@@ -56,11 +56,21 @@
       margin-bottom: 2px !important;
     }
 
+    /* Меньше текст в карточках с вопросами после практики. */
+    .after-list li {
+      font-size: 16px !important;
+      line-height: 1.45 !important;
+    }
+
     @media (min-width: 481px) {
       .practice-content > p:first-child {
         padding: 14px 15px 14px 18px !important;
         font-size: 17px !important;
         line-height: 1.55 !important;
+      }
+
+      .after-list li {
+        font-size: 17px !important;
       }
     }
   `;
