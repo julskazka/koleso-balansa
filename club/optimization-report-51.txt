@@ -1,0 +1,16 @@
+optimized_index_bytes=469799
+optimized_index_kib=458.8
+embedded_data_images=14
+embedded_data_images_binary_kib=59.5
+external_img_refs=0
+price=51 RUB
+visual_content_changes=none
+card_directions_base64_bytes=14928
+card_directions_approx_webp_bytes=11196
+card_experts_base64_bytes=14260
+card_experts_approx_webp_bytes=10695
+card_question_base64_bytes=13263
+card_question_approx_webp_bytes=9947
+card_materials_base64_bytes=13176
+card_materials_approx_webp_bytes=9882
+external_images:
