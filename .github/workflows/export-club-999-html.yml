@@ -38,12 +38,30 @@ jobs:
           css = '\n'.join((root/f).read_text(encoding='utf-8') for f in css_files)
           html = html.replace('</head>', '<style id="club999-inline-patches">\n'+css+'\n</style></head>', 1)
 
+          expert_paths = [
+            'assets/gallery-v110/01-anna-plaksina.webp',
+            'assets/gallery-v110/02-olga-schastye.webp',
+            'assets/gallery-v110/03-yannas-bogdan.webp',
+            'assets/gallery-v110/04-nadezhda-gromova.webp',
+            'assets/gallery-v110/05-vladlena-vasikova.webp'
+          ]
+          expert_data = ['data:image/webp;base64,' + base64.b64encode((root/p).read_bytes()).decode('ascii') for p in expert_paths]
+          elina_b64 = ''.join((root/f'assets/gallery-v113/elina-{i:02d}.txt').read_text(encoding='utf-8').strip() for i in range(1,11)).replace('\n','').replace('\r','')
+          elina_data = 'data:image/webp;base64,' + elina_b64
+
           js_files = [
             'v71-clarity-heading.js','v73-page-typography.js','v75-heading-fit-readability.js','v76-clarity-cards.js','v86-directions-popups.js','v92-real-direction-cards.js','v94-directions-desktop-3col.js','v213-direction-art-blob.js','v103-cross-block-safe-width.js','v106-connection-divider.js','v107-materials-glass-cards.js','v109-inside-payment-button-depth.js','v110-expert-gallery.js','v120-feed-compact.js','v121-resource-list-polish.js','v133-resource-box-clean-rebuild.js','v136-whofor-safe-local.js','v151-audience-question-cta.js','v153-audience-cta-contrast.js','v166-final-ui.js','v169-gold-checks-compact.js','v174-retention-direct.js','v175-access-block-clean.js','v178-access-polish.js','v179-access-list-compact.js','v181-access-final.js','v183-subscription-compact-icons.js','v184-remove-final-visual-footer.js','v190-unified-lists.js','v191-subscription-shell-flat.js','v194-unified-icons-real-shine.js','v195-icons-one-system.js','v198-path-card-square-direct.js','v200-icon-glow-uniform.js','v210-final-spacing-clean.js','v212-final-cta-containment.js','v219-notibot-product-bridge.js'
           ]
           scripts=[]
           for f in js_files:
-            js=(root/f).read_text(encoding='utf-8').replace('</script>','<\\/script>')
+            js=(root/f).read_text(encoding='utf-8')
+            if f == 'v110-expert-gallery.js':
+              for old,new in zip(expert_paths, expert_data):
+                js = js.replace('./'+old, new)
+              js = re.sub(r"const ELINA_PARTS=.*?;\n", "const ELINA_DATA='"+elina_data+"';\n", js, count=1)
+              js = re.sub(r"async function loadElina\(img\)\{[\s\S]*?\n  \}\n\n  function injectStyle", "function loadElina(img){img.src=ELINA_DATA;}\n\n  function injectStyle", js, count=1)
+              js = js.replace("${src}?v=113", "${src}")
+            js=js.replace('</script>','<\\/script>')
             scripts.append('<script>\n'+js+'\n</script>')
           html = html.replace('</body>', ''.join(scripts)+'</body>',1)
           html = re.sub(r'<body([^>]*)>', r'<body\1><div id="page-nebula-v61" aria-hidden="true"></div>', html, count=1, flags=re.I)
